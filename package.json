@@ -1,0 +1,45 @@
+{
+  "name": "ludum",
+  "version": "1.0.0",
+  "description": "Recomendador y tracker de juegos de mesa",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "import-csv": "ts-node scripts/import-csv.ts"
+  },
+  "keywords": [
+    "board-games",
+    "game-recommender",
+    "tracker"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.108.2",
+    "@tailwindcss/postcss": "^4.3.1",
+    "@types/node": "^26.0.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.5.0",
+    "axios": "^1.18.0",
+    "csv-parse": "^7.0.0",
+    "csv-parser": "^3.2.1",
+    "dotenv": "^17.4.2",
+    "next": "^16.2.9",
+    "postcss": "^8.5.15",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "tailwindcss": "^4.3.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1"
+  },
+  "devDependencies": {
+    "xml2js": "^0.6.2"
+  }
+}
