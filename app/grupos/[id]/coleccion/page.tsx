@@ -41,7 +41,7 @@ export default async function ColeccionPage({ params, searchParams }: Props) {
       .from('games')
       .select('id, bgg_id, name, year_published, bgg_rating, image_url')
       .ilike('name', `%${q}%`)
-      .order('bgg_rating', { ascending: false })
+      .order('bgg_rank', { ascending: true, nullsFirst: false })
       .limit(10);
     searchResults = data ?? [];
   }

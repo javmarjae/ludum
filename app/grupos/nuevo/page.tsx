@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Nav } from '@/components/Nav';
 import { createGroup } from '@/app/grupos/actions';
 
@@ -11,13 +12,19 @@ const inputStyle = {
 };
 
 export default function NuevoGrupoPage() {
+  const router = useRouter();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setError(''); setLoading(true);
     const result = await createGroup(formData);
-    if (result?.error) { setError(result.error); setLoading(false); }
+    if (result?.error) {
+      setError(result.error);
+      setLoading(false);
+    } else if (result?.groupId) {
+      router.push(`/grupos/${result.groupId}`);
+    }
   }
 
   return (

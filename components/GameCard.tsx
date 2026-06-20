@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import type { GameResult } from '@/lib/recommender';
 
 function RatingBadge({ rating }: { rating: number }) {
@@ -16,15 +17,8 @@ export function GameCard({ game, index }: { game: GameResult; index: number }) {
   return (
     <Link href={`/juegos/${game.bgg_id}`} style={{ display: 'block', textDecoration: 'none' }}>
       <div
-        style={{ borderRadius: 24, padding: 16, display: 'flex', gap: 16, alignItems: 'flex-start', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', transition: 'transform 0.2s, box-shadow 0.2s' }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.01)';
-          (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-card-hover)';
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLDivElement).style.transform = 'scale(1)';
-          (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-card)';
-        }}
+        className="hover-scale-md"
+        style={{ borderRadius: 24, padding: 16, display: 'flex', gap: 16, alignItems: 'flex-start', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}
       >
         {/* Rank badge */}
         <div style={{
@@ -39,7 +33,13 @@ export function GameCard({ game, index }: { game: GameResult; index: number }) {
 
         {/* Image */}
         {game.image_url ? (
-          <img src={game.image_url} alt={game.name} style={{ width: 64, height: 64, borderRadius: 16, objectFit: 'cover', flexShrink: 0 }} />
+          <Image
+            src={game.image_url}
+            alt={game.name}
+            width={64}
+            height={64}
+            style={{ borderRadius: 16, objectFit: 'cover', flexShrink: 0 }}
+          />
         ) : (
           <div style={{ width: 64, height: 64, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, flexShrink: 0, background: 'var(--bg-inset)' }}>
             🎲

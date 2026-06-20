@@ -31,11 +31,10 @@ export function AddGameButton({ groupId, gameId, inCollection: initialInCollecti
       disabled={loading}
       style={{
         flexShrink: 0, padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 700,
-        cursor: 'pointer', fontFamily: 'inherit', transition: 'transform 0.15s', border: 'none',
-        ...(inCollection
-          ? { background: 'rgba(58,55,47,0.08)', color: 'var(--text-2)', border: '1px solid rgba(58,55,47,0.18)' }
-          : { background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(62,94,59,0.25)' }
-        ),
+        cursor: 'pointer', fontFamily: 'inherit', transition: 'transform 0.15s',
+        background: inCollection ? 'rgba(58,55,47,0.08)' : 'var(--brand-tint)',
+        color: inCollection ? 'var(--text-2)' : 'var(--brand)',
+        border: inCollection ? '1px solid rgba(58,55,47,0.18)' : '1px solid rgba(62,94,59,0.25)',
         opacity: loading ? 0.5 : 1,
       }}
       onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.05)'; }}

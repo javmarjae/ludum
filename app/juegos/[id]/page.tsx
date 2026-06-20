@@ -1,11 +1,15 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 import { Nav } from '@/components/Nav';
+import { DescriptionCollapse } from './DescriptionCollapse';
+import { cache } from 'react';
 import type { Metadata } from 'next';
 
 interface Props { params: Promise<{ id: string }>; }
 
-async function getGame(bggId: number) {
+const getGame = cache(async (bggId: number) => {
   const supabase = await createClient();
   const { data } = await supabase
     .from('games')
@@ -13,7 +17,7 @@ async function getGame(bggId: number) {
     .eq('bgg_id', bggId)
     .single();
   return data ?? null;
-}
+});
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
@@ -88,7 +92,13 @@ export default async function GamePage({ params }: Props) {
         <div style={{ borderRadius: 32, padding: 24, marginBottom: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
           <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
             {game.image_url ? (
-              <img src={game.image_url} alt={game.name} style={{ width: 120, height: 120, borderRadius: 20, objectFit: 'cover', flexShrink: 0, boxShadow: '0 4px 16px rgba(58,55,47,0.12)' }} />
+              <Image
+                src={game.image_url}
+                alt={game.name}
+                width={120}
+                height={120}
+                style={{ borderRadius: 20, objectFit: 'cover', flexShrink: 0, boxShadow: '0 4px 16px rgba(58,55,47,0.12)' }}
+              />
             ) : (
               <div style={{ width: 120, height: 120, borderRadius: 20, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, flexShrink: 0 }}>🎲</div>
             )}
@@ -98,7 +108,7 @@ export default async function GamePage({ params }: Props) {
               {/* Categories */}
               {game.categories && game.categories.length > 0 && (
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
-                  {game.categories.map(c => <Tag key={c} text={c} accent />)}
+                  {game.categories.map((c: string) => <Tag key={c} text={c} accent />)}
                 </div>
               )}
 
@@ -131,7 +141,7 @@ export default async function GamePage({ params }: Props) {
           <div style={{ borderRadius: 24, padding: '18px 20px', marginBottom: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
             <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-3)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Mecánicas</h2>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {game.mechanics.map(m => <Tag key={m} text={m} />)}
+              {game.mechanics.map((m: string) => <Tag key={m} text={m} />)}
             </div>
           </div>
         )}
@@ -140,9 +150,7 @@ export default async function GamePage({ params }: Props) {
         <div style={{ borderRadius: 24, padding: '18px 20px', marginBottom: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
           <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-3)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Descripción</h2>
           {game.description ? (
-            <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-2)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
-              {game.description.length > 600 ? game.description.slice(0, 600) + '…' : game.description}
-            </p>
+            <DescriptionCollapse text={game.description} />
           ) : (
             <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-4)', fontStyle: 'italic' }}>
               Descripción no disponible aún — estamos enriqueciendo la base de datos.
@@ -163,8 +171,8 @@ export default async function GamePage({ params }: Props) {
           >
             Ver en BGG →
           </a>
-          <a
-            href={`/recomendador`}
+          <Link
+            href="/recomendador"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 999,
               fontSize: 14, fontWeight: 700, color: 'var(--text)', background: 'var(--bg-card)',
@@ -172,7 +180,7 @@ export default async function GamePage({ params }: Props) {
             }}
           >
             Más recomendaciones
-          </a>
+          </Link>
         </div>
 
         <p style={{ fontSize: 12, marginTop: 40, paddingTop: 24, textAlign: 'center', fontWeight: 500, borderTop: '1px solid var(--border)', color: 'var(--text-4)' }}>

@@ -7,6 +7,7 @@ interface Game { id: string; name: string; image_url: string | null; }
 interface Member { id: string; display_name: string; }
 
 interface Player {
+  uid: string;
   type: 'member' | 'guest';
   profile_id: string | null;
   guest_name: string;
@@ -20,30 +21,42 @@ const inputStyle = {
   fontSize: 14, fontWeight: 500, outline: 'none', fontFamily: 'inherit',
 };
 
+function makePlayer(overrides: Partial<Player> = {}): Player {
+  return {
+    uid: crypto.randomUUID(),
+    type: 'member',
+    profile_id: null,
+    guest_name: '',
+    score: '',
+    is_winner: false,
+    ...overrides,
+  };
+}
+
 export function NuevaPartidaForm({ groupId, games, members }: { groupId: string; games: Game[]; members: Member[] }) {
   const [gameId, setGameId] = useState(games[0]?.id ?? '');
   const [playedAt, setPlayedAt] = useState(new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState('');
   const [players, setPlayers] = useState<Player[]>([
-    { type: 'member', profile_id: members[0]?.id ?? null, guest_name: '', score: '', is_winner: false },
+    makePlayer({ profile_id: members[0]?.id ?? null }),
   ]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   function addPlayer() {
-    setPlayers([...players, { type: 'member', profile_id: null, guest_name: '', score: '', is_winner: false }]);
+    setPlayers(prev => [...prev, makePlayer()]);
   }
 
-  function removePlayer(i: number) {
-    setPlayers(players.filter((_, idx) => idx !== i));
+  function removePlayer(uid: string) {
+    setPlayers(prev => prev.filter(p => p.uid !== uid));
   }
 
-  function updatePlayer(i: number, field: keyof Player, value: any) {
-    setPlayers(players.map((p, idx) => idx === i ? { ...p, [field]: value } : p));
+  function updatePlayer(uid: string, field: keyof Player, value: string | boolean | null) {
+    setPlayers(prev => prev.map(p => p.uid === uid ? { ...p, [field]: value } : p));
   }
 
-  function setWinner(i: number) {
-    setPlayers(players.map((p, idx) => ({ ...p, is_winner: idx === i })));
+  function setWinner(uid: string) {
+    setPlayers(prev => prev.map(p => ({ ...p, is_winner: p.uid === uid })));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -79,7 +92,7 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
       {/* Game */}
       <div>
         <label style={labelStyle}>Juego</label>
-        <select value={gameId} onChange={(e) => setGameId(e.target.value)} required style={{ ...inputStyle, appearance: 'auto' } as any}>
+        <select value={gameId} onChange={(e) => setGameId(e.target.value)} required style={{ ...inputStyle, appearance: 'auto' } as React.CSSProperties}>
           {games.map((g) => (
             <option key={g.id} value={g.id}>{g.name}</option>
           ))}
@@ -89,7 +102,7 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
       {/* Date */}
       <div>
         <label style={labelStyle}>Fecha</label>
-        <input type="date" value={playedAt} onChange={(e) => setPlayedAt(e.target.value)} required style={inputStyle as any} />
+        <input type="date" value={playedAt} onChange={(e) => setPlayedAt(e.target.value)} required style={inputStyle as React.CSSProperties} />
       </div>
 
       {/* Players */}
@@ -107,10 +120,10 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {players.map((player, i) => (
-            <div key={i} style={{
+            <div key={player.uid} style={{
               borderRadius: 20, padding: 16,
               background: player.is_winner ? 'var(--brand-tint)' : 'var(--bg-card)',
-              boxShadow: player.is_winner ? 'var(--shadow-card)' : 'var(--shadow-card)',
+              boxShadow: 'var(--shadow-card)',
               border: player.is_winner ? '1.5px solid rgba(62,94,59,0.2)' : '1.5px solid transparent',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -118,7 +131,7 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
                   Jugador {i + 1} {player.is_winner && '🏆'}
                 </span>
                 {players.length > 1 && (
-                  <button type="button" onClick={() => removePlayer(i)} style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
+                  <button type="button" onClick={() => removePlayer(player.uid)} style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
                     Quitar
                   </button>
                 )}
@@ -127,7 +140,7 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
               {/* Type toggle */}
               <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
                 {(['member', 'guest'] as const).map((type) => (
-                  <button key={type} type="button" onClick={() => updatePlayer(i, 'type', type)} style={{
+                  <button key={type} type="button" onClick={() => updatePlayer(player.uid, 'type', type)} style={{
                     padding: '5px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                     background: player.type === type ? 'var(--brand-tint)' : 'var(--bg-inset)',
                     color: player.type === type ? 'var(--brand)' : 'var(--text-3)',
@@ -140,23 +153,23 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
 
               {/* Name */}
               {player.type === 'member' ? (
-                <select value={player.profile_id ?? ''} onChange={(e) => updatePlayer(i, 'profile_id', e.target.value)}
-                  style={{ ...inputStyle, marginBottom: 10, appearance: 'auto' } as any}>
+                <select value={player.profile_id ?? ''} onChange={(e) => updatePlayer(player.uid, 'profile_id', e.target.value)}
+                  style={{ ...inputStyle, marginBottom: 10, appearance: 'auto' } as React.CSSProperties}>
                   <option value="">— Seleccionar —</option>
                   {members.map((m) => <option key={m.id} value={m.id}>{m.display_name}</option>)}
                 </select>
               ) : (
                 <input type="text" placeholder="Nombre del invitado" value={player.guest_name}
-                  onChange={(e) => updatePlayer(i, 'guest_name', e.target.value)}
-                  style={{ ...inputStyle, marginBottom: 10 } as any} />
+                  onChange={(e) => updatePlayer(player.uid, 'guest_name', e.target.value)}
+                  style={{ ...inputStyle, marginBottom: 10 } as React.CSSProperties} />
               )}
 
               {/* Score + winner */}
               <div style={{ display: 'flex', gap: 8 }}>
                 <input type="number" placeholder="Puntuación" value={player.score}
-                  onChange={(e) => updatePlayer(i, 'score', e.target.value)}
-                  style={{ ...inputStyle, flex: 1 } as any} />
-                <button type="button" onClick={() => setWinner(i)} style={{
+                  onChange={(e) => updatePlayer(player.uid, 'score', e.target.value)}
+                  style={{ ...inputStyle, flex: 1 } as React.CSSProperties} />
+                <button type="button" onClick={() => setWinner(player.uid)} style={{
                   padding: '10px 14px', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0,
                   background: player.is_winner ? 'var(--brand-tint)' : 'var(--bg-inset)',
                   color: player.is_winner ? 'var(--brand)' : 'var(--text-3)',
@@ -175,7 +188,7 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
         <label style={labelStyle}>Notas (opcional)</label>
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="¿Algo memorable de esta partida?" rows={2}
-          style={{ ...inputStyle, resize: 'none' } as any} />
+          style={{ ...inputStyle, resize: 'none' } as React.CSSProperties} />
       </div>
 
       {error && (

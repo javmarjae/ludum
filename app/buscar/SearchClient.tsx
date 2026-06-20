@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 
 interface Game {
@@ -33,7 +34,7 @@ export function SearchClient() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -56,7 +57,7 @@ export function SearchClient() {
       setLoading(false);
       setSearched(true);
     }, 300);
-  }, [query]);
+  }, [query, supabase]);
 
   return (
     <div>
@@ -113,12 +114,17 @@ export function SearchClient() {
             return (
               <Link key={game.bgg_id} href={`/juegos/${game.bgg_id}`} style={{ display: 'block', textDecoration: 'none' }}>
                 <div
-                  style={{ borderRadius: 20, padding: '14px 16px', display: 'flex', gap: 14, alignItems: 'flex-start', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', transition: 'transform 0.15s' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.01)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = 'scale(1)'; }}
+                  className="hover-scale"
+                  style={{ borderRadius: 20, padding: '14px 16px', display: 'flex', gap: 14, alignItems: 'flex-start', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}
                 >
                   {game.image_url ? (
-                    <img src={game.image_url} alt={game.name} style={{ width: 56, height: 56, borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} />
+                    <Image
+                      src={game.image_url}
+                      alt={game.name}
+                      width={56}
+                      height={56}
+                      style={{ borderRadius: 14, objectFit: 'cover', flexShrink: 0 }}
+                    />
                   ) : (
                     <div style={{ width: 56, height: 56, borderRadius: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, background: 'var(--bg-inset)' }}>🎲</div>
                   )}

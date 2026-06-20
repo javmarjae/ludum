@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/lib/supabase/server';
 
 export interface RecommenderFilters {
   players?: number;
@@ -25,28 +25,28 @@ export interface GameResult {
   description: string | null;
 }
 
+const GAME_SELECT = 'id, bgg_id, name, year_published, bgg_rank, bgg_rating, min_players, max_players, min_playtime, max_playtime, complexity, image_url, mechanics, categories, description';
+
 export async function getRecommendations(filters: RecommenderFilters): Promise<GameResult[]> {
+  const supabase = await createClient();
   let query = supabase
     .from('games')
-    .select('id, bgg_id, name, year_published, bgg_rank, bgg_rating, min_players, max_players, min_playtime, max_playtime, complexity, image_url, mechanics, categories, description')
+    .select(GAME_SELECT)
     .not('bgg_rank', 'is', null)
     .not('bgg_rating', 'is', null);
 
-  // Filter by era (functional with current data)
   if (filters.era === 'moderno') {
     query = query.gte('year_published', 2010);
   } else if (filters.era === 'clasico') {
     query = query.lte('year_published', 2000);
   }
 
-  // Filter by player count — include games without data (null) as fallback
   if (filters.players && filters.players > 0) {
     query = query.or(
       `min_players.is.null,and(min_players.lte.${filters.players},max_players.gte.${filters.players})`
     );
   }
 
-  // Filter by duration — include games without data (null) as fallback
   if (filters.duration) {
     const durationRanges: Record<string, { min?: number; max?: number }> = {
       'corta':     { max: 45 },
@@ -64,7 +64,6 @@ export async function getRecommendations(filters: RecommenderFilters): Promise<G
     }
   }
 
-  // Filter by complexity — include games without data (null) as fallback
   if (filters.complexity) {
     const complexityRanges: Record<string, { min: number; max: number }> = {
       'ligero':   { min: 1.0, max: 2.0 },
@@ -84,9 +83,10 @@ export async function getRecommendations(filters: RecommenderFilters): Promise<G
 }
 
 export async function getGameByBggId(bggId: number): Promise<GameResult | null> {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('games')
-    .select('id, bgg_id, name, year_published, bgg_rank, bgg_rating, min_players, max_players, min_playtime, max_playtime, complexity, image_url, mechanics, categories, description')
+    .select(GAME_SELECT)
     .eq('bgg_id', bggId)
     .single();
 

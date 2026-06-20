@@ -84,3 +84,17 @@ h1, h2, h3, h4 {
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #D8CBBC; border-radius: 3px; }
+
+/* Hover utilities for Server Components (can't use inline event handlers) */
+.hover-scale { transition: transform 0.15s; }
+.hover-scale:hover { transform: scale(1.01); }
+.hover-scale-md { transition: transform 0.2s, box-shadow 0.2s; }
+.hover-scale-md:hover { transform: scale(1.02); box-shadow: var(--shadow-card-hover); }
+.hover-scale-lg { transition: transform 0.15s; }
+.hover-scale-lg:hover { transform: scale(1.04); }
+
+/* Responsive nav */
+@media (max-width: 600px) {
+  .nav-right-links { display: none; }
+  .nav-right-btn { display: flex; }
+}

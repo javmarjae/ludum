@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Nav } from '@/components/Nav';
 import { logout } from '@/app/auth/actions';
+import { CopyButton } from '@/components/CopyButton';
 
 interface Props { params: Promise<{ id: string }>; }
 
@@ -52,11 +53,12 @@ export default async function GrupoDetailPage({ params }: Props) {
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
             <div>
               <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.01em', color: 'var(--text)', marginBottom: 10 }}>{group.name}</h1>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                 <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-3)' }}>Código:</span>
                 <span style={{ fontFamily: 'monospace', fontWeight: 800, fontSize: 14, padding: '4px 10px', borderRadius: 8, letterSpacing: '0.15em', background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(92,140,42,0.2)' }}>
                   {group.invite_code}
                 </span>
+                <CopyButton text={group.invite_code} />
               </div>
             </div>
             {isOwner && (
@@ -68,15 +70,11 @@ export default async function GrupoDetailPage({ params }: Props) {
         {/* Quick actions */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
           {quickActions.map((action) => (
-            <Link key={action.href} href={action.href} style={{
+            <Link key={action.href} href={action.href} className="hover-scale-lg" style={{
               borderRadius: 24, padding: '18px 12px', textAlign: 'center', textDecoration: 'none',
               background: action.accent ? 'linear-gradient(135deg, #89BA86, #3E5E3B)' : 'var(--bg-card)',
               boxShadow: action.accent ? 'var(--shadow-btn-brand)' : 'var(--shadow-card)',
-              transition: 'transform 0.15s',
-            }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = 'scale(1.04)'; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = 'scale(1)'; }}
-            >
+            }}>
               <div style={{ fontSize: 24, marginBottom: 4 }}>{action.icon}</div>
               <div style={{ fontSize: 12, fontWeight: 700, color: action.accent ? 'white' : 'var(--text)' }}>{action.label}</div>
               {action.sub && <div style={{ fontSize: 11, fontWeight: 500, marginTop: 2, color: action.accent ? 'rgba(255,255,255,0.7)' : 'var(--text-4)' }}>{action.sub}</div>}

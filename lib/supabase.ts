@@ -15,5 +15,5 @@ export function createServiceRoleClient() {
   if (!serviceRoleKey) {
     throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY');
   }
-  return createClient(supabaseUrl, serviceRoleKey);
+  return createClient(supabaseUrl!, serviceRoleKey);
 }

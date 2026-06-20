@@ -67,13 +67,10 @@ export default async function GruposPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {(groups as any[]).map((group) => (
               <Link key={group.id} href={`/grupos/${group.id}`} style={{ textDecoration: 'none' }}>
-                <div style={{
+                <div className="hover-scale" style={{
                   borderRadius: 24, padding: '18px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', transition: 'transform 0.15s',
-                }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.01)'; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.transform = 'scale(1)'; }}
-                >
+                  background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
+                }}>
                   <div>
                     <h3 style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{group.name}</h3>
                     <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>

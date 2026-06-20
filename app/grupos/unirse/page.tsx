@@ -1,17 +1,24 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Nav } from '@/components/Nav';
 import { joinGroup } from '@/app/grupos/actions';
 
 export default function UnirseGrupoPage() {
+  const router = useRouter();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setError(''); setLoading(true);
     const result = await joinGroup(formData);
-    if (result?.error) { setError(result.error); setLoading(false); }
+    if (result?.error) {
+      setError(result.error);
+      setLoading(false);
+    } else if (result?.groupId) {
+      router.push(`/grupos/${result.groupId}`);
+    }
   }
 
   return (

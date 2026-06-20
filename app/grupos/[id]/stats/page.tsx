@@ -23,7 +23,8 @@ export default async function StatsPage({ params }: Props) {
     .from('plays')
     .select('id, played_at, games(name, image_url), play_results(profile_id, guest_name, score, is_winner, profiles(display_name))')
     .eq('group_id', groupId)
-    .order('played_at', { ascending: false });
+    .order('played_at', { ascending: false })
+    .limit(500);
 
   const totalPlays = plays?.length ?? 0;
 
