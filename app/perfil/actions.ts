@@ -26,7 +26,11 @@ export async function addGameToUserCollection(gameId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
-  await supabase.from('user_games').insert({ profile_id: user.id, game_id: gameId });
+  // Upsert so that moving from wishlist → collection works
+  await supabase.from('user_games').upsert(
+    { profile_id: user.id, game_id: gameId, in_wishlist: false },
+    { onConflict: 'profile_id,game_id' }
+  );
   revalidatePath('/perfil');
 }
 
@@ -34,7 +38,29 @@ export async function removeGameFromUserCollection(gameId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
-  await supabase.from('user_games').delete().eq('profile_id', user.id).eq('game_id', gameId);
+  await supabase.from('user_games').delete()
+    .eq('profile_id', user.id)
+    .eq('game_id', gameId)
+    .eq('in_wishlist', false);
+  revalidatePath('/perfil');
+}
+
+export async function addToWishlist(gameId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase.from('user_games').insert({ profile_id: user.id, game_id: gameId, in_wishlist: true });
+  revalidatePath('/perfil');
+}
+
+export async function removeFromWishlist(gameId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase.from('user_games').delete()
+    .eq('profile_id', user.id)
+    .eq('game_id', gameId)
+    .eq('in_wishlist', true);
   revalidatePath('/perfil');
 }
 

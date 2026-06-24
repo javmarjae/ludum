@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { getCachedRecommenderGames } from '@/lib/cached-queries';
 
 export interface RecommenderFilters {
@@ -96,10 +97,11 @@ export async function getRecommendations(filters: RecommenderFilters): Promise<G
 // ── Group-based recommendations ──────────────────────────────────────────────
 
 export interface GroupFilters {
-  jugadores?: number;       // override player count for pool filtering
+  jugadores?: number;
   duracion?: 'corta' | 'media' | 'larga' | 'muy-larga';
   dificultad?: 'ligero' | 'medio' | 'complejo';
-  novedad?: 'nuevo' | 'jugado'; // nuevo = not yet played, jugado = already played
+  novedad?: 'nuevo' | 'jugado';
+  skippedGameIds?: string[]; // IDs de juegos descartados por "No me interesa"
 }
 
 export interface GroupRecommendation {
@@ -411,6 +413,17 @@ export async function getGroupRecommendations(
 
   const memberIds = (members ?? []).map((m: any) => m.profile_id as string);
 
+  // Fetch games owned by any group member (admin client bypasses RLS)
+  let ownedGameIds = new Set<string>();
+  if (memberIds.length > 0) {
+    const adminClient = createAdminClient();
+    const { data: ownedRows } = await adminClient
+      .from('user_games')
+      .select('game_id')
+      .in('profile_id', memberIds);
+    ownedGameIds = new Set((ownedRows ?? []).map((r: any) => r.game_id as string));
+  }
+
   // Build play-count map
   const playCountMap = new Map<string, number>();
   for (const p of plays ?? []) {
@@ -487,6 +500,18 @@ export async function getGroupRecommendations(
       if (g.complexity === null || g.complexity === undefined) return true;
       return g.complexity >= min && g.complexity <= max;
     });
+  }
+
+  // Exclude games owned by group members
+  if (ownedGameIds.size > 0) {
+    const unowned = pool.filter(g => !ownedGameIds.has(g.id));
+    if (unowned.length >= 3) pool = unowned;
+  }
+
+  // Exclude games the user has dismissed ("No me interesa")
+  if (filters?.skippedGameIds && filters.skippedGameIds.length > 0) {
+    const skipped = new Set(filters.skippedGameIds);
+    pool = pool.filter(g => !skipped.has(g.id));
   }
 
   if (pool.length === 0) return null;

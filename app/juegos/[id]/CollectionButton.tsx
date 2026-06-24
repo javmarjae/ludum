@@ -19,6 +19,7 @@ export function CollectionButton({ gameId }: { gameId: string }) {
         .select('id')
         .eq('profile_id', user.id)
         .eq('game_id', gameId)
+        .eq('in_wishlist', false)
         .single()
         .then(({ data }) => setState(data ? 'in' : 'out'));
     });

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import { DescriptionCollapse } from './DescriptionCollapse';
 import { CollectionButton } from './CollectionButton';
+import { WishlistButton } from './WishlistButton';
 import { StarRating } from './StarRating';
 import { GameRatingProvider } from './GameRatingContext';
 import { cache } from 'react';
@@ -253,14 +254,14 @@ export default async function GamePage({ params, searchParams }: Props) {
             />
           )}
           <div style={{ flex: 1, minWidth: 0, paddingBottom: 4 }}>
-            <h1 style={{
-              fontSize: 42, fontWeight: 800, color: 'white', lineHeight: 1.1,
+            <h1 className="t-page-title" style={{
+              color: 'white', lineHeight: 1.1,
               marginBottom: 4, letterSpacing: '-0.01em', textShadow: '0 2px 10px rgba(0,0,0,0.5)',
             }}>
               {game.name}
             </h1>
             {categories.length > 0 && (
-              <p style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.72)', marginBottom: 10 }}>
+              <p className="t-card-sub" style={{ color: 'rgba(255,255,255,0.72)', marginBottom: 10 }}>
                 {categories.slice(0, 2).join(' · ')}
               </p>
             )}
@@ -314,12 +315,12 @@ export default async function GamePage({ params, searchParams }: Props) {
                     {(parentGame as any).image_url && (
                       <Image src={(parentGame as any).image_url} alt="" width={28} height={28} style={{ borderRadius: 8, objectFit: 'cover' }} />
                     )}
-                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-3)' }}>Expansión de </span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)' }}>{(parentGame as any).name} →</span>
+                    <span className="t-card-sub" style={{ color: 'var(--text-3)' }}>Expansión de </span>
+                    <span className="t-card-sub" style={{ color: 'var(--brand)' }}>{(parentGame as any).name} →</span>
                   </div>
                 </Link>
               ) : (
-                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)' }}>🧩 Expansión</span>
+                <span className="t-card-sub">🧩 Expansión</span>
               )}
             </div>
           )}
@@ -332,7 +333,7 @@ export default async function GamePage({ params, searchParams }: Props) {
             alignItems: 'flex-start',
           }}>
 
-            {/* LEFT: Portada */}
+            {/* LEFT: Portada + Lista de deseos */}
             <div>
               {game.image_url ? (
                 <Image
@@ -354,18 +355,23 @@ export default async function GamePage({ params, searchParams }: Props) {
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40,
                 }}>🎲</div>
               )}
+              {user && (
+                <div style={{ marginTop: 12 }}>
+                  <WishlistButton gameId={game.id} />
+                </div>
+              )}
             </div>
 
             {/* CENTER: Descripción + mecánicas */}
             <div>
-              <h2 style={{ fontSize: 26, fontWeight: 800, color: 'var(--text)', marginBottom: 16, letterSpacing: '-0.01em' }}>
+              <h2 className="t-section-title" style={{ marginBottom: 16, letterSpacing: '-0.01em' }}>
                 Descripción
               </h2>
 
               {game.description ? (
                 <DescriptionCollapse text={game.description as string} />
               ) : (
-                <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-4)', fontStyle: 'italic', lineHeight: 1.6 }}>
+                <p className="t-body" style={{ fontStyle: 'italic', lineHeight: 1.6 }}>
                   Descripción no disponible aún.
                 </p>
               )}
@@ -373,7 +379,7 @@ export default async function GamePage({ params, searchParams }: Props) {
               {/* Mecánicas */}
               {mechanics.length > 0 && (
                 <div style={{ marginTop: 24 }}>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>Mecánicas</p>
+                  <p className="t-label" style={{ marginBottom: 12 }}>Mecánicas</p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {mechanics.map((m: string) => (
                       <span key={m} style={{
@@ -391,7 +397,7 @@ export default async function GamePage({ params, searchParams }: Props) {
               {/* Juegos similares */}
               {similarGames.length > 0 && (
                 <div style={{ marginTop: 32 }}>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 16 }}>También te puede gustar</p>
+                  <p className="t-label" style={{ marginBottom: 16 }}>También te puede gustar</p>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     {similarGames.map((sg: any, i: number) => (
                       <Link key={sg.bgg_id} href={`/juegos/${sg.bgg_id}`} className="hover-ghost" style={{
@@ -404,9 +410,9 @@ export default async function GamePage({ params, searchParams }: Props) {
                           : <div style={{ width: 52, height: 52, borderRadius: 10, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 22 }}>🎲</div>
                         }
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sg.name}</p>
+                          <p className="t-card-title" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sg.name}</p>
                           {sg.bgg_rating && (
-                            <p style={{ fontSize: 14, fontWeight: 600, color: sg.bgg_rating >= 8 ? 'var(--brand)' : 'var(--text-4)' }}>★ {sg.bgg_rating.toFixed(1)}</p>
+                            <p className="t-meta" style={{ color: sg.bgg_rating >= 8 ? 'var(--brand)' : 'var(--text-4)' }}>★ {sg.bgg_rating.toFixed(1)}</p>
                           )}
                         </div>
                         <span style={{ color: 'var(--text-4)', fontSize: 18 }}>›</span>
@@ -419,7 +425,7 @@ export default async function GamePage({ params, searchParams }: Props) {
               {/* Expansiones del juego base */}
               {expansions.length > 0 && (
                 <div style={{ marginTop: 32 }}>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 16 }}>
+                  <p className="t-label" style={{ marginBottom: 16 }}>
                     Expansiones ({expansions.length})
                   </p>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -434,9 +440,9 @@ export default async function GamePage({ params, searchParams }: Props) {
                           : <div style={{ width: 52, height: 52, borderRadius: 10, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 22 }}>🧩</div>
                         }
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{exp.name}</p>
+                          <p className="t-card-title" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{exp.name}</p>
                           {exp.year_published && (
-                            <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-4)' }}>{exp.year_published}</p>
+                            <p className="t-meta">{exp.year_published}</p>
                           )}
                         </div>
                         <span style={{ color: 'var(--text-4)', fontSize: 18, flexShrink: 0 }}>›</span>
@@ -462,7 +468,7 @@ export default async function GamePage({ params, searchParams }: Props) {
 
             {/* RIGHT: Información */}
             <div>
-              <h2 style={{ fontSize: 26, fontWeight: 800, color: 'var(--text)', marginBottom: 20, letterSpacing: '-0.01em' }}>
+              <h2 className="t-section-title" style={{ marginBottom: 20, letterSpacing: '-0.01em' }}>
                 Información
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -470,8 +476,8 @@ export default async function GamePage({ params, searchParams }: Props) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <span style={{ fontSize: 24, flexShrink: 0 }}>📅</span>
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Publicado</p>
-                      <p style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)' }}>{game.year_published}</p>
+                      <p className="t-label">Publicado</p>
+                      <p className="t-meta">{game.year_published}</p>
                     </div>
                   </div>
                 )}
@@ -479,8 +485,8 @@ export default async function GamePage({ params, searchParams }: Props) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <img src={playersIcon} alt="" aria-hidden="true" style={{ width: 28, height: 28, flexShrink: 0 }} />
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Jugadores</p>
-                      <p style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)' }}>{playersText}</p>
+                      <p className="t-label">Jugadores</p>
+                      <p className="t-meta">{playersText}</p>
                     </div>
                   </div>
                 )}
@@ -488,8 +494,8 @@ export default async function GamePage({ params, searchParams }: Props) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <span style={{ fontSize: 24, flexShrink: 0 }}>⏱️</span>
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Duración</p>
-                      <p style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)' }}>
+                      <p className="t-label">Duración</p>
+                      <p className="t-meta">
                         {game.max_playtime && game.min_playtime !== game.max_playtime
                           ? `${game.min_playtime}–${game.max_playtime} min`
                           : `${game.min_playtime} min`}
@@ -501,8 +507,8 @@ export default async function GamePage({ params, searchParams }: Props) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <span style={{ fontSize: 24, flexShrink: 0 }}>🧠</span>
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Complejidad</p>
-                      <p style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)' }}>{complexityLabel} · {(game.complexity as number).toFixed(1)}/5</p>
+                      <p className="t-label">Complejidad</p>
+                      <p className="t-meta">{complexityLabel} · {(game.complexity as number).toFixed(1)}/5</p>
                     </div>
                   </div>
                 )}
@@ -510,8 +516,8 @@ export default async function GamePage({ params, searchParams }: Props) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <span style={{ fontSize: 24, flexShrink: 0 }}>⭐</span>
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rating BGG</p>
-                      <p style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)' }}>{(game.bgg_rating as number).toFixed(1)}/10</p>
+                      <p className="t-label">Rating BGG</p>
+                      <p className="t-meta">{(game.bgg_rating as number).toFixed(1)}/10</p>
                     </div>
                   </div>
                 )}
@@ -519,8 +525,8 @@ export default async function GamePage({ params, searchParams }: Props) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <span style={{ fontSize: 24, flexShrink: 0 }}>🏆</span>
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Ranking BGG</p>
-                      <p style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)' }}>#{game.bgg_rank}</p>
+                      <p className="t-label">Ranking BGG</p>
+                      <p className="t-meta">#{game.bgg_rank}</p>
                     </div>
                   </div>
                 )}
@@ -528,7 +534,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
                     <span style={{ fontSize: 24, flexShrink: 0, marginTop: 2 }}>🎭</span>
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Categorías</p>
+                      <p className="t-label" style={{ marginBottom: 8 }}>Categorías</p>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                         {categories.map((c: string) => (
                           <span key={c} style={{
@@ -562,14 +568,14 @@ export default async function GamePage({ params, searchParams }: Props) {
           {!user ? (
             <div style={{ textAlign: 'center', padding: '64px 0' }}>
               <p style={{ fontSize: 32, marginBottom: 12 }}>🎲</p>
-              <p style={{ fontWeight: 700, fontSize: 17, color: 'var(--text)', marginBottom: 8 }}>Inicia sesión para ver tus partidas</p>
+              <p className="t-section-title" style={{ marginBottom: 8 }}>Inicia sesión para ver tus partidas</p>
               <Link href="/auth/login" style={{ fontSize: 14, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none' }}>Iniciar sesión →</Link>
             </div>
           ) : userPlays.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '64px 0' }}>
               <p style={{ fontSize: 32, marginBottom: 12 }}>🎲</p>
-              <p style={{ fontWeight: 700, fontSize: 17, color: 'var(--text)', marginBottom: 6 }}>Sin partidas de {game.name}</p>
-              <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-3)' }}>Registra una partida desde tu grupo</p>
+              <p className="t-section-title" style={{ marginBottom: 6 }}>Sin partidas de {game.name}</p>
+              <p className="t-card-sub">Registra una partida desde tu grupo</p>
             </div>
           ) : (
             <div>
@@ -596,15 +602,15 @@ export default async function GamePage({ params, searchParams }: Props) {
                       🎲
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontWeight: 700, fontSize: 17, color: 'var(--text)', marginBottom: 4 }}>
+                      <p className="t-card-title" style={{ marginBottom: 4 }}>
                         {play.groups?.name ?? 'Partida'}
                       </p>
-                      <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-4)' }}>
+                      <p className="t-meta">
                         {dateStr}
                         {winnerName ? ` · Ganador: ${winnerName}` : ''}
                       </p>
                       {userResult?.score != null && (
-                        <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-3)', marginTop: 3 }}>
+                        <p className="t-meta" style={{ marginTop: 3 }}>
                           Puntuación: {userResult.score > 0 ? '+' : ''}{userResult.score} ptos.
                         </p>
                       )}
@@ -631,7 +637,7 @@ export default async function GamePage({ params, searchParams }: Props) {
           borderTop: '1px solid var(--border)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
         }}>
-          <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-2)' }}>
+          <p className="t-card-title" style={{ color: 'var(--text-2)' }}>
             Regístrate para comentar, editar, inspeccionar
           </p>
           <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>

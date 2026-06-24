@@ -30,6 +30,7 @@ export default async function PerfilPage() {
     { data: recentPlays },
     { data: collectionData },
     { data: ratedData },
+    { data: wishlistData },
     { data: verificationRequest },
   ] = await Promise.all([
     supabase.from('profiles').select('display_name, bio, avatar_url, social_links, is_verified').eq('id', user.id).single(),
@@ -43,15 +44,23 @@ export default async function PerfilPage() {
       .from('user_games')
       .select('game_id, games(id, bgg_id, name, image_url)')
       .eq('profile_id', user.id)
+      .eq('in_wishlist', false)
       .limit(50),
     supabase
       .from('user_games')
       .select('rating, games(id, bgg_id, name, image_url)')
       .eq('profile_id', user.id)
+      .eq('in_wishlist', false)
       .not('rating', 'is', null)
       .gt('rating', 0)
       .order('rating', { ascending: false })
       .limit(30),
+    supabase
+      .from('user_games')
+      .select('game_id, games(id, bgg_id, name, image_url)')
+      .eq('profile_id', user.id)
+      .eq('in_wishlist', true)
+      .limit(50),
     supabase
       .from('verification_requests')
       .select('status, reason, category, admin_notes, created_at')
@@ -83,6 +92,7 @@ export default async function PerfilPage() {
   const playsByGame = Array.from(gamePlayMap.values()).sort((a, b) => b.count - a.count);
   const collection = (collectionData ?? []).map((ug: any) => ug.games).filter(Boolean);
   const ratedGames = (ratedData ?? []).map((ug: any) => ({ ...ug.games, rating: ug.rating as number })).filter((g: any) => g?.id);
+  const wishlist = (wishlistData ?? []).map((ug: any) => ug.games).filter(Boolean);
 
   return (
     <>
@@ -113,7 +123,7 @@ export default async function PerfilPage() {
           >
             ←
           </Link>
-          <h1 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.01em' }}>Tu Perfil</h1>
+          <h1 className="t-section-title" style={{ letterSpacing: '-0.01em' }}>Tu Perfil</h1>
         </div>
 
         {/* Fila principal: columna izquierda + columna logros */}
@@ -150,13 +160,13 @@ export default async function PerfilPage() {
             <section style={{ marginTop: 36, paddingTop: 32, borderTop: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, gap: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>Explora tus juegos</h2>
+                  <h2 className="t-section-title">Explora tus juegos</h2>
                   <span style={{ fontSize: 16, color: 'var(--text-3)' }}>→</span>
                 </div>
                 <ImportBGGCollection />
               </div>
               {collection.length === 0 ? (
-                <p style={{ fontSize: 14, color: 'var(--text-4)', fontWeight: 500 }}>
+                <p className="t-card-sub">
                   Tu colección está vacía.{' '}
                   <Link href="/buscar" style={{ color: 'var(--brand)', fontWeight: 700, textDecoration: 'none' }}>Añade juegos →</Link>
                 </p>
@@ -174,7 +184,42 @@ export default async function PerfilPage() {
                           : <GamePlaceholderIcon />
                         }
                       </div>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-3)', textAlign: 'center', lineHeight: 1.3, width: 84, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <span className="t-card-sub" style={{ textAlign: 'center', lineHeight: 1.3, width: 84, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {game.name}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {/* Lista de deseos */}
+            <section style={{ marginTop: 36, paddingTop: 32, borderTop: '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
+                <h2 className="t-section-title">Lista de Deseos</h2>
+                <span style={{ fontSize: 14, color: 'var(--brand)', fontWeight: 700 }}>♥</span>
+              </div>
+              {wishlist.length === 0 ? (
+                <p className="t-card-sub">
+                  Tu lista de deseos está vacía.{' '}
+                  <Link href="/buscar" style={{ color: 'var(--brand)', fontWeight: 700, textDecoration: 'none' }}>Descubre juegos →</Link>
+                </p>
+              ) : (
+                <div className="scroll-row" style={{ display: 'flex', gap: 20, overflowX: 'auto', paddingBottom: 4 }}>
+                  {wishlist.map((game: any) => (
+                    <Link
+                      key={game.id}
+                      href={`/juegos/${game.bgg_id}`}
+                      style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, flexShrink: 0, width: 84 }}
+                    >
+                      <div style={{ width: 84, height: 84, borderRadius: '50%', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-4)', position: 'relative' }}>
+                        {game.image_url
+                          ? <Image src={game.image_url} alt={game.name} width={84} height={84} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          : <GamePlaceholderIcon />
+                        }
+                        <span style={{ position: 'absolute', bottom: 3, right: 3, fontSize: 12, lineHeight: 1 }}>♥</span>
+                      </div>
+                      <span className="t-card-sub" style={{ textAlign: 'center', lineHeight: 1.3, width: 84, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {game.name}
                       </span>
                     </Link>
@@ -187,7 +232,7 @@ export default async function PerfilPage() {
             {ratedGames.length > 0 && (
               <section style={{ marginTop: 36, paddingTop: 32, borderTop: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
-                  <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>Juegos valorados</h2>
+                  <h2 className="t-section-title">Juegos valorados</h2>
                   <span style={{ fontSize: 14, color: 'var(--brand)', fontWeight: 700 }}>★</span>
                 </div>
                 <div className="scroll-row" style={{ display: 'flex', gap: 14, overflowX: 'auto', paddingBottom: 4 }}>
@@ -202,7 +247,7 @@ export default async function PerfilPage() {
                           ★ {game.rating}/5
                         </span>
                       </div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>
+                      <p className="t-card-title" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>
                     </Link>
                   ))}
                 </div>
@@ -212,11 +257,11 @@ export default async function PerfilPage() {
             {/* Tus partidas */}
             <section style={{ marginTop: 36, paddingTop: 32, borderTop: '1px solid var(--border)', paddingBottom: 32 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
-                <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>Tus partidas</h2>
+                <h2 className="t-section-title">Tus partidas</h2>
                 <span style={{ fontSize: 14, color: 'var(--brand)', fontWeight: 700 }}>✦</span>
               </div>
               {playsByGame.length === 0 ? (
-                <p style={{ fontSize: 14, color: 'var(--text-4)', fontWeight: 500 }}>Sin partidas registradas todavía.</p>
+                <p className="t-card-sub">Sin partidas registradas todavía.</p>
               ) : (
                 <div className="scroll-row" style={{ display: 'flex', gap: 14, overflowX: 'auto', paddingBottom: 4 }}>
                   {playsByGame.map((item) => (
@@ -227,8 +272,8 @@ export default async function PerfilPage() {
                           : <GamePlaceholderIcon />
                         }
                       </div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</p>
-                      <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)', marginTop: 2 }}>{item.count} Partida{item.count !== 1 ? 's' : ''}</p>
+                      <p className="t-card-title" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</p>
+                      <p className="t-card-sub" style={{ marginTop: 2 }}>{item.count} Partida{item.count !== 1 ? 's' : ''}</p>
                     </div>
                   ))}
                 </div>
@@ -258,7 +303,7 @@ function StatBadge({ label, value }: { label: string; value: number }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 20px', borderRadius: 999, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', whiteSpace: 'nowrap' }}>
       <span style={{ fontSize: 15, color: 'var(--brand)' }}>★</span>
-      <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>
+      <span className="t-card-title">
         {label}: <strong>{value}</strong>
       </span>
     </div>
