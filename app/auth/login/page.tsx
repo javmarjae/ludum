@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -10,7 +10,7 @@ const inputStyle = {
   background: 'var(--bg-inset)',
   boxShadow: 'var(--shadow-input)',
   border: '1px solid var(--border)',
-  borderRadius: 16,
+  borderRadius: 8,
   color: 'var(--text)',
   width: '100%',
   padding: '12px 16px',
@@ -46,7 +46,7 @@ function LoginForm() {
   }
 
   return (
-    <div style={{ borderRadius: 32, padding: 32, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+    <div style={{ borderRadius: 12, padding: 32, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
       <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 6 }}>Iniciar sesión</h1>
       <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-3)', marginBottom: 28 }}>
         ¿No tienes cuenta?{' '}
@@ -59,12 +59,15 @@ function LoginForm() {
           <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com" style={inputStyle} />
         </div>
         <div>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Contraseña</label>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+            <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>Contraseña</label>
+            <Link href="/auth/reset-password" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', textDecoration: 'none' }}>¿Olvidaste tu contraseña?</Link>
+          </div>
           <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={inputStyle} />
         </div>
 
         {error && (
-          <p style={{ fontSize: 13, borderRadius: 16, padding: '10px 14px', fontWeight: 600, background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(62,94,59,0.2)' }}>
+          <p style={{ fontSize: 13, borderRadius: 8, padding: '10px 14px', fontWeight: 600, background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(62,94,59,0.2)' }}>
             {error}
           </p>
         )}
@@ -86,7 +89,7 @@ export default function LoginPage() {
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
       <Nav />
       <main style={{ maxWidth: 400, margin: '0 auto', padding: '64px 24px 80px' }}>
-        <Suspense fallback={<div style={{ borderRadius: 32, padding: 32, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', minHeight: 200 }} />}>
+        <Suspense fallback={<div style={{ borderRadius: 12, padding: 32, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', minHeight: 200 }} />}>
           <LoginForm />
         </Suspense>
       </main>

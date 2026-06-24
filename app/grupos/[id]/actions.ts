@@ -50,6 +50,9 @@ export async function createPlay(formData: FormData) {
   const playedAt = formData.get('played_at') as string;
   const notes = (formData.get('notes') as string) || null;
   const resultsJson = formData.get('results') as string;
+  const isPublic = formData.get('is_public') === 'true';
+  const durationStr = formData.get('duration_minutes') as string | null;
+  const durationMinutes = durationStr ? parseInt(durationStr, 10) || null : null;
 
   if (!groupId || !gameId || !playedAt) return { error: 'Faltan datos obligatorios.' };
 
@@ -62,7 +65,7 @@ export async function createPlay(formData: FormData) {
 
   const { data: play, error: playError } = await supabase
     .from('plays')
-    .insert({ group_id: groupId, game_id: gameId, played_at: playedAt, notes, created_by: user.id })
+    .insert({ group_id: groupId, game_id: gameId, played_at: playedAt, notes, created_by: user.id, is_public: isPublic, duration_minutes: durationMinutes })
     .select()
     .single();
 
@@ -83,4 +86,75 @@ export async function createPlay(formData: FormData) {
 
   revalidatePath(`/grupos/${groupId}`);
   redirect(`/grupos/${groupId}`);
+}
+
+export async function deletePlay(playId: string, groupId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect('/auth/login');
+
+  const { data: play } = await supabase
+    .from('plays').select('created_by, groups(owner_id)')
+    .eq('id', playId).eq('group_id', groupId).single();
+
+  if (!play) return { error: 'Partida no encontrada.' };
+  const isCreator = play.created_by === user.id;
+  const isOwner = (play.groups as any)?.owner_id === user.id;
+  if (!isCreator && !isOwner) return { error: 'No tienes permiso para eliminar esta partida.' };
+
+  await supabase.from('play_results').delete().eq('play_id', playId);
+  await supabase.from('plays').delete().eq('id', playId);
+
+  revalidatePath(`/grupos/${groupId}`);
+  redirect(`/grupos/${groupId}`);
+}
+
+export async function updatePlayNotes(playId: string, groupId: string, notes: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect('/auth/login');
+
+  const { data: play } = await supabase
+    .from('plays').select('created_by, groups(owner_id)')
+    .eq('id', playId).eq('group_id', groupId).single();
+
+  if (!play) return { error: 'Partida no encontrada.' };
+  const isCreator = play.created_by === user.id;
+  const isOwner = (play.groups as any)?.owner_id === user.id;
+  if (!isCreator && !isOwner) return { error: 'Sin permiso.' };
+
+  await supabase.from('plays').update({ notes: notes || null }).eq('id', playId);
+  revalidatePath(`/grupos/${groupId}/partidas/${playId}`);
+  return { success: true };
+}
+
+export async function updatePlayVisibility(playId: string, groupId: string, isPublic: boolean) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect('/auth/login');
+
+  const { data: play } = await supabase
+    .from('plays').select('created_by, groups(owner_id)')
+    .eq('id', playId).eq('group_id', groupId).single();
+
+  if (!play) return { error: 'Partida no encontrada.' };
+  const isCreator = play.created_by === user.id;
+  const isOwner = (play.groups as any)?.owner_id === user.id;
+  if (!isCreator && !isOwner) return { error: 'Sin permiso.' };
+
+  await supabase.from('plays').update({ is_public: isPublic }).eq('id', playId);
+  revalidatePath(`/grupos/${groupId}/partidas/${playId}`);
+  return { success: true };
+}
+
+export async function trackGroupVisit(groupId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase
+    .from('group_members')
+    .update({ last_visited_at: new Date().toISOString() })
+    .eq('group_id', groupId)
+    .eq('profile_id', user.id);
 }

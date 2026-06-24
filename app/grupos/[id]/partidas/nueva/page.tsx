@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Nav } from '@/components/Nav';
+import { AppNav } from '@/components/AppNav';
 import { NuevaPartidaForm } from './NuevaPartidaForm';
 
 interface Props {
@@ -20,7 +20,7 @@ export default async function NuevaPartidaPage({ params }: Props) {
   const { data: membership } = await supabase.from('group_members').select('group_id').eq('group_id', groupId).eq('profile_id', user.id).single();
   if (!membership) redirect('/grupos');
 
-  const { data: collection } = await supabase.from('group_games').select('game_id, games(id, name, image_url)').eq('group_id', groupId);
+  const { data: collection } = await supabase.from('group_games').select('game_id, games(id, name, image_url, min_playtime, max_playtime)').eq('group_id', groupId);
   const { data: members } = await supabase.from('group_members').select('profile_id, profiles(id, display_name)').eq('group_id', groupId);
 
   const games = collection?.map((c) => c.games).filter(Boolean) ?? [];
@@ -28,7 +28,7 @@ export default async function NuevaPartidaPage({ params }: Props) {
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      <Nav back={{ href: `/grupos/${groupId}`, label: group.name }} />
+      <AppNav back={{ href: `/grupos/${groupId}`, label: group.name }} />
 
       <main style={{ maxWidth: 580, margin: '0 auto', padding: '48px 24px 80px' }}>
         <div style={{ marginBottom: 28 }}>

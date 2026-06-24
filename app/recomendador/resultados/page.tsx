@@ -4,7 +4,15 @@ import Link from 'next/link';
 import { Nav } from '@/components/Nav';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = { title: 'Recomendaciones — Ludum' };
+export const metadata: Metadata = {
+  title: 'Recomendaciones de juegos de mesa',
+  description: 'Juegos de mesa recomendados según tus preferencias: número de jugadores, duración y complejidad.',
+  openGraph: {
+    title: 'Recomendaciones de juegos de mesa',
+    description: 'Juegos de mesa recomendados según tus preferencias.',
+    type: 'website',
+  },
+};
 
 interface Props {
   searchParams: Promise<{ [key: string]: string | undefined }>;

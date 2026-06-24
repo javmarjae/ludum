@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { createPlay } from '../../actions';
 
-interface Game { id: string; name: string; image_url: string | null; }
+interface Game { id: string; name: string; image_url: string | null; min_playtime?: number | null; max_playtime?: number | null; }
 interface Member { id: string; display_name: string; }
 
 interface Player {
@@ -36,7 +36,9 @@ function makePlayer(overrides: Partial<Player> = {}): Player {
 export function NuevaPartidaForm({ groupId, games, members }: { groupId: string; games: Game[]; members: Member[] }) {
   const [gameId, setGameId] = useState(games[0]?.id ?? '');
   const [playedAt, setPlayedAt] = useState(new Date().toISOString().split('T')[0]);
+  const [duration, setDuration] = useState('');
   const [notes, setNotes] = useState('');
+  const [isPublic, setIsPublic] = useState(false);
   const [players, setPlayers] = useState<Player[]>([
     makePlayer({ profile_id: members[0]?.id ?? null }),
   ]);
@@ -55,8 +57,8 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
     setPlayers(prev => prev.map(p => p.uid === uid ? { ...p, [field]: value } : p));
   }
 
-  function setWinner(uid: string) {
-    setPlayers(prev => prev.map(p => ({ ...p, is_winner: p.uid === uid })));
+  function toggleWinner(uid: string) {
+    setPlayers(prev => prev.map(p => p.uid === uid ? { ...p, is_winner: !p.is_winner } : p));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -77,6 +79,8 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
     formData.set('played_at', playedAt);
     formData.set('notes', notes);
     formData.set('results', JSON.stringify(results));
+    formData.set('is_public', String(isPublic));
+    if (duration) formData.set('duration_minutes', duration);
 
     const result = await createPlay(formData);
     if (result?.error) {
@@ -103,6 +107,23 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
       <div>
         <label style={labelStyle}>Fecha</label>
         <input type="date" value={playedAt} onChange={(e) => setPlayedAt(e.target.value)} required style={inputStyle as React.CSSProperties} />
+      </div>
+
+      {/* Duration */}
+      <div>
+        <label style={labelStyle}>Duración (minutos) <span style={{ fontWeight: 500, color: 'var(--text-4)' }}>— opcional</span></label>
+        <input
+          type="number" min="1" max="999" value={duration}
+          onChange={(e) => setDuration(e.target.value)}
+          placeholder={(() => {
+            const g = games.find(g => g.id === gameId);
+            if (!g) return 'ej. 45';
+            if (g.min_playtime && g.max_playtime && g.min_playtime !== g.max_playtime) return `ej. ${Math.round((g.min_playtime + g.max_playtime) / 2)} (típico: ${g.min_playtime}–${g.max_playtime})`;
+            if (g.min_playtime) return `ej. ${g.min_playtime} (típico del juego)`;
+            return 'ej. 45';
+          })()}
+          style={inputStyle as React.CSSProperties}
+        />
       </div>
 
       {/* Players */}
@@ -169,7 +190,7 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
                 <input type="number" placeholder="Puntuación" value={player.score}
                   onChange={(e) => updatePlayer(player.uid, 'score', e.target.value)}
                   style={{ ...inputStyle, flex: 1 } as React.CSSProperties} />
-                <button type="button" onClick={() => setWinner(player.uid)} style={{
+                <button type="button" onClick={() => toggleWinner(player.uid)} style={{
                   padding: '10px 14px', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0,
                   background: player.is_winner ? 'var(--brand-tint)' : 'var(--bg-inset)',
                   color: player.is_winner ? 'var(--brand)' : 'var(--text-3)',
@@ -189,6 +210,32 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="¿Algo memorable de esta partida?" rows={2}
           style={{ ...inputStyle, resize: 'none' } as React.CSSProperties} />
+      </div>
+
+      {/* Visibilidad */}
+      <div style={{ borderRadius: 20, padding: '16px 20px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+          <div>
+            <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
+              {isPublic ? '🌐 Partida pública' : '🔒 Partida privada'}
+            </p>
+            <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-3)' }}>
+              {isPublic ? 'Cualquiera con el enlace puede verla' : 'Solo los miembros del grupo pueden verla'}
+            </p>
+          </div>
+          <button type="button" onClick={() => setIsPublic(!isPublic)} style={{
+            width: 44, height: 24, borderRadius: 999, border: 'none', cursor: 'pointer',
+            background: isPublic ? 'var(--brand)' : 'var(--bg-inset)',
+            position: 'relative', transition: 'background 0.2s', flexShrink: 0,
+            boxShadow: isPublic ? 'var(--shadow-btn-brand)' : 'var(--shadow-input)',
+          }}>
+            <span style={{
+              position: 'absolute', top: 3, left: isPublic ? 23 : 3, width: 18, height: 18,
+              borderRadius: '50%', background: 'white',
+              transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+            }} />
+          </button>
+        </div>
       </div>
 
       {error && (

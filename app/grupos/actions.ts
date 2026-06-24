@@ -51,6 +51,65 @@ export async function createGroup(formData: FormData) {
   return { groupId: group.id };
 }
 
+export async function deleteGroup(groupId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect('/auth/login');
+
+  const { data: group } = await supabase.from('groups').select('owner_id').eq('id', groupId).single();
+  if (!group || group.owner_id !== user.id) return { error: 'No tienes permiso para eliminar este grupo.' };
+
+  const { error } = await supabase.from('groups').delete().eq('id', groupId);
+  if (error) return { error: 'Error al eliminar el grupo.' };
+
+  revalidatePath('/grupos');
+  redirect('/grupos');
+}
+
+export async function updateGroup(groupId: string, data: { name?: string; description?: string }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'No autenticado' };
+
+  const { data: group } = await supabase.from('groups').select('owner_id').eq('id', groupId).single();
+  if (!group || group.owner_id !== user.id) return { error: 'Sin permiso' };
+
+  const { error } = await supabase.from('groups').update(data).eq('id', groupId);
+  if (error) return { error: error.message };
+
+  revalidatePath(`/grupos/${groupId}`);
+  return { ok: true };
+}
+
+export async function uploadGroupImage(groupId: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'No autenticado' };
+
+  const { data: group } = await supabase.from('groups').select('owner_id').eq('id', groupId).single();
+  if (!group || group.owner_id !== user.id) return { error: 'Sin permiso' };
+
+  const file = formData.get('image') as File;
+  if (!file || file.size === 0) return { error: 'Sin archivo' };
+
+  const ext = file.name.split('.').pop() ?? 'jpg';
+  const path = `${groupId}/cover.${ext}`;
+
+  const arrayBuffer = await file.arrayBuffer();
+  const { error: uploadError } = await supabase.storage
+    .from('group-images')
+    .upload(path, arrayBuffer, { contentType: file.type, upsert: true });
+
+  if (uploadError) return { error: uploadError.message };
+
+  const { data: { publicUrl } } = supabase.storage.from('group-images').getPublicUrl(path);
+  const imageUrl = `${publicUrl}?v=${Date.now()}`;
+
+  await supabase.from('groups').update({ image_url: imageUrl }).eq('id', groupId);
+  revalidatePath(`/grupos/${groupId}`);
+  return { url: imageUrl };
+}
+
 export async function joinGroup(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

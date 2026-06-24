@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -9,7 +9,7 @@ const inputStyle = {
   background: 'var(--bg-inset)',
   boxShadow: 'var(--shadow-input)',
   border: '1px solid var(--border)',
-  borderRadius: 16,
+  borderRadius: 8,
   color: 'var(--text)',
   width: '100%',
   padding: '12px 16px',
@@ -41,7 +41,7 @@ export default function SignupPage() {
       <div style={{ background: 'transparent', minHeight: '100vh' }}>
         <Nav />
         <main style={{ maxWidth: 400, margin: '0 auto', padding: '80px 24px' }}>
-          <div style={{ textAlign: 'center', borderRadius: 32, padding: 40, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+          <div style={{ textAlign: 'center', borderRadius: 12, padding: 40, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>📬</div>
             <h2 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>Revisa tu email</h2>
             <p style={{ fontWeight: 500, color: 'var(--text-3)', marginBottom: 0 }}>
@@ -61,7 +61,7 @@ export default function SignupPage() {
       <Nav />
 
       <main style={{ maxWidth: 400, margin: '0 auto', padding: '64px 24px 80px' }}>
-        <div style={{ borderRadius: 32, padding: 32, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+        <div style={{ borderRadius: 12, padding: 32, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
           <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 6 }}>Crear cuenta</h1>
           <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-3)', marginBottom: 28 }}>
             ¿Ya tienes cuenta?{' '}
@@ -83,7 +83,7 @@ export default function SignupPage() {
             </div>
 
             {error && (
-              <p style={{ fontSize: 13, borderRadius: 16, padding: '10px 14px', fontWeight: 600, background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(62,94,59,0.2)' }}>
+              <p style={{ fontSize: 13, borderRadius: 8, padding: '10px 14px', fontWeight: 600, background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(62,94,59,0.2)' }}>
                 {error}
               </p>
             )}

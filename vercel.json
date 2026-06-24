@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/sync-bgg?mode=ranked&batch=100",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/sync-bgg?mode=new&batch=200",
+      "schedule": "0 4 * * *"
+    }
+  ]
+}

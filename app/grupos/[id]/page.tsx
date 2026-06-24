@@ -1,9 +1,26 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Nav } from '@/components/Nav';
-import { logout } from '@/app/auth/actions';
+import Image from 'next/image';
+import { Avatar } from '@/components/Avatar';
+import { VerifiedBadge } from '@/components/VerifiedBadge';
+import { DeleteGroupButton } from './DeleteGroupButton';
+import { EditGroupForm } from './EditGroupForm';
+import { VisitTracker } from './VisitTracker';
+import { WhatToPlay } from './WhatToPlay';
 import { CopyButton } from '@/components/CopyButton';
+import { InviteQR } from './InviteQR';
+
+function relativeDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffDays = Math.floor((now.getTime() - date.getTime()) / 86400000);
+  if (diffDays === 0) return 'Hoy';
+  if (diffDays === 1) return 'Ayer';
+  if (diffDays < 7) return `Hace ${diffDays} días`;
+  if (diffDays < 30) return `Hace ${Math.floor(diffDays / 7)} semanas`;
+  return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+}
 
 interface Props { params: Promise<{ id: string }>; }
 
@@ -13,125 +30,427 @@ export default async function GrupoDetailPage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/auth/login');
 
-  const { data: group } = await supabase.from('groups').select('id, name, invite_code, owner_id').eq('id', id).single();
-  if (!group) notFound();
-
-  const { data: membership } = await supabase.from('group_members').select('group_id').eq('group_id', id).eq('profile_id', user.id).single();
-  if (!membership) redirect('/grupos');
-
-  const [{ data: members }, { data: recentPlays }, { data: collection }] = await Promise.all([
-    supabase.from('group_members').select('profile_id, profiles(display_name)').eq('group_id', id),
-    supabase.from('plays').select('id, played_at, games(name, image_url), play_results(is_winner, profiles(display_name), guest_name)').eq('group_id', id).order('played_at', { ascending: false }).limit(5),
-    supabase.from('group_games').select('game_id').eq('group_id', id),
+  const [
+    { data: group },
+    { data: membership },
+    { data: members },
+    { data: recentPlays },
+    { data: collection },
+    { data: allPlayStats, count: totalPlaysCount },
+  ] = await Promise.all([
+    supabase.from('groups').select('id, name, invite_code, owner_id, image_url, description').eq('id', id).single(),
+    supabase.from('group_members').select('group_id').eq('group_id', id).eq('profile_id', user.id).single(),
+    supabase.from('group_members').select('profile_id, profiles(display_name, avatar_url, is_verified)').eq('group_id', id),
+    supabase.from('plays')
+      .select('id, played_at, duration_minutes, games(name, image_url, bgg_id), play_results(profile_id, is_winner, score, guest_name, profiles(display_name, avatar_url))')
+      .eq('group_id', id)
+      .order('played_at', { ascending: false })
+      .limit(5),
+    supabase.from('group_games')
+      .select('game_id, games(id, bgg_id, name, image_url, min_players, max_players, min_playtime, max_playtime)')
+      .eq('group_id', id),
+    supabase.from('plays')
+      .select('game_id, duration_minutes, games(min_playtime, max_playtime), play_results(score)', { count: 'exact' })
+      .eq('group_id', id)
+      .limit(500),
   ]);
 
-  const isOwner = group.owner_id === user.id;
-  const collectionCount = collection?.length ?? 0;
+  if (!group) notFound();
+  if (!membership) redirect('/grupos');
 
-  const quickActions = [
-    { href: `/grupos/${id}/partidas/nueva`, icon: '🎮', label: 'Nueva partida', accent: true },
-    { href: `/grupos/${id}/coleccion`, icon: '📦', label: 'Colección', sub: `${collectionCount} juegos`, accent: false },
-    { href: `/grupos/${id}/stats`, icon: '📊', label: 'Estadísticas', accent: false },
-  ];
+  const isOwner = group.owner_id === user.id;
+  const memberCount = members?.length ?? 0;
+  const collectionCount = collection?.length ?? 0;
+  const collectionGames = (collection ?? []).map((c: any) => c.games).filter(Boolean);
+  const totalPlays = totalPlaysCount ?? 0;
+
+  // Best score from sampled plays
+  let bestScore: { score: number; gameName: string } | null = null;
+  (allPlayStats ?? []).forEach((play: any) => {
+    (play.play_results ?? []).forEach((r: any) => {
+      if (r.score !== null && r.score !== undefined && (bestScore === null || r.score > bestScore.score)) {
+        bestScore = { score: r.score, gameName: '' };
+      }
+    });
+  });
+
+  // Repeated games %
+  const gameCount: Record<string, number> = {};
+  (allPlayStats ?? []).forEach((play: any) => {
+    if (play.game_id) gameCount[play.game_id] = (gameCount[play.game_id] ?? 0) + 1;
+  });
+  const repeatedPlays = Object.values(gameCount).filter(c => c > 1).reduce((sum, c) => sum + c, 0);
+  const sampleSize = allPlayStats?.length ?? 0;
+  const repeatedPercent = sampleSize > 0 ? Math.round((repeatedPlays / sampleSize) * 100) : 0;
+
+  // Average play duration
+  const durationsForAvg: number[] = [];
+  (allPlayStats ?? []).forEach((play: any) => {
+    if (play.duration_minutes != null) {
+      durationsForAvg.push(play.duration_minutes);
+    } else if (play.games?.min_playtime != null || play.games?.max_playtime != null) {
+      const min = play.games.min_playtime ?? play.games.max_playtime;
+      const max = play.games.max_playtime ?? play.games.min_playtime;
+      durationsForAvg.push(Math.round((min + max) / 2));
+    }
+  });
+  const avgDuration = durationsForAvg.length > 0
+    ? Math.round(durationsForAvg.reduce((sum, d) => sum + d, 0) / durationsForAvg.length)
+    : null;
 
   return (
-    <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      <Nav
-        back={{ href: '/grupos', label: 'Mis grupos' }}
-        right={
-          <form action={logout}>
-            <button type="submit" style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
-              Salir
-            </button>
-          </form>
-        }
-      />
+    <div style={{ background: 'var(--bg)', minHeight: '100vh', width: '100%' }}>
+      <VisitTracker groupId={id} />
 
-      <main style={{ maxWidth: 680, margin: '0 auto', padding: '48px 24px 80px' }}>
-        {/* Header */}
-        <div style={{ borderRadius: 32, padding: 24, marginBottom: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-            <div>
-              <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.01em', color: 'var(--text)', marginBottom: 10 }}>{group.name}</h1>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-3)' }}>Código:</span>
-                <span style={{ fontFamily: 'monospace', fontWeight: 800, fontSize: 14, padding: '4px 10px', borderRadius: 8, letterSpacing: '0.15em', background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(92,140,42,0.2)' }}>
-                  {group.invite_code}
-                </span>
-                <CopyButton text={group.invite_code} />
+      {/* Sticky group header */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        width: '100%', boxSizing: 'border-box',
+        padding: '0 32px', height: 72, gap: 16,
+        borderBottom: '1px solid var(--border)',
+        background: 'var(--bg-card)',
+        backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+        position: 'sticky', top: 0, zIndex: 30,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+          <Link href="/grupos" style={{
+            color: 'var(--text-4)', textDecoration: 'none', fontSize: 18, lineHeight: 1,
+            flexShrink: 0, padding: '6px 10px', borderRadius: 8, background: 'var(--bg-inset)',
+            fontWeight: 700,
+          }}>
+            ←
+          </Link>
+          {(group as any).image_url ? (
+            <img src={(group as any).image_url} alt={group.name} style={{ width: 40, height: 40, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
+          ) : (
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>👥</div>
+          )}
+          <div style={{ minWidth: 0 }}>
+            <h1 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2, lineHeight: 1.2 }}>
+              {group.name}
+            </h1>
+            <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)', lineHeight: 1 }}>
+              {memberCount} miembros
+            </p>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
+          <span className="grupo-invite-btn">
+            <CopyButton text={group.invite_code} label="Invitar miembros" />
+          </span>
+          <Link href={`/grupos/${id}/partidas/nueva`} style={{
+            display: 'inline-flex', alignItems: 'center',
+            padding: '10px 18px', borderRadius: 10, fontWeight: 700, fontSize: 14,
+            color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',
+            textDecoration: 'none', whiteSpace: 'nowrap',
+          }}>
+            <span className="grupo-btn-long">+ Registrar nueva partida</span>
+            <span className="grupo-btn-short" style={{ display: 'none' }}>+ Partida</span>
+          </Link>
+        </div>
+      </div>
+
+      <div style={{ width: '100%', boxSizing: 'border-box', padding: '28px 32px 80px' }}>
+
+        {/* Stats row */}
+        <div className="grupo-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 14, marginBottom: 28 }}>
+          <StatCard
+            value={collectionCount.toString()}
+            label="Juegos en posesión"
+            link={{ href: `/grupos/${id}/coleccion`, text: 'Ver colección' }}
+          />
+          <StatCard
+            value={totalPlays.toString()}
+            label="Partidas jugadas"
+            link={{ href: `/grupos/${id}/stats`, text: 'Ver estadísticas' }}
+          />
+          <StatCard
+            value={bestScore ? `${(bestScore as any).score} pts` : '—'}
+            label="Mejor puntuación"
+            sub={bestScore ? 'Récord del grupo' : 'Sin puntuaciones'}
+          />
+          <StatCard
+            value={`${repeatedPercent}%`}
+            label="Juegos repetidos"
+            sub={`${repeatedPlays} de ${sampleSize} partidas`}
+          />
+          <StatCard
+            value={avgDuration != null ? `${avgDuration} min` : '—'}
+            label="Tiempo medio de partida"
+            sub={avgDuration != null ? `Sobre ${durationsForAvg.length} partidas` : 'Sin datos aún'}
+          />
+        </div>
+
+        {/* Two-column grid */}
+        <div className="grupo-cols" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24, alignItems: 'start' }}>
+
+          {/* LEFT column */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+            {/* Recent plays */}
+            <section>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>Partidas recientes</h2>
               </div>
-            </div>
+
+              {!recentPlays || recentPlays.length === 0 ? (
+                <div style={{ borderRadius: 22, padding: 28, textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+                  <p style={{ fontSize: 26, marginBottom: 8 }}>🎲</p>
+                  <p style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>Sin partidas todavía</p>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-3)', marginBottom: 14 }}>Registrad vuestra primera partida.</p>
+                  <Link href={`/grupos/${id}/partidas/nueva`} style={{
+                    display: 'inline-flex', padding: '9px 18px', borderRadius: 999, fontSize: 13, fontWeight: 700,
+                    color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none',
+                  }}>
+                    Registrar partida →
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {(recentPlays as any[]).map((play) => {
+                      const winner = play.play_results?.find((r: any) => r.is_winner);
+                      const winnerName = winner?.profiles?.display_name ?? winner?.guest_name ?? null;
+                      const winnerAvatar = winner?.profiles?.avatar_url ?? null;
+                      const playerCount = play.play_results?.length ?? 0;
+                      const userResult = play.play_results?.find((r: any) => r.profile_id === user.id);
+                      const userScore = userResult?.score ?? null;
+                      let userPosition: number | null = null;
+                      if (userScore !== null) {
+                        const sorted = [...(play.play_results ?? [])].sort((a: any, b: any) => (b.score ?? 0) - (a.score ?? 0));
+                        userPosition = sorted.findIndex((r: any) => r.profile_id === user.id) + 1;
+                      }
+
+                      return (
+                        <Link key={play.id} href={`/grupos/${id}/partidas/${play.id}`} style={{ textDecoration: 'none' }}>
+                          <div className="hover-scale" style={{
+                            display: 'flex', alignItems: 'center', gap: 14,
+                            borderRadius: 20, padding: '14px 18px',
+                            background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
+                          }}>
+                            {play.games?.image_url
+                              ? <div style={{ position: 'relative', width: 52, height: 70, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
+                                  <Image src={play.games.image_url} alt={play.games.name} fill style={{ objectFit: 'cover' }} />
+                                </div>
+                              : <div style={{ width: 52, height: 70, borderRadius: 14, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26 }}>🎲</div>
+                            }
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 4 }}>
+                                {play.games?.name ?? 'Juego desconocido'}
+                              </p>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                                <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>
+                                  📅 {relativeDate(play.played_at)}
+                                </span>
+                                {playerCount > 0 && (
+                                  <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>
+                                    👥 {playerCount} jugadores
+                                  </span>
+                                )}
+                                {play.duration_minutes && (
+                                  <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>
+                                    ⏱ {play.duration_minutes} min
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="grupo-play-meta" style={{ display: 'flex', alignItems: 'center', gap: 20, flexShrink: 0 }}>
+                              {winnerName && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                  {winnerAvatar ? (
+                                    <img src={winnerAvatar} alt={winnerName} style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                                  ) : (
+                                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 800, color: 'var(--brand)', flexShrink: 0 }}>
+                                      {(winnerName[0] ?? '?').toUpperCase()}
+                                    </div>
+                                  )}
+                                  <div>
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)', marginBottom: 2 }}>Ganador</p>
+                                    <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', whiteSpace: 'nowrap' }}>
+                                      {winnerName} 👑
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
+                              {userScore !== null && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                  <div>
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)', marginBottom: 2 }}>Tu puntuación</p>
+                                    <p style={{ fontSize: 14, fontWeight: 800, color: 'var(--text)' }}>{userScore} pts</p>
+                                  </div>
+                                  {userPosition !== null && (
+                                    <div style={{
+                                      width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+                                      background: userPosition === 1 ? 'var(--brand-tint)' : 'var(--bg-inset)',
+                                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                      fontSize: 12, fontWeight: 800,
+                                      color: userPosition === 1 ? 'var(--brand)' : 'var(--text-3)',
+                                      border: userPosition === 1 ? '1.5px solid rgba(62,94,59,0.2)' : '1px solid var(--border)',
+                                    }}>
+                                      {userPosition}º
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                  <Link href={`/grupos/${id}/partidas`} style={{
+                    display: 'block', textAlign: 'center', marginTop: 10,
+                    padding: '11px', borderRadius: 16, fontSize: 13, fontWeight: 700,
+                    color: 'var(--brand)', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
+                    textDecoration: 'none',
+                  }}>
+                    Ver todas las partidas →
+                  </Link>
+                </>
+              )}
+            </section>
+
+            {/* What to play */}
+            {collectionGames.length > 0 && <WhatToPlay games={collectionGames} />}
+          </div>
+
+          {/* RIGHT column */}
+          <div className="grupo-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+            {/* Members */}
+            <section style={{ borderRadius: 22, overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+              <div style={{ padding: '16px 18px 12px' }}>
+                <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>
+                  Miembros del grupo ({memberCount})
+                </h2>
+              </div>
+              {(members as any[])?.map((m, i) => (
+                <Link
+                  key={m.profile_id}
+                  href={m.profile_id === user.id ? '/perfil' : `/perfil/${m.profile_id}`}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '10px 18px',
+                    borderTop: '1px solid var(--border)',
+                    textDecoration: 'none',
+                  }}
+                >
+                  <Avatar name={m.profiles?.display_name ?? '?'} src={(m.profiles as any)?.avatar_url} size={34} />
+                  <span style={{
+                    fontWeight: 600, fontSize: 13, color: 'var(--text)', flex: 1,
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    display: 'flex', alignItems: 'center', gap: 4,
+                  }}>
+                    {m.profiles?.display_name ?? 'Usuario'}
+                    {(m.profiles as any)?.is_verified && <VerifiedBadge size={12} title="Verificado" />}
+                  </span>
+                  {m.profile_id === group.owner_id && (
+                    <span style={{
+                      fontSize: 10, fontWeight: 700, color: 'var(--text-4)',
+                      background: 'var(--bg-inset)', padding: '2px 7px', borderRadius: 6, flexShrink: 0,
+                    }}>
+                      Admin
+                    </span>
+                  )}
+                </Link>
+              ))}
+              <div style={{ padding: '11px 18px', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--brand)' }}>Ver todos los miembros</span>
+                <span style={{ color: 'var(--text-4)', fontSize: 16 }}>›</span>
+              </div>
+            </section>
+
+            {/* Next session */}
+            <section style={{ borderRadius: 22, padding: '18px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+              <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Próxima partida</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 42, height: 42, borderRadius: 12, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>
+                  📅
+                </div>
+                <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-3)' }}>
+                  Aún no hay ninguna partida programada.
+                </p>
+              </div>
+              <Link href={`/grupos/${id}/partidas/nueva`} style={{ display: 'inline-block', marginTop: 14, fontSize: 13, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none' }}>
+                Programar partida →
+              </Link>
+            </section>
+
+            {/* Owner settings */}
             {isOwner && (
-              <span style={{ fontSize: 11, padding: '4px 10px', borderRadius: 999, fontWeight: 700, background: 'var(--brand-tint)', color: 'var(--brand)' }}>Admin</span>
+              <section style={{ borderRadius: 22, padding: '18px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Ajustes del grupo</h3>
+
+                {/* Editar grupo */}
+                <div style={{ marginBottom: 14 }}>
+                  <EditGroupForm
+                    groupId={group.id}
+                    initialName={group.name}
+                    initialDescription={(group as any).description ?? ''}
+                    initialImage={(group as any).image_url ?? null}
+                    inviteCode={group.invite_code}
+                    isOwner={isOwner}
+                  />
+                </div>
+
+                {/* Invite code */}
+                <div style={{ marginBottom: 14 }}>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
+                    Código de invitación
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <span style={{
+                      fontFamily: 'monospace', fontWeight: 800, fontSize: 14,
+                      padding: '4px 10px', borderRadius: 8, letterSpacing: '0.15em',
+                      background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(92,140,42,0.2)',
+                    }}>
+                      {group.invite_code}
+                    </span>
+                    <CopyButton text={group.invite_code} />
+                    <InviteQR inviteCode={group.invite_code} groupName={group.name} />
+                  </div>
+                </div>
+
+                {/* Danger zone */}
+                <div style={{ paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+                  <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)', marginBottom: 10 }}>
+                    Esta acción es irreversible y borrará todos los datos del grupo.
+                  </p>
+                  <DeleteGroupButton groupId={group.id} />
+                </div>
+              </section>
             )}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        {/* Quick actions */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
-          {quickActions.map((action) => (
-            <Link key={action.href} href={action.href} className="hover-scale-lg" style={{
-              borderRadius: 24, padding: '18px 12px', textAlign: 'center', textDecoration: 'none',
-              background: action.accent ? 'linear-gradient(135deg, #89BA86, #3E5E3B)' : 'var(--bg-card)',
-              boxShadow: action.accent ? 'var(--shadow-btn-brand)' : 'var(--shadow-card)',
-            }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }}>{action.icon}</div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: action.accent ? 'white' : 'var(--text)' }}>{action.label}</div>
-              {action.sub && <div style={{ fontSize: 11, fontWeight: 500, marginTop: 2, color: action.accent ? 'rgba(255,255,255,0.7)' : 'var(--text-4)' }}>{action.sub}</div>}
-            </Link>
-          ))}
-        </div>
-
-        {/* Recent plays */}
-        <section style={{ marginBottom: 20 }}>
-          <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Partidas recientes</h2>
-          {!recentPlays || recentPlays.length === 0 ? (
-            <div style={{ borderRadius: 24, padding: 32, textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-              <p style={{ fontSize: 28, marginBottom: 8 }}>🎲</p>
-              <p style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Sin partidas todavía</p>
-              <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-3)' }}>Registrad vuestra primera partida.</p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {(recentPlays as any[]).map((play) => {
-                const winner = play.play_results?.find((r: any) => r.is_winner);
-                const winnerName = winner?.profiles?.display_name ?? winner?.guest_name ?? null;
-                return (
-                  <div key={play.id} style={{ display: 'flex', alignItems: 'center', gap: 14, borderRadius: 20, padding: '12px 16px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-                    {play.games?.image_url
-                      ? <img src={play.games.image_url} alt={play.games.name} style={{ width: 40, height: 40, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
-                      : <div style={{ width: 40, height: 40, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}>🎲</div>
-                    }
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{play.games?.name ?? 'Juego desconocido'}</p>
-                      <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>
-                        {new Date(play.played_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
-                        {winnerName && <span> · 🏆 {winnerName}</span>}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </section>
-
-        {/* Members */}
-        <section>
-          <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Miembros ({members?.length ?? 0})</h2>
-          <div style={{ borderRadius: 24, overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-            {(members as any[])?.map((m, i) => (
-              <div key={m.profile_id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderTop: i > 0 ? '1px solid var(--border)' : 'none' }}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, color: 'white', background: 'linear-gradient(135deg, #89BA86, #3E5E3B)', boxShadow: '0 2px 8px rgba(62,94,59,0.2)', flexShrink: 0 }}>
-                  {(m.profiles?.display_name ?? '?')[0].toUpperCase()}
-                </div>
-                <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--text)' }}>{m.profiles?.display_name ?? 'Usuario'}</span>
-                {m.profile_id === group.owner_id && <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)', marginLeft: 'auto' }}>Admin</span>}
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
+function StatCard({ value, label, link, sub }: {
+  value: string;
+  label: string;
+  link?: { href: string; text: string };
+  sub?: string;
+}) {
+  return (
+    <div style={{ borderRadius: 20, padding: '18px 16px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+      <p className="grupo-stat-value" style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em', marginBottom: 3, lineHeight: 1 }}>
+        {value}
+      </p>
+      <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: sub || link ? 8 : 0 }}>
+        {label}
+      </p>
+      {sub && (
+        <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', marginBottom: link ? 6 : 0 }}>
+          {sub}
+        </p>
+      )}
+      {link && (
+        <Link href={link.href} style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none' }}>
+          {link.text} →
+        </Link>
+      )}
     </div>
   );
 }

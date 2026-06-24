@@ -1,7 +1,9 @@
-import { createClient } from '@/lib/supabase/server';
+﻿import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
-import { Nav } from '@/components/Nav';
+import Image from 'next/image';
+import { AppNav } from '@/components/AppNav';
 import { AddGameButton } from './AddGameButton';
+import { ColeccionFilter } from './ColeccionFilter';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -50,9 +52,9 @@ export default async function ColeccionPage({ params, searchParams }: Props) {
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      <Nav back={{ href: `/grupos/${groupId}`, label: group.name }} />
+      <AppNav back={{ href: `/grupos/${groupId}`, label: group.name }} />
 
-      <main style={{ maxWidth: 680, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <main style={{ maxWidth: 860, margin: '0 auto', padding: '48px 32px 80px' }}>
         <div style={{ marginBottom: 32 }}>
           <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 4 }}>Colección</h1>
           <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-3)' }}>{collectionGames.length} juego{collectionGames.length !== 1 ? 's' : ''}</p>
@@ -80,11 +82,13 @@ export default async function ColeccionPage({ params, searchParams }: Props) {
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {searchResults.map((game) => (
-                <div key={game.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, borderRadius: 20, padding: '12px 16px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+                <div key={game.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, borderRadius: 22, padding: '16px 20px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
                     {game.image_url
-                      ? <img src={game.image_url} alt={game.name} style={{ width: 40, height: 40, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
-                      : <div style={{ width: 40, height: 40, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}>🎲</div>
+                      ? <div style={{ position: 'relative', width: 40, height: 54, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
+                          <Image src={game.image_url} alt={game.name} fill style={{ objectFit: 'cover' }} />
+                        </div>
+                      : <div style={{ width: 40, height: 54, borderRadius: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}>🎲</div>
                     }
                     <div style={{ minWidth: 0 }}>
                       <p style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>
@@ -104,7 +108,7 @@ export default async function ColeccionPage({ params, searchParams }: Props) {
 
         {/* Current collection */}
         <div>
-          <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>
             En la colección ({collectionGames.length})
           </h2>
 
@@ -115,23 +119,7 @@ export default async function ColeccionPage({ params, searchParams }: Props) {
               <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-3)' }}>Busca un juego arriba para añadirlo.</p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {(collectionGames as any[]).map((game) => (
-                <div key={game.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, borderRadius: 20, padding: '12px 16px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-                    {game.image_url
-                      ? <img src={game.image_url} alt={game.name} style={{ width: 40, height: 40, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
-                      : <div style={{ width: 40, height: 40, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}>🎲</div>
-                    }
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>
-                      <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>{game.year_published}</p>
-                    </div>
-                  </div>
-                  <AddGameButton groupId={groupId} gameId={game.id} inCollection={true} />
-                </div>
-              ))}
-            </div>
+            <ColeccionFilter games={collectionGames as any[]} groupId={groupId} />
           )}
         </div>
       </main>
