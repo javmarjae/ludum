@@ -11,6 +11,12 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 3 * * *'
     runs-on: ubuntu-latest
     steps:
+      - name: Check secret
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          echo "Secret length: ${#CRON_SECRET}"
+
       - name: Sync ranked games
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
