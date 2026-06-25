@@ -14,7 +14,7 @@ jobs:
       - name: Sync ranked games
         run: |
           curl -X POST "https://ludumgames.es/api/sync-bgg?mode=ranked&batch=100" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --fail \
             --silent \
@@ -27,7 +27,7 @@ jobs:
       - name: Sync new games
         run: |
           curl -X POST "https://ludumgames.es/api/sync-bgg?mode=new&batch=200" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --fail \
             --silent \
