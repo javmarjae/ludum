@@ -4,6 +4,7 @@ import Script from 'next/script';
 import './globals.css';
 import { getAuthUser, createClient } from '@/lib/supabase/server';
 import { SidebarNav } from '@/components/SidebarNav';
+import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { TutorialModal } from '@/components/TutorialModal';
 
 const urbanist = Urbanist({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-sans' });
@@ -77,6 +78,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             {children}
           </div>
         </div>
+        {user && <MobileBottomNav isAdmin={isAdmin} />}
         {showTutorial && <TutorialModal />}
       </body>
     </html>

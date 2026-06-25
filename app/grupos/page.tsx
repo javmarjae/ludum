@@ -26,8 +26,8 @@ export default async function GruposPage({ searchParams }: { searchParams: Promi
     { data: memberships },
     { data: communities },
     { data: myMemberships },
-    { data: ownedOrgs },
-    { data: memberOrgs },
+    { data: allOrgsRaw },
+    { data: myOrgMemberships },
   ] = await Promise.all([
     supabase
       .from('group_members')
@@ -44,22 +44,19 @@ export default async function GruposPage({ searchParams }: { searchParams: Promi
       .eq('profile_id', user.id),
     supabase
       .from('organizations')
-      .select('id, name, type, location, logo_url')
-      .eq('owner_id', user.id),
+      .select('id, name, type, location, logo_url, owner_id')
+      .order('name', { ascending: true }),
     supabase
       .from('organization_members')
-      .select('organizations(id, name, type, location, logo_url)')
+      .select('organization_id')
       .eq('profile_id', user.id),
   ]);
 
   const groups = (memberships ?? []).map((m) => m.groups).filter(Boolean) as any[];
 
-  const ownedOrgIds = new Set((ownedOrgs ?? []).map(o => o.id));
-  const memberOrgList = (memberOrgs ?? []).map((m: any) => m.organizations).filter(Boolean) as any[];
-  const allOrgs = [
-    ...(ownedOrgs ?? []),
-    ...memberOrgList.filter((o: any) => !ownedOrgIds.has(o.id)),
-  ];
+  const ownedOrgIds = new Set((allOrgsRaw ?? []).filter(o => o.owner_id === user.id).map(o => o.id));
+  const staffOrgIds = new Set((myOrgMemberships ?? []).map((m: any) => m.organization_id));
+  const allOrgs = allOrgsRaw ?? [];
 
   const communityIds = (communities ?? []).map(c => c.id);
   let memberCounts: Record<string, number> = {};
@@ -290,6 +287,11 @@ export default async function GruposPage({ searchParams }: { searchParams: Promi
                     {ownedOrgIds.has(org.id) && (
                       <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--brand)', background: 'var(--brand-tint)', padding: '2px 8px', borderRadius: 20, flexShrink: 0 }}>
                         Admin
+                      </span>
+                    )}
+                    {!ownedOrgIds.has(org.id) && staffOrgIds.has(org.id) && (
+                      <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', background: 'var(--bg-inset)', padding: '2px 8px', borderRadius: 20, flexShrink: 0 }}>
+                        Staff
                       </span>
                     )}
                     <span style={{ color: 'var(--text-4)', fontSize: 20, flexShrink: 0 }}>›</span>

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
 import { Nav } from '@/components/Nav';
 
 const inputStyle = {
@@ -20,7 +19,6 @@ const inputStyle = {
 };
 
 export default function UpdatePasswordPage() {
-  const router = useRouter();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
@@ -44,7 +42,7 @@ export default function UpdatePasswordPage() {
     if (error) {
       setError('No se pudo actualizar la contraseña. El enlace puede haber caducado.');
     } else {
-      router.push('/grupos');
+      window.location.href = '/grupos';
     }
   }
 

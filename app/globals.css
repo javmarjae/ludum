@@ -226,9 +226,41 @@ html[data-authed="true"] .app-nav {
 }
 .app-sidebar::-webkit-scrollbar { display: none; }
 
-/* En móvil: ocultar sidebar */
+/* En móvil: ocultar sidebar lateral, mostrar barra inferior */
 @media (max-width: 640px) {
   .app-sidebar { display: none !important; }
+  .app-shell-main { padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* Mobile bottom nav */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 62px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  z-index: 50;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 4px;
+  box-shadow: 0 -2px 16px rgba(58,55,47,0.08);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.mobile-bottom-nav::-webkit-scrollbar { display: none; }
+
+[data-theme="dark"] .mobile-bottom-nav {
+  box-shadow: 0 -2px 20px rgba(0,0,0,0.25);
+}
+
+@media (max-width: 640px) {
+  .mobile-bottom-nav { display: flex; }
 }
 
 /* ── Home: split hero y sidebar responsive ─────────────*/
