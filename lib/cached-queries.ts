@@ -94,7 +94,6 @@ export const getNewGames = unstable_cache(
       .select('bgg_id, name, image_url, bgg_rating, year_published, is_expansion')
       .not('year_published', 'is', null)
       .not('bgg_rating', 'is', null)
-      .not('year_published', 'is', null)
       .gte('year_published', new Date().getFullYear() - 1)
       .lte('year_published', new Date().getFullYear())
       .order('bgg_rating', { ascending: false })

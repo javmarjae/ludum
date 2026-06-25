@@ -1,9 +1,9 @@
-import { Nav, NavButton } from '@/components/Nav';
+﻿import { Nav, NavButton } from '@/components/Nav';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Política de privacidad',
-  description: 'Cómo Ludum gestiona tus datos personales.',
+  title: 'PolÃ­tica de privacidad',
+  description: 'CÃ³mo Ludum gestiona tus datos personales.',
 };
 
 export default function Privacidad() {
@@ -15,18 +15,18 @@ export default function Privacidad() {
           Legal
         </p>
         <h1 style={{ fontSize: 'clamp(24px, 4vw, 40px)', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1, color: 'var(--text)', marginBottom: 8 }}>
-          Política de privacidad
+          PolÃ­tica de privacidad
         </h1>
-        <p style={{ fontSize: 13, color: 'var(--text-4)', marginBottom: 48 }}>Última actualización: junio 2025</p>
+        <p style={{ fontSize: 13, color: 'var(--text-4)', marginBottom: 48 }}>Ãšltima actualizaciÃ³n: junio 2025</p>
 
         {[
           {
             title: '1. Responsable del tratamiento',
-            body: 'Ludum (en adelante, "nosotros") es responsable del tratamiento de los datos personales que recoges al usar esta plataforma. Puedes contactarnos en hola@ludum.es.',
+            body: 'Ludum (en adelante, "nosotros") es responsable del tratamiento de los datos personales que recoges al usar esta plataforma. Puedes contactarnos en info@ludumgames.es.',
           },
           {
             title: '2. Datos que recopilamos',
-            body: 'Recopilamos el email y contraseña que usas para registrarte (gestionados de forma segura por Supabase), el nombre de usuario que eliges, las partidas, valoraciones y listas que creas dentro de la plataforma, y los datos de colección que importas voluntariamente desde BoardGameGeek.',
+            body: 'Recopilamos el email y contraseÃ±a que usas para registrarte (gestionados de forma segura por Supabase), el nombre de usuario que eliges, las partidas, valoraciones y listas que creas dentro de la plataforma, y los datos de colecciÃ³n que importas voluntariamente desde BoardGameGeek.',
           },
           {
             title: '3. Finalidad del tratamiento',
@@ -34,23 +34,23 @@ export default function Privacidad() {
           },
           {
             title: '4. Publicidad',
-            body: 'Ludum muestra publicidad para cubrir sus costes de operación. Los anuncios pueden ser contextuales (basados en el contenido de la página) pero no en tu perfil personal.',
+            body: 'Ludum muestra publicidad para cubrir sus costes de operaciÃ³n. Los anuncios pueden ser contextuales (basados en el contenido de la pÃ¡gina) pero no en tu perfil personal.',
           },
           {
             title: '5. Cookies',
-            body: 'Usamos únicamente cookies técnicas necesarias para mantener tu sesión iniciada. No utilizamos cookies de seguimiento de terceros.',
+            body: 'Usamos Ãºnicamente cookies tÃ©cnicas necesarias para mantener tu sesiÃ³n iniciada. No utilizamos cookies de seguimiento de terceros.',
           },
           {
             title: '6. Tus derechos',
-            body: 'Tienes derecho a acceder, rectificar o eliminar tus datos. Para ejercerlos, escríbenos a hola@ludum.es indicando tu solicitud. Eliminaremos tu cuenta y todos tus datos en un plazo máximo de 30 días.',
+            body: 'Tienes derecho a acceder, rectificar o eliminar tus datos. Para ejercerlos, escrÃ­benos a info@ludumgames.es indicando tu solicitud. Eliminaremos tu cuenta y todos tus datos en un plazo mÃ¡ximo de 30 dÃ­as.',
           },
           {
             title: '7. Seguridad',
-            body: 'Tus datos se almacenan en servidores de Supabase con cifrado en tránsito (HTTPS) y en reposo. Las contraseñas nunca se almacenan en texto plano.',
+            body: 'Tus datos se almacenan en servidores de Supabase con cifrado en trÃ¡nsito (HTTPS) y en reposo. Las contraseÃ±as nunca se almacenan en texto plano.',
           },
           {
-            title: '8. Cambios en esta política',
-            body: 'Podemos actualizar esta política ocasionalmente. Te notificaremos los cambios relevantes por email si tienes una cuenta activa.',
+            title: '8. Cambios en esta polÃ­tica',
+            body: 'Podemos actualizar esta polÃ­tica ocasionalmente. Te notificaremos los cambios relevantes por email si tienes una cuenta activa.',
           },
         ].map(section => (
           <div key={section.title} style={{ marginBottom: 32 }}>

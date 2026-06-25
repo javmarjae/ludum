@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
@@ -224,7 +224,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
   const [filterComplexity, setFilterComplexity] = useState<string | null>(null);
   const [filterDuration, setFilterDuration] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const supabase = useMemo(() => createClient(), []);
+  const supabaseRef = useRef(createClient());
 
   const hasFilters = filterPlayers !== null || filterComplexity !== null || filterDuration !== null;
   const hasQuery = query.trim().length >= 2;
@@ -252,7 +252,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
 
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
-      let q = supabase
+      let q = supabaseRef.current
         .from('games')
         .select('bgg_id, name, year_published, bgg_rating, bgg_rank, min_players, max_players, min_playtime, max_playtime, complexity, image_url, categories, mechanics, is_expansion')
         .neq('is_expansion', true);
@@ -276,7 +276,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
     }, 280);
 
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [query, supabase, filterPlayers, filterComplexity, filterDuration, hasQuery, hasFilters]);
+  }, [query, filterPlayers, filterComplexity, filterDuration, hasQuery, hasFilters]);
 
   const trendingNames = mostPlayedGames.slice(0, 5).map(g => g.name);
 

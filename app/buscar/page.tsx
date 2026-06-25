@@ -3,6 +3,8 @@ import { SearchClient } from './SearchClient';
 import { getTrendingGames, getTopRatedGames, getNewGames } from '@/lib/cached-queries';
 import type { Metadata } from 'next';
 
+export const revalidate = 1800;
+
 export const metadata: Metadata = {
   title: 'Buscador',
   description: 'Busca entre más de 138.000 juegos de mesa.',

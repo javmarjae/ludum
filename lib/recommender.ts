@@ -404,7 +404,7 @@ export async function getGroupRecommendations(
   // Parallel: plays, members, cached games + trending
   const [{ data: plays }, { data: members }, { main: allGames, trending: trendingGames }] =
     await Promise.all([
-      supabase.from('plays').select('game_id').eq('group_id', groupId),
+      supabase.from('plays').select('game_id').eq('group_id', groupId).limit(500),
       supabase.from('group_members').select('profile_id').eq('group_id', groupId),
       getCachedRecommenderGames(),
     ]);
@@ -412,17 +412,6 @@ export async function getGroupRecommendations(
   if (!allGames || allGames.length === 0) return null;
 
   const memberIds = (members ?? []).map((m: any) => m.profile_id as string);
-
-  // Fetch games owned by any group member (admin client bypasses RLS)
-  let ownedGameIds = new Set<string>();
-  if (memberIds.length > 0) {
-    const adminClient = createAdminClient();
-    const { data: ownedRows } = await adminClient
-      .from('user_games')
-      .select('game_id')
-      .in('profile_id', memberIds);
-    ownedGameIds = new Set((ownedRows ?? []).map((r: any) => r.game_id as string));
-  }
 
   // Build play-count map
   const playCountMap = new Map<string, number>();
@@ -433,7 +422,8 @@ export async function getGroupRecommendations(
     }
   }
 
-  // Fetch member ratings (needs memberIds, so sequential after parallel block)
+  // Fetch owned games + member ratings in parallel (both depend on memberIds, not each other)
+  let ownedGameIds = new Set<string>();
   let profile: PreferenceProfile = {
     categoryWeights: {},
     mechanicWeights: {},
@@ -445,15 +435,25 @@ export async function getGroupRecommendations(
   };
 
   if (memberIds.length > 0) {
-    const { data: ratedRows } = await supabase
-      .from('user_games')
-      .select(
-        'profile_id, rating, games(categories, mechanics, min_playtime, max_playtime, complexity)'
-      )
-      .in('profile_id', memberIds)
-      .not('rating', 'is', null)
-      .gte('rating', 3);
+    const adminClient = createAdminClient();
+    const [{ data: ownedRows }, { data: ratedRows }] = await Promise.all([
+      adminClient
+        .from('user_games')
+        .select('game_id')
+        .in('profile_id', memberIds)
+        .limit(1000),
+      supabase
+        .from('user_games')
+        .select(
+          'profile_id, rating, games(categories, mechanics, min_playtime, max_playtime, complexity)'
+        )
+        .in('profile_id', memberIds)
+        .not('rating', 'is', null)
+        .gte('rating', 3)
+        .limit(300),
+    ]);
 
+    ownedGameIds = new Set((ownedRows ?? []).map((r: any) => r.game_id as string));
     if (ratedRows && ratedRows.length > 0) {
       profile = buildPreferenceProfile(ratedRows as any, memberIds.length);
     }

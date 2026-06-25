@@ -1,4 +1,4 @@
-import { Nav, NavButton } from '@/components/Nav';
+﻿import { Nav, NavButton } from '@/components/Nav';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -18,27 +18,27 @@ export default function Contacto() {
           Contacto
         </h1>
         <p style={{ fontSize: 16, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 48 }}>
-          Somos un equipo pequeño pero respondemos rápido. Si tienes una duda, sugerencia o quieres colaborar, no dudes en escribirnos.
+          Somos un equipo pequeÃ±o pero respondemos rÃ¡pido. Si tienes una duda, sugerencia o quieres colaborar, no dudes en escribirnos.
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {[
             {
-              icon: '✉️',
+              icon: 'âœ‰ï¸',
               title: 'Email general',
               desc: 'Para cualquier consulta',
-              value: 'hola@ludum.es',
-              href: 'mailto:hola@ludum.es',
+              value: 'info@ludumgames.es',
+              href: 'mailto:info@ludumgames.es',
             },
             {
-              icon: '🐛',
-              title: 'Bugs y soporte técnico',
-              desc: 'Si algo no funciona como debería',
+              icon: 'ðŸ›',
+              title: 'Bugs y soporte tÃ©cnico',
+              desc: 'Si algo no funciona como deberÃ­a',
               value: 'soporte@ludum.es',
               href: 'mailto:soporte@ludum.es',
             },
             {
-              icon: '🤝',
+              icon: 'ðŸ¤',
               title: 'Colaboraciones y prensa',
               desc: 'Tiendas, clubes, eventos y medios',
               value: 'colabora@ludum.es',
@@ -62,7 +62,7 @@ export default function Contacto() {
         </div>
 
         <p style={{ fontSize: 13, color: 'var(--text-4)', marginTop: 36, lineHeight: 1.65 }}>
-          Tiempo de respuesta habitual: menos de 48 horas en días laborables.
+          Tiempo de respuesta habitual: menos de 48 horas en dÃ­as laborables.
         </p>
       </main>
     </>

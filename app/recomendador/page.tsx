@@ -135,7 +135,7 @@ export default async function RecomendadorPage({ searchParams }: Props) {
   const groupIds = groupsRaw.map((g) => g.id);
 
   const { data: allMembers } = groupIds.length > 0
-    ? await supabase.from('group_members').select('group_id').in('group_id', groupIds)
+    ? await supabase.from('group_members').select('group_id').in('group_id', groupIds).limit(500)
     : { data: [] };
 
   const countMap: Record<string, number> = {};
