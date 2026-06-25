@@ -7,6 +7,7 @@ import { SidebarNav } from '@/components/SidebarNav';
 import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { TutorialModal } from '@/components/TutorialModal';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next';
 import { Footer } from '@/components/Footer';
 
 const urbanist = Urbanist({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-sans' });
@@ -84,6 +85,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {user && <MobileBottomNav isAdmin={isAdmin} />}
         {showTutorial && <TutorialModal />}
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
