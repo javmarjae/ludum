@@ -16,9 +16,8 @@ jobs:
           curl -X POST "https://ludumgames.es/api/sync-bgg?mode=ranked&batch=100" \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
-            --fail \
-            --silent \
-            --show-error
+            -w "\nHTTP Status: %{http_code}\n" \
+            --verbose
 
   sync-new:
     if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 4 * * *'
