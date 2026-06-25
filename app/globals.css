@@ -343,20 +343,58 @@ html[data-authed="true"] .app-nav {
   border: none;
   cursor: pointer;
   font-family: inherit;
-  transition: background 0.12s;
+  transition: background 0.15s, transform 0.1s;
   width: 100%;
 }
 @media (max-width: 640px) {
   .buscar-player-btn { padding: 10px 6px; border-radius: 10px; }
 }
+.buscar-player-btn:not([data-active]):hover {
+  background: var(--brand-tint);
+  transform: translateY(-1px);
+}
+.buscar-player-btn:not([data-active]):hover .bp-count { color: var(--brand); }
+.buscar-player-btn:not([data-active]):hover .bp-label { color: var(--brand); }
+.buscar-player-btn[data-active] {
+  background: var(--brand);
+}
+.buscar-player-btn[data-active]:hover { opacity: 0.88; }
+.buscar-player-btn[data-active] .bp-count { color: white; }
+.buscar-player-btn[data-active] .bp-label { color: rgba(255,255,255,0.75); }
 
 .buscar-player-btn .bp-icon { font-size: 22px; }
-.buscar-player-btn .bp-count { font-size: 14px; font-weight: 800; color: var(--text); }
-.buscar-player-btn .bp-label { font-size: 11px; font-weight: 500; color: var(--text-4); }
+.buscar-player-btn .bp-count { font-size: 14px; font-weight: 800; color: var(--text); transition: color 0.15s; }
+.buscar-player-btn .bp-label { font-size: 11px; font-weight: 500; color: var(--text-4); transition: color 0.15s; }
 @media (max-width: 640px) {
   .buscar-player-btn .bp-icon  { font-size: 18px; }
   .buscar-player-btn .bp-count { font-size: 13px; }
   .buscar-player-btn .bp-label { font-size: 10px; }
+}
+
+/* Quick search chips — base styles via inline, hover via !important to override inline */
+.buscar-chip-btn:not([data-active]):hover {
+  background: var(--brand-tint) !important;
+  color: var(--brand) !important;
+  transform: translateX(2px);
+}
+.buscar-chip-btn[data-active]:hover { opacity: 0.88; }
+
+/* Trending chips — hover overrides inline styles */
+.buscar-trend-chip:not([data-active]):hover {
+  background: var(--brand-tint) !important;
+  color: var(--brand) !important;
+  border-color: var(--brand) !important;
+  transform: translateY(-1px);
+}
+.buscar-trend-chip[data-active]:hover { opacity: 0.88; }
+
+/* Search submit button */
+.buscar-search-submit {
+  transition: opacity 0.12s, transform 0.12s;
+}
+.buscar-search-submit:hover {
+  opacity: 0.88;
+  transform: translateY(-50%) scale(1.08);
 }
 
 .buscar-trending-bar {

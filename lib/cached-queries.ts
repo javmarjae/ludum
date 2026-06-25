@@ -45,12 +45,13 @@ export const getTopRatedGames = unstable_cache(
       .from('games')
       .select('bgg_id, name, image_url, bgg_rating, year_published, is_expansion')
       .not('bgg_rating', 'is', null)
+      .or('is_expansion.is.null,is_expansion.eq.false')
       .order('bgg_rating', { ascending: false })
       .limit(10);
     if (error) console.error('[cached-queries] getTopRatedGames:', error.message);
     return data ?? [];
   },
-  ['top-rated-games'],
+  ['top-rated-games-v3'],
   { revalidate: 3600 }
 );
 
@@ -92,14 +93,15 @@ export const getNewGames = unstable_cache(
       .from('games')
       .select('bgg_id, name, image_url, bgg_rating, year_published, is_expansion')
       .not('year_published', 'is', null)
-      .gte('year_published', new Date().getFullYear() - 2)
+      .not('bgg_rating', 'is', null)
+      .not('year_published', 'is', null)
+      .gte('year_published', new Date().getFullYear() - 1)
       .lte('year_published', new Date().getFullYear())
-      .order('year_published', { ascending: false })
       .order('bgg_rating', { ascending: false })
       .limit(15);
     if (error) console.error('[cached-queries] getNewGames:', error.message);
     return data ?? [];
   },
-  ['new-games'],
+  ['new-games-v5'],
   { revalidate: 3600 }
 );

@@ -324,6 +324,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
             }}
           />
           <button
+            className="buscar-search-submit"
             style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', width: 36, height: 36, borderRadius: '50%', background: 'var(--brand)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-btn-brand)' }}
             onClick={() => {}}
           >
@@ -353,14 +354,16 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
                       <button
                         key={item.label}
                         onClick={() => toggleFilter(item.filter)}
-                        className="hover-ghost"
+                        className="buscar-chip-btn"
+                        data-active={active ? 'true' : undefined}
                         style={{
-                          display: 'flex', alignItems: 'center', padding: '8px 10px', borderRadius: 9,
-                          background: active ? 'var(--brand)' : 'var(--bg-inset)', border: 'none',
-                          cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
+                          display: 'flex', alignItems: 'center', padding: '8px 10px',
+                          borderRadius: 9, border: 'none', cursor: 'pointer',
+                          textAlign: 'left', fontFamily: 'inherit', width: '100%',
                           fontSize: 12, fontWeight: 600,
+                          background: active ? 'var(--brand)' : 'var(--bg-inset)',
                           color: active ? 'white' : 'var(--text-2)',
-                          transition: 'background 0.12s, color 0.12s', width: '100%',
+                          transition: 'background 0.12s, color 0.12s, transform 0.1s',
                         }}
                       >
                         {item.label}
@@ -386,10 +389,20 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
             <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
               {trendingNames.map(name => (
                 <button key={name} onClick={() => setQuery(q => q === name ? '' : name)}
-                  className="hover-ghost"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 12px', borderRadius: 999, background: query === name ? 'var(--brand)' : 'var(--bg-inset)', border: '1.5px solid var(--border)', cursor: 'pointer', fontSize: 12, fontWeight: 700, color: query === name ? 'white' : 'var(--text)', fontFamily: 'inherit', transition: 'all 0.12s' }}
+                  className="buscar-trend-chip"
+                  data-active={query === name ? 'true' : undefined}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                    padding: '5px 12px', borderRadius: 999,
+                    background: query === name ? 'var(--brand)' : 'var(--bg-inset)',
+                    border: `1.5px solid ${query === name ? 'var(--brand)' : 'var(--border)'}`,
+                    cursor: 'pointer', fontSize: 12, fontWeight: 700,
+                    color: query === name ? 'white' : 'var(--text)',
+                    fontFamily: 'inherit',
+                    transition: 'background 0.12s, color 0.12s, border-color 0.12s, transform 0.1s',
+                  }}
                 >
-                  <span style={{ color: query === name ? 'rgba(255,255,255,0.7)' : '#16A34A', fontSize: 11, fontWeight: 900 }}>↗</span>
+                  <span style={{ fontSize: 11, fontWeight: 900 }}>↗</span>
                   {name}
                 </button>
               ))}
@@ -435,12 +448,12 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
               <button
                 key={n}
                 onClick={() => setFilterPlayers(prev => prev === n ? null : n)}
-                className="buscar-player-btn hover-ghost"
-                style={filterPlayers === n ? { background: 'var(--brand)' } : undefined}
+                className="buscar-player-btn"
+                data-active={filterPlayers === n || undefined}
               >
                 <span className="bp-icon">{icon}</span>
-                <span className="bp-count" style={filterPlayers === n ? { color: 'white' } : undefined}>{n === 6 ? '6+' : n}</span>
-                <span className="bp-label" style={filterPlayers === n ? { color: 'rgba(255,255,255,0.75)' } : undefined}>{label}</span>
+                <span className="bp-count">{n === 6 ? '6+' : n}</span>
+                <span className="bp-label">{label}</span>
               </button>
             ))}
           </div>
