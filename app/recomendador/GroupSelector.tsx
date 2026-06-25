@@ -82,26 +82,6 @@ export function GroupSelector({ groups, activeGroupId }: Props) {
                 {group.memberCount} miembro{group.memberCount !== 1 ? 's' : ''}
               </div>
             </div>
-            {active && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 8,
-                  right: 10,
-                  width: 20,
-                  height: 20,
-                  borderRadius: '50%',
-                  background: 'var(--brand)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                  <path d="M1.5 5L4 7.5L8.5 2.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-            )}
           </button>
         );
       })}

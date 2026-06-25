@@ -106,7 +106,7 @@ export default async function GrupoDetailPage({ params }: Props) {
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         width: '100%', boxSizing: 'border-box',
-        padding: '0 32px', height: 72, gap: 16,
+        padding: '0 clamp(14px,4vw,32px)', height: 72, gap: 16,
         borderBottom: '1px solid var(--border)',
         background: 'var(--bg-card)',
         backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
@@ -150,7 +150,7 @@ export default async function GrupoDetailPage({ params }: Props) {
         </div>
       </div>
 
-      <div style={{ width: '100%', boxSizing: 'border-box', padding: '28px 32px 80px' }}>
+      <div style={{ width: '100%', boxSizing: 'border-box', padding: '28px clamp(16px,4vw,32px) 80px' }}>
 
         {/* Stats row */}
         <div className="grupo-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 14, marginBottom: 28 }}>

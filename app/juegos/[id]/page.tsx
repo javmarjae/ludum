@@ -232,11 +232,7 @@ export default async function GamePage({ params, searchParams }: Props) {
         </div>
 
         {/* Portada + título anclados al fondo */}
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0,
-          display: 'flex', alignItems: 'flex-end', gap: 20,
-          padding: '0 32px 22px',
-        }}>
+        <div className="game-hero-inner">
           {game.image_url && (
             <Image
               src={game.image_url}
@@ -244,13 +240,7 @@ export default async function GamePage({ params, searchParams }: Props) {
               width={160}
               height={220}
               priority
-              style={{
-                height: 220, width: 'auto', maxWidth: 160,
-                borderRadius: 14, display: 'block', flexShrink: 0,
-                boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
-                border: '2px solid rgba(255,255,255,0.18)',
-                objectFit: 'cover',
-              }}
+              className="game-hero-cover"
             />
           )}
           <div style={{ flex: 1, minWidth: 0, paddingBottom: 4 }}>
@@ -304,7 +294,7 @@ export default async function GamePage({ params, searchParams }: Props) {
 
       {/* ── DETALLES ─────────────────────────────────── */}
       {activeTab === 'detalles' && (
-        <main style={{ maxWidth: 1400, margin: '0 auto', padding: '36px 40px 80px' }}>
+        <main className="game-detail-main">
 
           {/* Expansion banner */}
           {(game as any).is_expansion && (
@@ -326,12 +316,7 @@ export default async function GamePage({ params, searchParams }: Props) {
           )}
 
           {/* 3-column grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '240px 1fr 320px',
-            gap: 48,
-            alignItems: 'flex-start',
-          }}>
+          <div className="game-detail-cols">
 
             {/* LEFT: Portada + Lista de deseos */}
             <div>
@@ -467,7 +452,7 @@ export default async function GamePage({ params, searchParams }: Props) {
             </div>
 
             {/* RIGHT: Información */}
-            <div>
+            <div className="game-detail-col-right">
               <h2 className="t-section-title" style={{ marginBottom: 20, letterSpacing: '-0.01em' }}>
                 Información
               </h2>
@@ -564,7 +549,7 @@ export default async function GamePage({ params, searchParams }: Props) {
 
       {/* ── PARTIDAS ─────────────────────────────────── */}
       {activeTab === 'partidas' && (
-        <main style={{ maxWidth: 1100, margin: '0 auto', padding: '36px 40px 80px' }}>
+        <main style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(20px,3vw,36px) clamp(16px,4vw,40px) 80px' }}>
           {!user ? (
             <div style={{ textAlign: 'center', padding: '64px 0' }}>
               <p style={{ fontSize: 32, marginBottom: 12 }}>🎲</p>
@@ -631,14 +616,15 @@ export default async function GamePage({ params, searchParams }: Props) {
       {!user && (
         <div style={{
           position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50,
-          padding: '14px 28px',
+          padding: '12px clamp(16px,4vw,28px)',
           background: 'rgba(247,238,231,0.96)',
           backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
           borderTop: '1px solid var(--border)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
+          flexWrap: 'wrap',
         }}>
-          <p className="t-card-title" style={{ color: 'var(--text-2)' }}>
-            Regístrate para comentar, editar, inspeccionar
+          <p className="t-card-title" style={{ color: 'var(--text-2)', display: 'contents' }}>
+            <span style={{ display: 'inline' }}>Regístrate para comentar, editar, inspeccionar</span>
           </p>
           <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
             <Link href="/auth/signup" style={{
@@ -653,7 +639,7 @@ export default async function GamePage({ params, searchParams }: Props) {
               background: 'var(--bg-card)', color: 'var(--text-2)', textDecoration: 'none',
               boxShadow: 'var(--shadow-btn)',
             }}>
-              Continuar
+              Entrar
             </Link>
           </div>
         </div>

@@ -112,7 +112,10 @@ export default async function OrgPage({ params }: Props) {
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: isAdmin ? '1fr 300px' : '1fr', gap: 40, alignItems: 'start' }}>
+        <div
+          className={isAdmin ? 'org-admin-cols' : undefined}
+          style={{ display: 'grid', gridTemplateColumns: isAdmin ? undefined : '1fr', gap: isAdmin ? undefined : 40, alignItems: 'start' }}
+        >
 
           {/* ── Torneos ──────────────────────────────── */}
           <section>

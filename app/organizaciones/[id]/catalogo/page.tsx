@@ -82,7 +82,7 @@ export default async function CatalogoPage({ params, searchParams }: Props) {
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: `/organizaciones/${orgId}`, label: org.name }} />
 
-      <main style={{ maxWidth: 860, margin: '0 auto', padding: '48px 32px 80px' }}>
+      <main style={{ maxWidth: 860, margin: '0 auto', padding: '48px clamp(16px,4vw,32px) 80px' }}>
         <div style={{ marginBottom: 32 }}>
           <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 4 }}>
             Catálogo

@@ -170,19 +170,94 @@ h1, h2, h3, h4 {
 /* Game detail — three-column layout: narrow | wide center | narrow */
 .game-detail-cols {
   display: grid;
-  grid-template-columns: 220px 1fr 220px;
-  gap: 28px;
+  grid-template-columns: 240px 1fr 320px;
+  gap: 40px;
   align-items: flex-start;
 }
 @media (max-width: 960px) {
   .game-detail-cols {
     grid-template-columns: 200px 1fr;
+    gap: 28px;
   }
   .game-detail-col-right { display: none; }
 }
 @media (max-width: 640px) {
   .game-detail-cols { grid-template-columns: 1fr; gap: 16px; }
   .game-detail-col-right { display: block; }
+}
+
+/* Game detail main container */
+.game-detail-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 36px 40px 80px;
+}
+@media (max-width: 640px) {
+  .game-detail-main { padding: 20px 16px 80px; }
+}
+
+/* Game hero inner (cover + title anchored to bottom) */
+.game-hero-inner {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  display: flex; align-items: flex-end; gap: 20px;
+  padding: 0 32px 22px;
+}
+@media (max-width: 640px) {
+  .game-hero-inner { padding: 0 16px 16px; gap: 12px; }
+}
+
+/* Game cover image in hero — smaller on mobile */
+.game-hero-cover {
+  height: 220px; width: auto; max-width: 160px;
+  border-radius: 14px; display: block; flex-shrink: 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  border: 2px solid rgba(255,255,255,0.18);
+  object-fit: cover;
+}
+@media (max-width: 640px) {
+  .game-hero-cover { height: 160px; max-width: 110px; border-radius: 10px; }
+}
+
+/* Home dashboard (logged-in) header and content */
+.home-dash-header {
+  display: grid;
+  grid-template-columns: 56px 1fr 96px;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 32px 30px;
+  background: var(--bg);
+}
+.home-dash-content {
+  padding: 0 32px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+@media (max-width: 640px) {
+  .home-dash-header { padding: 14px 16px 20px; }
+  .home-dash-content { padding: 0 16px 80px; gap: 32px; }
+}
+
+/* Organizations admin two-column grid */
+.org-admin-cols {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 40px;
+  align-items: start;
+}
+@media (max-width: 700px) {
+  .org-admin-cols { grid-template-columns: 1fr; gap: 28px; }
+}
+
+/* Recomendador skeleton two-column grid */
+.recom-skeleton-cols {
+  display: grid;
+  grid-template-columns: 1fr min(440px, 38%);
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 700px) {
+  .recom-skeleton-cols { grid-template-columns: 1fr; }
 }
 
 /* Responsive nav */
@@ -280,7 +355,8 @@ html[data-authed="true"] .app-nav {
   .home-sidebar { display: none; }
 }
 @media (max-width: 640px) {
-  .home-steps { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .home-steps { grid-template-columns: 1fr !important; gap: 32px !important; padding: 40px 16px !important; }
+  .home-hero  { padding: 40px 16px 56px !important; }
 }
 
 /* Home sidebar nav (logged-in layout) */
@@ -635,9 +711,4 @@ html[data-authed="true"] .app-nav {
     grid-template-columns: 1fr 1fr;
     gap: 24px 16px;
   }
-}
-
-/* Ocultar footer en la app autenticada (sidebar layout) */
-html[data-authed="true"] .site-footer {
-  display: none;
 }

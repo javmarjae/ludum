@@ -60,7 +60,7 @@ export default async function EventoDetailPage({ params }: Props) {
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: '/eventos', label: 'Eventos' }} />
 
-      <main style={{ maxWidth: 720, margin: '0 auto', padding: '40px 32px 80px' }}>
+      <main style={{ maxWidth: 720, margin: '0 auto', padding: '40px clamp(16px,4vw,32px) 80px' }}>
         {/* Image header */}
         <div style={{
           width: '100%', height: 240, borderRadius: 16, overflow: 'hidden',

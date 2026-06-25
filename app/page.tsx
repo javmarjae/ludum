@@ -215,7 +215,7 @@ export default async function Home() {
 
           <BeginnerSection games={beginnerList} isLanding />
 
-          <section style={{ maxWidth: 1120, margin: '0 auto', padding: '64px 32px 80px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap' }}>
+          <section style={{ maxWidth: 1120, margin: '0 auto', padding: '64px clamp(16px,4vw,32px) 80px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', gap: 48, flexWrap: 'wrap' }}>
               {[
                 { value: '138k+', label: 'juegos en catálogo' },
@@ -240,14 +240,7 @@ export default async function Home() {
         <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
 
           {/* Top header */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '56px 1fr 96px',
-            alignItems: 'center',
-            gap: 16,
-            padding: '22px 32px 30px',
-            background: 'var(--bg)',
-          }}>
+          <div className="home-dash-header">
             <Link href="/perfil" style={{
               width: 48, height: 48, borderRadius: '50%',
               background: 'var(--bg-card)',
@@ -264,7 +257,7 @@ export default async function Home() {
             <div />
           </div>
 
-          <div style={{ padding: '0 32px 96px', display: 'flex', flexDirection: 'column', gap: 48 }}>
+          <div className="home-dash-content">
 
             {/* Explora tus juegos */}
             <section>

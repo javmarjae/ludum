@@ -180,7 +180,8 @@ export default async function TorneoPage({ params }: Props) {
             <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>
               {tournament.status === 'finalizado' ? 'Clasificación final' : 'Clasificación'}
             </h2>
-            <div style={{ borderRadius: 20, overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+            <div style={{ borderRadius: 20, overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', overflowX: 'auto' }}>
+              <div style={{ minWidth: 400 }}>
               {/* Table header */}
               <div style={{ display: 'grid', gridTemplateColumns: '40px 1fr 50px 50px 50px 50px', gap: 0, padding: '10px 16px', background: 'var(--bg-inset)', borderBottom: '1px solid var(--border)' }}>
                 {['#', 'Jugador', 'PJ', 'V', 'D', 'Pts'].map(h => (
@@ -208,6 +209,7 @@ export default async function TorneoPage({ params }: Props) {
                   </div>
                 );
               })}
+              </div>
             </div>
           </section>
         )}

@@ -55,7 +55,7 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
 
   return (
     <section style={wrapperStyle}>
-      <div style={{ maxWidth: isLanding ? 1120 : undefined, margin: isLanding ? '0 auto' : undefined, padding: isLanding ? '72px 32px' : undefined }}>
+      <div style={{ maxWidth: isLanding ? 1120 : undefined, margin: isLanding ? '0 auto' : undefined, padding: isLanding ? 'clamp(40px,7vw,72px) clamp(16px,4vw,32px)' : undefined }}>
         {/* Header row */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32, gap: 16 }}>
           <div>

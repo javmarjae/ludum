@@ -22,7 +22,7 @@ export default async function NuevoEventoPage() {
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: '/eventos', label: 'Eventos' }} />
-      <main style={{ maxWidth: 640, margin: '0 auto', padding: '48px 32px 80px' }}>
+      <main style={{ maxWidth: 640, margin: '0 auto', padding: '48px clamp(16px,4vw,32px) 80px' }}>
         <h1 style={{ margin: '0 0 32px', fontSize: 24, fontWeight: 800, color: 'var(--text-1)' }}>
           Crear evento
         </h1>

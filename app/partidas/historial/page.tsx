@@ -51,7 +51,7 @@ export default async function HistorialPage({ searchParams }: Props) {
         </Link>
       </div>
 
-      <main style={{ maxWidth: 860, margin: '0 auto', padding: '48px 32px 80px' }}>
+      <main style={{ maxWidth: 860, margin: '0 auto', padding: '48px clamp(16px,4vw,32px) 80px' }}>
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 4 }}>Historial de partidas</h1>
           <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-3)' }}>

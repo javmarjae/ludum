@@ -193,7 +193,7 @@ export async function RecommendationSection({ groupId, memberCount, filters }: P
   if (!recs) return <NoRecs />;
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr clamp(300px, 28%, 440px)', gap: 24, alignItems: 'start' }}>
+    <div className="recom-skeleton-cols">
       {/* Left column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24, minWidth: 0 }}>
         <section>

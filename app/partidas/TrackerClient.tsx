@@ -270,7 +270,7 @@ export function TrackerClient({ plays, ratings, totalUsers, userRank, userId }: 
   ];
 
   return (
-    <div style={{ padding: '32px 32px 64px' }}>
+    <div style={{ padding: '32px clamp(16px,4vw,32px) 64px' }}>
 
       {/* ── Header ── */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 14 }}>
