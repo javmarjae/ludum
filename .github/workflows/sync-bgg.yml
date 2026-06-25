@@ -12,22 +12,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Sync ranked games
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
           curl -X POST "https://ludumgames.es/api/sync-bgg?mode=ranked&batch=100" \
-            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: ${CRON_SECRET}" \
             -H "Content-Type: application/json" \
-            -w "\nHTTP Status: %{http_code}\n" \
-            --verbose
+            -w "\nHTTP Status: %{http_code}\n"
 
   sync-new:
     if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 4 * * *'
     runs-on: ubuntu-latest
     steps:
       - name: Sync new games
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
           curl -X POST "https://ludumgames.es/api/sync-bgg?mode=new&batch=200" \
-            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: ${CRON_SECRET}" \
             -H "Content-Type: application/json" \
-            --fail \
-            --silent \
-            --show-error
+            -w "\nHTTP Status: %{http_code}\n"
