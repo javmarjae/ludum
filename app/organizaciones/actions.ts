@@ -113,7 +113,7 @@ export async function submitOrgRequest(formData: FormData) {
 }
 
 export async function updateOrganization(orgId: string, data: {
-  name?: string; description?: string; location?: string; website?: string;
+  name?: string; description?: string; location?: string; maps_url?: string; website?: string;
 }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

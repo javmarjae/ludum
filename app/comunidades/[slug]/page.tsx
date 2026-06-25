@@ -6,6 +6,7 @@ import { Avatar } from '@/components/Avatar';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
 import { JoinButton } from './JoinButton';
 import { CreatePostForm } from './CreatePostForm';
+import { EditCommunityForm } from './EditCommunityForm';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -28,7 +29,7 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
 
   const { data: community } = await supabase
     .from('communities')
-    .select('id, name, slug, description, is_official, image_url, category_id, categories(name)')
+    .select('id, name, slug, description, is_official, image_url, category_id, created_by, location, maps_url, categories(name)')
     .eq('slug', slug)
     .single();
 
@@ -42,6 +43,7 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
     .single();
 
   const isMember = !!membership;
+  const isCreator = user.id === community.created_by;
   const categoryName = (community.categories as any)?.name ?? null;
   const icon = CATEGORY_ICONS[categoryName ?? ''] ?? '🧩';
 
@@ -109,13 +111,16 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
       <main style={{ maxWidth: 720, margin: '0 auto', padding: '32px 24px 80px' }}>
         {/* Community header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 28 }}>
-          <div style={{
-            width: 56, height: 56, borderRadius: 16, flexShrink: 0,
-            background: 'var(--brand-tint)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
-          }}>
-            {icon}
-          </div>
+          {community.image_url
+            ? <img src={community.image_url} alt={community.name} style={{ width: 56, height: 56, borderRadius: 16, objectFit: 'cover', flexShrink: 0, boxShadow: 'var(--shadow-card)' }} />
+            : <div style={{
+                width: 56, height: 56, borderRadius: 16, flexShrink: 0,
+                background: 'var(--brand-tint)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
+              }}>
+                {icon}
+              </div>
+          }
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
               <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em' }}>
@@ -131,12 +136,32 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
             {community.description && (
               <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-3)', lineHeight: 1.5 }}>{community.description}</p>
             )}
+            {(community as any).location && (
+              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', marginTop: 4 }}>
+                {(community as any).maps_url
+                  ? <a href={(community as any).maps_url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>📍 {(community as any).location}</a>
+                  : `📍 ${(community as any).location}`
+                }
+              </p>
+            )}
           </div>
-          <JoinButton
-            communityId={community.id}
-            isMember={isMember}
-            communitySlug={community.slug}
-          />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, flexShrink: 0 }}>
+            <JoinButton
+              communityId={community.id}
+              isMember={isMember}
+              communitySlug={community.slug}
+            />
+            {isCreator && (
+              <EditCommunityForm
+                communityId={community.id}
+                communitySlug={community.slug}
+                initialDescription={community.description ?? ''}
+                initialLocation={(community as any).location ?? ''}
+                initialMapsUrl={(community as any).maps_url ?? ''}
+                initialImage={community.image_url ?? null}
+              />
+            )}
+          </div>
         </div>
 
         {/* Tabs */}

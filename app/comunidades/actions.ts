@@ -145,3 +145,61 @@ export async function deleteComment(commentId: string, postId: string, community
   revalidatePath(`/comunidades/${communitySlug}/posts/${postId}`);
   return { ok: true };
 }
+
+export async function updateCommunity(
+  communityId: string,
+  communitySlug: string,
+  data: { description?: string; location?: string; maps_url?: string }
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'No autenticado' };
+
+  const { data: community } = await supabase
+    .from('communities')
+    .select('created_by')
+    .eq('id', communityId)
+    .single();
+
+  if (!community || community.created_by !== user.id) return { error: 'Sin permiso' };
+
+  const { error } = await supabase.from('communities').update(data).eq('id', communityId);
+  if (error) return { error: error.message };
+
+  revalidatePath(`/comunidades/${communitySlug}`);
+  return { ok: true };
+}
+
+export async function uploadCommunityImage(communityId: string, communitySlug: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'No autenticado' };
+
+  const { data: community } = await supabase
+    .from('communities')
+    .select('created_by')
+    .eq('id', communityId)
+    .single();
+
+  if (!community || community.created_by !== user.id) return { error: 'Sin permiso' };
+
+  const file = formData.get('image') as File;
+  if (!file || file.size === 0) return { error: 'Sin archivo' };
+
+  const ext = file.name.split('.').pop() ?? 'jpg';
+  const path = `${communityId}/cover.${ext}`;
+  const arrayBuffer = await file.arrayBuffer();
+
+  const { error: uploadError } = await supabase.storage
+    .from('community-images')
+    .upload(path, arrayBuffer, { contentType: file.type, upsert: true });
+
+  if (uploadError) return { error: uploadError.message };
+
+  const { data: { publicUrl } } = supabase.storage.from('community-images').getPublicUrl(path);
+  const imageUrl = `${publicUrl}?v=${Date.now()}`;
+
+  await supabase.from('communities').update({ image_url: imageUrl }).eq('id', communityId);
+  revalidatePath(`/comunidades/${communitySlug}`);
+  return { url: imageUrl };
+}

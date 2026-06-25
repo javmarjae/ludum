@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { AppNav } from '@/components/AppNav';
 import { ManageStaff } from './ManageStaff';
+import { EditOrgForm } from './EditOrgForm';
 
 interface Props { params: Promise<{ id: string }> }
 
@@ -74,7 +75,11 @@ export default async function OrgPage({ params }: Props) {
             </div>
             <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', marginBottom: 6 }}>
               {org.type === 'tienda' ? '🏪 Tienda' : '🎲 Asociación'}
-              {org.location && ` · 📍 ${org.location}`}
+              {org.location && (
+                org.maps_url
+                  ? <> · <a href={org.maps_url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>📍 {org.location}</a></>
+                  : ` · 📍 ${org.location}`
+              )}
             </p>
             {org.description && (
               <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-2)', lineHeight: 1.6 }}>{org.description}</p>
@@ -156,7 +161,7 @@ export default async function OrgPage({ params }: Props) {
             )}
           </section>
 
-          {/* ── Equipo ───────────────────────────────── */}
+          {/* ── Equipo + Edición ─────────────────────── */}
           {isAdmin && (
             <section>
               <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)', marginBottom: 14 }}>
@@ -173,6 +178,17 @@ export default async function OrgPage({ params }: Props) {
               </div>
 
               <ManageStaff orgId={id} members={members} isAdmin={isAdmin} />
+
+              <div style={{ marginTop: 20 }}>
+                <EditOrgForm
+                  orgId={id}
+                  initialDescription={org.description ?? ''}
+                  initialLocation={org.location ?? ''}
+                  initialMapsUrl={(org as any).maps_url ?? ''}
+                  initialLogo={org.logo_url ?? null}
+                  orgType={org.type}
+                />
+              </div>
             </section>
           )}
 

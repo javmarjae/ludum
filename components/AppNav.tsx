@@ -60,6 +60,13 @@ export async function AppNav({ back }: { back?: { href: string; label: string } 
           <NavButton href="/perfil" variant="brand">Perfil</NavButton>
         </>
       }
+      mobileItems={[
+        { href: '/blog', label: 'Blog' },
+        { href: '/buscar', label: 'Buscar' },
+        { href: '/recomendador', label: 'Recomendador' },
+        { href: '/grupos', label: 'Mis grupos' },
+        { href: '/perfil', label: 'Entrar / Perfil', variant: 'brand' },
+      ]}
     />
   );
 }

@@ -1,14 +1,16 @@
 import Link from 'next/link';
 import { ThemeToggle } from './ThemeToggle';
+import { MobileNavMenu } from './MobileNavMenu';
 
 export { ThemeToggle };
 
 interface NavProps {
   back?: { href: string; label: string };
   right?: React.ReactNode;
+  mobileItems?: Array<{ href: string; label: string; variant?: 'brand' }>;
 }
 
-export function Nav({ back, right }: NavProps) {
+export function Nav({ back, right, mobileItems }: NavProps) {
   return (
     <header className="app-nav" style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 50 }}>
       <div style={{ maxWidth: 1120, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -23,7 +25,12 @@ export function Nav({ back, right }: NavProps) {
             </Link>
           )}
         </div>
-        {right && <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>{right}</div>}
+        {right && <div className="nav-desktop-links" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>{right}</div>}
+        {mobileItems && (
+          <div className="nav-mobile-menu">
+            <MobileNavMenu items={mobileItems} />
+          </div>
+        )}
       </div>
     </header>
   );
