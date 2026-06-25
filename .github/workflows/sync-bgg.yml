@@ -15,8 +15,7 @@ jobs:
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          curl -X POST "https://ludumgames.es/api/sync-bgg?mode=ranked&batch=100" \
-            -H "x-cron-secret: ${CRON_SECRET}" \
+          curl -X POST "https://ludumgames.es/api/sync-bgg?mode=ranked&batch=100&secret=${CRON_SECRET}" \
             -H "Content-Type: application/json" \
             -w "\nHTTP Status: %{http_code}\n"
 
@@ -28,7 +27,6 @@ jobs:
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          curl -X POST "https://ludumgames.es/api/sync-bgg?mode=new&batch=200" \
-            -H "x-cron-secret: ${CRON_SECRET}" \
+          curl -X POST "https://ludumgames.es/api/sync-bgg?mode=new&batch=200&secret=${CRON_SECRET}" \
             -H "Content-Type: application/json" \
             -w "\nHTTP Status: %{http_code}\n"
