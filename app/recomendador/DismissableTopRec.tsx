@@ -274,6 +274,31 @@ export function DismissableTopRec({ initial, groupId, memberCount, filters }: Pr
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, opacity: isPending ? 0.7 : 1, transition: 'opacity 0.2s' }}>
       <TopGameCard rec={rec} onDismiss={handleDismiss} isPending={isPending} />
       <CompatibilityStats stats={rec.stats} />
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <button
+          onClick={handleDismiss}
+          disabled={isPending}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '9px 18px', borderRadius: 999,
+            border: '1.5px solid var(--border)',
+            background: 'var(--bg-card)',
+            fontSize: 13, fontWeight: 600, color: 'var(--text-2)',
+            cursor: isPending ? 'default' : 'pointer',
+            opacity: isPending ? 0.5 : 1,
+            transition: 'all 0.15s',
+            fontFamily: 'inherit',
+          }}
+        >
+          {isPending ? 'Buscando...' : 'Siguiente recomendación'}
+          {!isPending && (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          )}
+        </button>
+      </div>
     </div>
   );
 }

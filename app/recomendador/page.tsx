@@ -17,6 +17,26 @@ export const metadata: Metadata = {
 
 function RecommendationSkeleton() {
   return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+      {/* Status bar */}
+      <div style={{
+        borderRadius: 16, padding: '14px 18px',
+        background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 10 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0, animation: 'spin 1.1s linear infinite' }}>
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-2)' }}>
+            Buscando los juegos que encajan con vuestro grupo...
+          </span>
+        </div>
+        <div style={{ height: 5, borderRadius: 999, background: 'var(--bg-inset)', overflow: 'hidden' }}>
+          <div className="rec-loading-bar-fill" />
+        </div>
+      </div>
+
     <div className="recom-skeleton-cols">
       {/* Left */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -76,6 +96,7 @@ function RecommendationSkeleton() {
           ))}
         </div>
       </div>
+    </div>
     </div>
   );
 }
