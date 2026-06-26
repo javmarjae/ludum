@@ -402,14 +402,30 @@ export async function getGroupRecommendations(
   const supabase = await createClient();
 
   // Parallel: plays, members, cached games + trending
-  const [{ data: plays }, { data: members }, { main: allGames, trending: trendingGames }] =
+  const [{ data: plays }, { data: members }, cachedGames] =
     await Promise.all([
       supabase.from('plays').select('game_id').eq('group_id', groupId).limit(500),
       supabase.from('group_members').select('profile_id').eq('group_id', groupId),
-      getCachedRecommenderGames(),
+      getCachedRecommenderGames().catch(() => null),
     ]);
 
-  if (!allGames || allGames.length === 0) return null;
+  let allGames: GameResult[] = cachedGames?.main ?? [];
+  const trendingGames = cachedGames?.trending ?? [];
+
+  // Cache miss or poisoned empty result — query directly
+  if (allGames.length === 0) {
+    const { data: fallback } = await supabase
+      .from('games')
+      .select(GAME_SELECT)
+      .not('bgg_rank', 'is', null)
+      .not('bgg_rating', 'is', null)
+      .gte('bgg_rating', 7.0)
+      .order('bgg_rating', { ascending: false })
+      .limit(80);
+    allGames = (fallback ?? []) as GameResult[];
+  }
+
+  if (allGames.length === 0) return null;
 
   const memberIds = (members ?? []).map((m: any) => m.profile_id as string);
 

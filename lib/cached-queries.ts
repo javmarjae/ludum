@@ -62,7 +62,7 @@ const RECOMMENDER_GAME_SELECT =
 export const getCachedRecommenderGames = unstable_cache(
   async () => {
     const supabase = getPublicSupabase();
-    const [{ data: main }, { data: trending }] = await Promise.all([
+    const [{ data: main, error: mainErr }, { data: trending }] = await Promise.all([
       supabase
         .from('games')
         .select(RECOMMENDER_GAME_SELECT)
@@ -79,7 +79,10 @@ export const getCachedRecommenderGames = unstable_cache(
         .order('bgg_rating', { ascending: false })
         .range(8, 26),
     ]);
-    return { main: main ?? [], trending: trending ?? [] };
+    // Throw on error or empty so unstable_cache never stores a failed result
+    if (mainErr) throw new Error(mainErr.message);
+    if (!main || main.length === 0) throw new Error('recommender: no games returned');
+    return { main, trending: trending ?? [] };
   },
   ['recommender-games'],
   { revalidate: 3600 }
