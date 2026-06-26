@@ -52,7 +52,7 @@ function TrendingSection({ games }: { games: Array<GameResult & { groupCount: nu
         {games.slice(0, 8).map((game) => (
           <Link key={game.id} href={`/juegos/${game.bgg_id}`} style={{ flexShrink: 0, borderRadius: 14, overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', textDecoration: 'none', width: 140 }}>
             {game.image_url ? (
-              <Image src={game.image_url} alt={game.name} width={140} height={90}
+              <Image src={game.image_url} alt={game.name} width={140} height={90} sizes="140px"
                 style={{ objectFit: 'cover', display: 'block', width: '100%', height: 90 }} />
             ) : (
               <div style={{ width: '100%', height: 90, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>🎲</div>
@@ -76,7 +76,7 @@ function AlternativeRow({ game }: { game: GameResult & { affinity: number } }) {
     <Link href={`/juegos/${game.bgg_id}`} style={{ textDecoration: 'none' }}>
       <div className="hover-scale-sm" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
         {game.image_url ? (
-          <Image src={game.image_url} alt={game.name} width={44} height={44} style={{ borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
+          <Image src={game.image_url} alt={game.name} width={44} height={44} sizes="44px" style={{ borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
         ) : (
           <div style={{ width: 44, height: 44, borderRadius: 8, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>🎲</div>
         )}
@@ -117,7 +117,7 @@ function WildcardCard({ game }: { game: GameResult & { affinity: number; wildcar
       <Link href={`/juegos/${game.bgg_id}`} style={{ textDecoration: 'none' }}>
         <div className="hover-scale-sm" style={{ display: 'flex', gap: 12, padding: '0 16px 12px', alignItems: 'flex-start' }}>
           {game.image_url ? (
-            <Image src={game.image_url} alt={game.name} width={64} height={80} style={{ borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
+            <Image src={game.image_url} alt={game.name} width={64} height={80} sizes="64px" style={{ borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
           ) : (
             <div style={{ width: 64, height: 80, borderRadius: 10, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>🎲</div>
           )}

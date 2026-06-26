@@ -118,7 +118,7 @@ function TopGameCard({ rec, onDismiss, isPending }: {
           {/* Imagen — clickable */}
           <Link href={`/juegos/${game.bgg_id}`} style={{ flexShrink: 0, display: 'block', textDecoration: 'none' }} className="hover-scale-sm">
             {game.image_url ? (
-              <Image src={game.image_url} alt={game.name} width={120} height={150}
+              <Image src={game.image_url} alt={game.name} width={120} height={150} priority sizes="120px"
                 style={{ borderRadius: 12, objectFit: 'cover', display: 'block' }} />
             ) : (
               <div style={{ width: 120, height: 150, borderRadius: 12, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>🎲</div>
