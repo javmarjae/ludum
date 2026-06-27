@@ -11,6 +11,13 @@ import { WhatToPlay } from './WhatToPlay';
 import { CopyButton } from '@/components/CopyButton';
 import { InviteQR } from './InviteQR';
 
+function playerIcon(n: number): string {
+  if (n <= 1) return '/icons/solo.svg';
+  if (n <= 2) return '/icons/pareja.svg';
+  if (n <= 4) return '/icons/grupo.svg';
+  return '/icons/pandilla.svg';
+}
+
 function relativeDate(dateStr: string): string {
   const date = new Date(dateStr);
   const now = new Date();
@@ -123,7 +130,9 @@ export default async function GrupoDetailPage({ params }: Props) {
           {(group as any).image_url ? (
             <img src={(group as any).image_url} alt={group.name} style={{ width: 40, height: 40, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
           ) : (
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>👥</div>
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <img src={playerIcon(memberCount)} alt="" aria-hidden="true" style={{ width: 22, height: 22 }} />
+              </div>
           )}
           <div style={{ minWidth: 0 }}>
             <h1 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2, lineHeight: 1.2 }}>
@@ -243,8 +252,9 @@ export default async function GrupoDetailPage({ params }: Props) {
                                   📅 {relativeDate(play.played_at)}
                                 </span>
                                 {playerCount > 0 && (
-                                  <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>
-                                    👥 {playerCount} jugadores
+                                  <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                    <img src={playerIcon(playerCount)} alt="" aria-hidden="true" style={{ width: 13, height: 13 }} />
+                                    {playerCount} jugadores
                                   </span>
                                 )}
                                 {play.duration_minutes && (

@@ -62,7 +62,7 @@ const RECOMMENDER_GAME_SELECT =
 export const getCachedRecommenderGames = unstable_cache(
   async () => {
     const supabase = getPublicSupabase();
-    const [{ data: main, error: mainErr }, { data: trending }] = await Promise.all([
+    const [{ data: main, error: mainErr }, { data: trending, error: trendingErr }] = await Promise.all([
       supabase
         .from('games')
         .select(RECOMMENDER_GAME_SELECT)
@@ -82,7 +82,9 @@ export const getCachedRecommenderGames = unstable_cache(
     // Throw on error or empty so unstable_cache never stores a failed result
     if (mainErr) throw new Error(mainErr.message);
     if (!main || main.length === 0) throw new Error('recommender: no games returned');
-    return { main, trending: trending ?? [] };
+    if (trendingErr) console.error('[cached-queries] getCachedRecommenderGames trending:', trendingErr.message);
+    // Use a slice of main as fallback so trending is never silently cached as []
+    return { main, trending: (trending && trending.length > 0) ? trending : main.slice(8, 27) };
   },
   ['recommender-games'],
   { revalidate: 3600 }

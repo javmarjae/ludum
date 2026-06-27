@@ -410,7 +410,7 @@ export async function getGroupRecommendations(
     ]);
 
   let allGames: GameResult[] = cachedGames?.main ?? [];
-  const trendingGames = cachedGames?.trending ?? [];
+  let trendingGames: GameResult[] = cachedGames?.trending ?? [];
 
   // Cache miss or poisoned empty result — query directly
   if (allGames.length === 0) {
@@ -423,6 +423,12 @@ export async function getGroupRecommendations(
       .order('bgg_rating', { ascending: false })
       .limit(80);
     allGames = (fallback ?? []) as GameResult[];
+  }
+
+  // Trending fallback: if cache missed or the trending sub-query returned null,
+  // derive from allGames so section 5 always renders.
+  if (trendingGames.length === 0 && allGames.length > 8) {
+    trendingGames = allGames.slice(8, 27);
   }
 
   if (allGames.length === 0) return null;
