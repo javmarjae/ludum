@@ -546,11 +546,11 @@ html[data-authed="true"] .app-nav {
 .buscar-player-btn[data-active] .bp-count { color: white; }
 .buscar-player-btn[data-active] .bp-label { color: rgba(255,255,255,0.75); }
 
-.buscar-player-btn .bp-icon  { font-size: 22px; }
+.buscar-player-btn .bp-icon  { width: 32px; height: 32px; display: block; }
 .buscar-player-btn .bp-count { font-size: var(--fs-h6); font-weight: 800; color: var(--text); transition: color 0.15s; }
 .buscar-player-btn .bp-label { font-size: var(--fs-caption); font-weight: 500; color: var(--text-4); transition: color 0.15s; }
 @media (max-width: 640px) {
-  .buscar-player-btn .bp-icon { font-size: 18px; }
+  .buscar-player-btn .bp-icon { width: 26px; height: 26px; }
 }
 
 /* Quick search chips — base styles via inline, hover via !important to override inline */

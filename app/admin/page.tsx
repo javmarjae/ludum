@@ -10,7 +10,7 @@ export const metadata = { title: 'Admin — Ludum' };
 
 function RequestsSkeleton() {
   return (
-    <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-4)', padding: '20px 0' }}>
+    <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-4)', padding: '16px 0' }}>
       Cargando…
     </p>
   );
@@ -38,8 +38,6 @@ export default async function AdminPage({
 
   const admin = createAdminClient();
 
-  // Fetch auth users (capped at 200) + count-only queries in parallel.
-  // Org/verif full data is deferred to Suspense sections below.
   const [
     { data: authData },
     { count: totalUsers },
@@ -61,7 +59,6 @@ export default async function AdminPage({
   const authUsers = authData?.users ?? [];
   const emailMap: Record<string, string> = Object.fromEntries(authUsers.map(u => [u.id, u.email ?? '']));
 
-  // Determine which user IDs to show
   let userIds: string[];
   if (query) {
     const ql = query.toLowerCase();
@@ -79,7 +76,6 @@ export default async function AdminPage({
       .map(u => u.id);
   }
 
-  // Sentinel UUID so .in() never returns all rows when list is empty
   const safeIds = userIds.length ? userIds : ['00000000-0000-0000-0000-000000000000'];
   const { data: profiles } = await admin
     .from('profiles')
@@ -92,107 +88,157 @@ export default async function AdminPage({
   }));
 
   const stats = [
-    { label: 'Usuarios totales', value: totalUsers ?? authUsers.length },
-    { label: 'Admins',           value: adminCount ?? 0 },
-    { label: 'Blog',             value: blogCount ?? 0 },
-    { label: 'Orgs pendientes',  value: pendingOrgs ?? 0,   alert: (pendingOrgs ?? 0) > 0 },
-    { label: 'Verificaciones',   value: pendingVerifs ?? 0, alert: (pendingVerifs ?? 0) > 0 },
+    { label: 'Usuarios',          value: totalUsers ?? authUsers.length, icon: '👥' },
+    { label: 'Admins',            value: adminCount ?? 0,                icon: '🔑' },
+    { label: 'Blog',              value: blogCount ?? 0,                 icon: '✍️' },
+    { label: 'Orgs pendientes',   value: pendingOrgs ?? 0,               icon: '🏢', alert: (pendingOrgs ?? 0) > 0 },
+    { label: 'Verificaciones',    value: pendingVerifs ?? 0,             icon: '✅', alert: (pendingVerifs ?? 0) > 0 },
   ];
 
+  const hasPending = (pendingOrgs ?? 0) > 0 || (pendingVerifs ?? 0) > 0;
+
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto', padding: '40px 20px 80px' }}>
+    <div style={{ maxWidth: 1320, margin: '0 auto', padding: '40px 28px 80px' }}>
+
       {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 4 }}>
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 4 }}>
           Panel de administración
         </h1>
-        <p style={{ color: 'var(--text-3)', fontSize: 14, margin: 0 }}>
-          Gestiona usuarios y permisos de la plataforma
+        <p style={{ color: 'var(--text-3)', fontSize: 14 }}>
+          Gestiona usuarios, permisos y solicitudes de la plataforma
         </p>
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, marginBottom: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 32 }}>
         {stats.map(s => (
           <div key={s.label} style={{
-            background: 'var(--bg-card)', border: `1px solid ${(s as any).alert ? 'rgba(220,38,38,0.3)' : 'var(--border)'}`,
-            borderRadius: 12, padding: '14px 16px',
+            background: 'var(--bg-card)',
+            border: `1px solid ${(s as any).alert ? 'rgba(220,38,38,0.35)' : 'var(--border)'}`,
+            borderRadius: 12,
+            padding: '16px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 14,
           }}>
-            <div style={{ fontSize: 24, fontWeight: 800, color: (s as any).alert ? '#dc2626' : 'var(--brand)', lineHeight: 1 }}>{s.value}</div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)', marginTop: 4 }}>{s.label}</div>
+            <span style={{ fontSize: 22, lineHeight: 1, flexShrink: 0 }}>{s.icon}</span>
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: (s as any).alert ? '#dc2626' : 'var(--brand)', lineHeight: 1 }}>{s.value}</div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)', marginTop: 3 }}>{s.label}</div>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Org requests — streamed independently */}
-      <div style={{ marginBottom: 36 }}>
-        <h2 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 10 }}>
-          Solicitudes de organizaciones
-          {(pendingOrgs ?? 0) > 0 && (
-            <span style={{ fontSize: 12, fontWeight: 700, color: 'white', background: '#dc2626', borderRadius: 20, padding: '2px 8px' }}>
-              {pendingOrgs}
+      {/* Main two-column layout: users + sidebar when there are pending items */}
+      <div style={{ display: 'grid', gridTemplateColumns: hasPending ? '1fr 360px' : '1fr', gap: 28, alignItems: 'start' }}>
+
+        {/* Left — users */}
+        <div>
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.01em', marginBottom: 16 }}>
+            Usuarios
+            <span style={{ marginLeft: 8, fontSize: 12, fontWeight: 600, color: 'var(--text-4)' }}>
+              {query ? `resultados de "${query}"` : 'más recientes'}
             </span>
-          )}
-        </h2>
-        <Suspense fallback={<RequestsSkeleton />}>
-          <OrgRequestsSection />
-        </Suspense>
-      </div>
+          </h2>
 
-      {/* Verification requests — streamed independently */}
-      <div style={{ marginBottom: 36 }}>
-        <h2 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 10 }}>
-          Solicitudes de verificación
-          {(pendingVerifs ?? 0) > 0 && (
-            <span style={{ fontSize: 12, fontWeight: 700, color: 'white', background: '#dc2626', borderRadius: 20, padding: '2px 8px' }}>
-              {pendingVerifs}
-            </span>
-          )}
-        </h2>
-        <Suspense fallback={<RequestsSkeleton />}>
-          <VerificationRequestsSection />
-        </Suspense>
-      </div>
+          {/* Search */}
+          <form method="GET" style={{ marginBottom: 16 }}>
+            <input
+              name="q"
+              defaultValue={query}
+              placeholder="Buscar por nombre o email…"
+              autoComplete="off"
+              style={{
+                width: '100%', padding: '10px 16px', fontSize: 14,
+                borderRadius: 10, border: '1px solid var(--border)',
+                background: 'var(--bg-card)', color: 'var(--text)', outline: 'none',
+              }}
+            />
+          </form>
 
-      {/* Search */}
-      <form method="GET" style={{ marginBottom: 20 }}>
-        <input
-          name="q"
-          defaultValue={query}
-          placeholder="Buscar por nombre o email..."
-          autoComplete="off"
-          style={{
-            width: '100%', padding: '10px 16px', fontSize: 14, boxSizing: 'border-box',
-            borderRadius: 10, border: '1px solid var(--border)',
-            background: 'var(--bg-card)', color: 'var(--text)', outline: 'none',
-          }}
-        />
-      </form>
+          {/* Column headers */}
+          <div style={{ display: 'flex', paddingRight: 18, paddingLeft: 70, marginBottom: 6 }}>
+            <div style={{ flex: 1 }} />
+            <div style={{ display: 'flex', gap: 16 }}>
+              {['BLOG', 'EVENTOS', 'ADMIN'].map(h => (
+                <span key={h} style={{ width: 40, textAlign: 'center', fontSize: 9, fontWeight: 700, color: 'var(--text-4)', letterSpacing: '0.06em' }}>
+                  {h}
+                </span>
+              ))}
+            </div>
+          </div>
 
-      {/* Column headers */}
-      <div style={{
-        display: 'flex', justifyContent: 'flex-end', paddingRight: 18,
-        gap: 16, marginBottom: 8,
-      }}>
-        {['BLOG', 'EVENTOS', 'ADMIN'].map(h => (
-          <span key={h} style={{ width: 40, textAlign: 'center', fontSize: 9, fontWeight: 700, color: 'var(--text-4)', letterSpacing: '0.04em' }}>
-            {h}
-          </span>
-        ))}
-      </div>
+          {/* User list */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {users.length === 0 ? (
+              <p style={{ textAlign: 'center', color: 'var(--text-4)', padding: '48px 0', fontSize: 14 }}>
+                {query ? `Sin resultados para "${query}"` : 'No hay usuarios'}
+              </p>
+            ) : (
+              users.map(u => (
+                <AdminUserCard key={u.id} user={u} currentUserId={user.id} />
+              ))
+            )}
+          </div>
+        </div>
 
-      {/* Users */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {users.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--text-4)', padding: '40px 0' }}>
-            {query ? `Sin resultados para "${query}"` : 'No hay usuarios'}
-          </p>
-        ) : (
-          users.map(u => (
-            <AdminUserCard key={u.id} user={u} currentUserId={user.id} />
-          ))
+        {/* Right sidebar — requests (only when pending) */}
+        {hasPending && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            {(pendingOrgs ?? 0) > 0 && (
+              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: '20px 22px' }}>
+                <h2 style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  Organizaciones
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'white', background: '#dc2626', borderRadius: 20, padding: '2px 8px' }}>
+                    {pendingOrgs}
+                  </span>
+                </h2>
+                <Suspense fallback={<RequestsSkeleton />}>
+                  <OrgRequestsSection />
+                </Suspense>
+              </div>
+            )}
+
+            {(pendingVerifs ?? 0) > 0 && (
+              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: '20px 22px' }}>
+                <h2 style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  Verificaciones
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'white', background: '#dc2626', borderRadius: 20, padding: '2px 8px' }}>
+                    {pendingVerifs}
+                  </span>
+                </h2>
+                <Suspense fallback={<RequestsSkeleton />}>
+                  <VerificationRequestsSection />
+                </Suspense>
+              </div>
+            )}
+          </div>
         )}
       </div>
+
+      {/* When nothing is pending, show requests below users in 2 columns */}
+      {!hasPending && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginTop: 28 }}>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: '20px 22px' }}>
+            <h2 style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', marginBottom: 14 }}>
+              Solicitudes de organizaciones
+            </h2>
+            <Suspense fallback={<RequestsSkeleton />}>
+              <OrgRequestsSection />
+            </Suspense>
+          </div>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: '20px 22px' }}>
+            <h2 style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', marginBottom: 14 }}>
+              Solicitudes de verificación
+            </h2>
+            <Suspense fallback={<RequestsSkeleton />}>
+              <VerificationRequestsSection />
+            </Suspense>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
