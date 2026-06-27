@@ -80,11 +80,13 @@ export default async function GamePage({ params, searchParams }: Props) {
 
   const bggId = parseInt(id);
   if (isNaN(bggId)) notFound();
-  const game = await getGame(bggId);
-  if (!game) notFound();
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const [game, { data: { user } }] = await Promise.all([
+    getGame(bggId),
+    supabase.auth.getUser(),
+  ]);
+  if (!game) notFound();
 
   const mechanics: string[] = (game as any).mechanics ?? [];
   const categories: string[] = (game as any).categories ?? [];
@@ -123,28 +125,18 @@ export default async function GamePage({ params, searchParams }: Props) {
   const similarGames = (similarResult.data ?? []) as any[];
   const userPlays = (playsResult.data ?? []) as any[];
 
-  // Winner names via separate queries
   const playIds = userPlays.map((p: any) => p.id);
   let winnersByPlay: Record<string, string> = {};
   if (playIds.length > 0) {
     const { data: winnerRows } = await supabase
       .from('play_results')
-      .select('play_id, profile_id, guest_name')
+      .select('play_id, profile_id, guest_name, profiles(display_name)')
       .in('play_id', playIds)
       .eq('is_winner', true);
 
-    const winnerProfileIds = [...new Set(
-      (winnerRows ?? []).map((r: any) => r.profile_id).filter(Boolean)
-    )] as string[];
-
-    const { data: winnerProfiles } = winnerProfileIds.length > 0
-      ? await supabase.from('profiles').select('id, display_name').in('id', winnerProfileIds)
-      : { data: [] };
-
-    const profileMap = Object.fromEntries((winnerProfiles ?? []).map((p: any) => [p.id, p.display_name]));
     for (const r of winnerRows ?? []) {
       winnersByPlay[(r as any).play_id] = (r as any).profile_id
-        ? (profileMap[(r as any).profile_id] ?? 'Jugador')
+        ? ((r as any).profiles?.display_name ?? 'Jugador')
         : ((r as any).guest_name ?? 'Invitado');
     }
   }

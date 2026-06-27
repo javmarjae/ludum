@@ -5,6 +5,13 @@ import Image from 'next/image';
 import { useState } from 'react';
 import type { GameResult } from '@/lib/recommender';
 
+function playerIcon(min: number): string {
+  if (min <= 1) return '/icons/solo.svg';
+  if (min <= 2) return '/icons/pareja.svg';
+  if (min <= 4) return '/icons/grupo.svg';
+  return '/icons/pandilla.svg';
+}
+
 function RatingBadge({ rating }: { rating: number }) {
   const color = rating >= 8 ? '#16a34a' : rating >= 7 ? '#d97706' : '#71717A';
   return (
@@ -94,8 +101,9 @@ export function GameCard({ game, index, inCollection, onCollectionToggle }: Prop
 
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {game.min_players && game.max_players && (
-              <span style={{ fontSize: 11, padding: '2px 7px', borderRadius: 4, fontWeight: 600, background: 'var(--bg-inset)', color: 'var(--text-3)' }}>
-                👥 {game.min_players === game.max_players ? game.min_players : `${game.min_players}–${game.max_players}`}
+              <span style={{ fontSize: 11, padding: '2px 7px', borderRadius: 4, fontWeight: 600, background: 'var(--bg-inset)', color: 'var(--text-3)', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                <img src={playerIcon(game.min_players)} alt="" aria-hidden="true" style={{ width: 13, height: 13 }} />
+                {game.min_players === game.max_players ? game.min_players : `${game.min_players}–${game.max_players}`}
               </span>
             )}
             {game.min_playtime && (

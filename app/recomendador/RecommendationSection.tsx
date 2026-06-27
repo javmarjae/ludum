@@ -8,6 +8,13 @@ import {
 } from '@/lib/recommender';
 import { DismissableTopRec } from './DismissableTopRec';
 
+function playerIcon(min: number | null): string {
+  if (!min || min <= 1) return '/icons/solo.svg';
+  if (min <= 2) return '/icons/pareja.svg';
+  if (min <= 4) return '/icons/grupo.svg';
+  return '/icons/pandilla.svg';
+}
+
 
 // ── Affinity badge (used in alternatives sidebar) ─────────────────────────────
 
@@ -84,8 +91,9 @@ function AlternativeRow({ game }: { game: GameResult & { affinity: number } }) {
           <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{game.name}</p>
           <div style={{ display: 'flex', gap: 6 }}>
             {game.min_players !== null && game.max_players !== null && (
-              <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)' }}>
-                👥 {game.min_players === game.max_players ? game.min_players : `${game.min_players}-${game.max_players}`} jug.
+              <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                <img src={playerIcon(game.min_players)} alt="" aria-hidden="true" style={{ width: 13, height: 13 }} />
+                {game.min_players === game.max_players ? game.min_players : `${game.min_players}-${game.max_players}`} jug.
               </span>
             )}
             {game.min_playtime !== null && (
@@ -124,9 +132,10 @@ function WildcardCard({ game }: { game: GameResult & { affinity: number; wildcar
           <div style={{ flex: 1 }}>
             <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', marginBottom: 4, lineHeight: 1.2 }}>{game.name}</p>
             {game.min_players !== null && game.max_players !== null && (
-              <p style={{ fontSize: 11, color: 'var(--text-4)', marginBottom: 8 }}>
-                👥 {game.min_players === game.max_players ? game.min_players : `${game.min_players}-${game.max_players}`} jugadores
-                {game.min_playtime !== null && ` · ⏱ ${game.min_playtime}${game.max_playtime && game.max_playtime !== game.min_playtime ? `–${game.max_playtime}` : ''} min`}
+              <p style={{ fontSize: 11, color: 'var(--text-4)', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>
+                <img src={playerIcon(game.min_players)} alt="" aria-hidden="true" style={{ width: 13, height: 13 }} />
+                {game.min_players === game.max_players ? game.min_players : `${game.min_players}-${game.max_players}`} jugadores
+                {game.min_playtime !== null && <span>· ⏱ {game.min_playtime}{game.max_playtime && game.max_playtime !== game.min_playtime ? `–${game.max_playtime}` : ''} min</span>}
               </p>
             )}
             <p style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.4, marginBottom: 10 }}>{game.wildcardReason}</p>

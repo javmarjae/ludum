@@ -91,12 +91,12 @@ const QUICK_GROUPS: { title: string; items: { label: string; filter: QuickFilter
 ];
 
 const PLAYER_BUTTONS = [
-  { n: 1, icon: '🙋', label: 'Jugador' },
-  { n: 2, icon: '👫', label: 'Jugadores' },
-  { n: 3, icon: '👥', label: 'Jugadores' },
-  { n: 4, icon: '👥', label: 'Jugadores' },
-  { n: 5, icon: '👥', label: 'Jugadores' },
-  { n: 6, icon: '🎉', label: 'Jugadores' },
+  { n: 1, icon: '/icons/solo.svg', label: 'Jugador' },
+  { n: 2, icon: '/icons/pareja.svg', label: 'Jugadores' },
+  { n: 3, icon: '/icons/grupo.svg', label: 'Jugadores' },
+  { n: 4, icon: '/icons/grupo.svg', label: 'Jugadores' },
+  { n: 5, icon: '/icons/pandilla.svg', label: 'Jugadores' },
+  { n: 6, icon: '/icons/pandilla.svg', label: 'Jugadores' },
 ];
 
 function GameThumb({ src, alt, size = 44 }: { src: string | null; alt: string; size?: number }) {
@@ -451,7 +451,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
                 className="buscar-player-btn"
                 data-active={filterPlayers === n || undefined}
               >
-                <span className="bp-icon">{icon}</span>
+                <img src={icon} alt="" className="bp-icon" aria-hidden="true" />
                 <span className="bp-count">{n === 6 ? '6+' : n}</span>
                 <span className="bp-label">{label}</span>
               </button>
@@ -459,34 +459,11 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
           </div>
         </div>
 
-      </div>{/* fin columna central */}
-
-      {/* ── COLUMNA DERECHA: Mejor valorados ó Resultados ── */}
-      <aside className="buscar-col-right buscar-side-sticky">
-        {!showResults ? (
-          /* Mejor valorados */
-          <>
-            <SectionHeader icon="🏆" title="Mejor valorados" subtitle="Los clásicos que nunca fallan" />
-            <div>
-              {topRatedGames.map((g, i) => (
-                <SideCard
-                  key={g.bgg_id}
-                  game={g}
-                  badge={
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      {g.bgg_rating && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)' }}>★ {g.bgg_rating.toFixed(1)}</span>}
-                      <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-4)' }}>#{i + 1}</span>
-                    </div>
-                  }
-                />
-              ))}
-            </div>
-          </>
-        ) : (
-          /* Resultados */
-          <div>
-            <div style={{ marginBottom: 14 }}>
-              <p style={{ fontSize: 14, fontWeight: 800, color: 'var(--text)', marginBottom: 10 }}>Resultados</p>
+        {/* Resultados */}
+        {showResults && (
+          <div className="buscar-quick-card">
+            <div style={{ marginBottom: 14, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
+              <p style={{ fontSize: 14, fontWeight: 800, color: 'var(--text)' }}>Resultados</p>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
                 {filterPlayers !== null && (
                   <ActiveFilterBadge
@@ -512,7 +489,6 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
                 </button>
               </div>
             </div>
-
             {loading && (
               <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-4)', padding: '20px 0' }}>Buscando...</p>
             )}
@@ -533,6 +509,26 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
             )}
           </div>
         )}
+
+      </div>{/* fin columna central */}
+
+      {/* ── COLUMNA DERECHA: Mejor valorados ── */}
+      <aside className="buscar-col-right buscar-side-sticky">
+        <SectionHeader icon="🏆" title="Mejor valorados" subtitle="Los clásicos que nunca fallan" />
+        <div>
+          {topRatedGames.map((g, i) => (
+            <SideCard
+              key={g.bgg_id}
+              game={g}
+              badge={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  {g.bgg_rating && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)' }}>★ {g.bgg_rating.toFixed(1)}</span>}
+                  <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-4)' }}>#{i + 1}</span>
+                </div>
+              }
+            />
+          ))}
+        </div>
       </aside>
 
     </div>

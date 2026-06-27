@@ -10,10 +10,10 @@ interface FilterChip {
 }
 
 const JUGADORES: FilterChip[] = [
-  { value: '1', label: 'Solo', icon: '🧍' },
-  { value: '2', label: 'Pareja', icon: '👫' },
-  { value: '3', label: 'Grupo', icon: '👥' },
-  { value: '5', label: 'Pandilla', icon: '🎉' },
+  { value: '1', label: 'Solo', icon: '/icons/solo.svg' },
+  { value: '2', label: 'Pareja', icon: '/icons/pareja.svg' },
+  { value: '3', label: 'Grupo', icon: '/icons/grupo.svg' },
+  { value: '5', label: 'Pandilla', icon: '/icons/pandilla.svg' },
 ];
 
 const DURACION: FilterChip[] = [
@@ -163,7 +163,10 @@ export function FiltersPanel({ activeGroupId }: Props) {
                             transition: 'all 0.12s',
                           }}
                         >
-                          <span style={{ fontSize: 14 }}>{chip.icon}</span>
+                          {chip.icon.startsWith('/')
+                            ? <img src={chip.icon} alt="" aria-hidden="true" style={{ width: 18, height: 18 }} />
+                            : <span style={{ fontSize: 14 }}>{chip.icon}</span>
+                          }
                           {chip.label}
                         </button>
                       );

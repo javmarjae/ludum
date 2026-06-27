@@ -45,13 +45,13 @@ export const getTopRatedGames = unstable_cache(
       .from('games')
       .select('bgg_id, name, image_url, bgg_rating, year_published, is_expansion')
       .not('bgg_rating', 'is', null)
-      .or('is_expansion.is.null,is_expansion.eq.false')
+      .not('is_expansion', 'is', true)
       .order('bgg_rating', { ascending: false })
       .limit(10);
     if (error) console.error('[cached-queries] getTopRatedGames:', error.message);
     return data ?? [];
   },
-  ['top-rated-games-v3'],
+  ['top-rated-games-v4'],
   { revalidate: 3600 }
 );
 
