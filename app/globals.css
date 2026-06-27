@@ -374,12 +374,15 @@ html[data-authed="true"] .app-nav {
   .app-shell-main { padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px)); }
 }
 
-/* Nav responsive: desktop links / mobile hamburger */
+/* Nav responsive: siempre visible; ocultar etiquetas cuando no caben */
 .nav-desktop-links { display: flex; }
 .nav-mobile-menu   { display: none; }
-@media (max-width: 640px) {
-  .nav-desktop-links { display: none !important; }
-  .nav-mobile-menu   { display: block; }
+.nav-link-label    { display: inline; }
+
+@media (max-width: 860px) {
+  .nav-link-label    { display: none; }
+  .nav-desktop-links { gap: 4px !important; }
+  .nav-icon-btn      { padding: 7px 10px !important; }
 }
 .mobile-nav-link:hover { background: var(--bg-inset) !important; }
 

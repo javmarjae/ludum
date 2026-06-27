@@ -36,30 +36,50 @@ export function Nav({ back, right, mobileItems }: NavProps) {
   );
 }
 
-export function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+export function NavLink({ href, children, icon }: {
+  href: string;
+  children: React.ReactNode;
+  icon?: React.ReactNode;
+}) {
   return (
-    <Link href={href} style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-2)', textDecoration: 'none' }}>
-      {children}
+    <Link
+      href={href}
+      title={typeof children === 'string' ? children : undefined}
+      style={{
+        fontSize: 14, fontWeight: 600, color: 'var(--text-2)',
+        textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 5,
+      }}
+    >
+      {icon && <span style={{ display: 'flex', flexShrink: 0, alignItems: 'center' }}>{icon}</span>}
+      <span className="nav-link-label">{children}</span>
     </Link>
   );
 }
 
-export function NavButton({ href, children, variant = 'ghost' }: { href: string; children: React.ReactNode; variant?: 'ghost' | 'brand' }) {
+export function NavButton({ href, children, variant = 'ghost', icon }: {
+  href: string;
+  children: React.ReactNode;
+  variant?: 'ghost' | 'brand';
+  icon?: React.ReactNode;
+}) {
   return (
     <Link
       href={href}
+      className="nav-icon-btn"
+      title={typeof children === 'string' ? children : undefined}
       style={{
-        fontSize: 14,
-        fontWeight: 700,
+        fontSize: 14, fontWeight: 700,
         padding: '7px 16px',
         borderRadius: 8,
         textDecoration: 'none',
         color: variant === 'brand' ? 'white' : 'var(--text-2)',
         background: variant === 'brand' ? 'var(--brand)' : 'var(--bg-card)',
         boxShadow: variant === 'brand' ? 'var(--shadow-btn-brand)' : 'var(--shadow-btn)',
+        display: 'flex', alignItems: 'center', gap: 6,
       }}
     >
-      {children}
+      {icon && <span style={{ display: 'flex', flexShrink: 0, alignItems: 'center' }}>{icon}</span>}
+      <span className="nav-link-label">{children}</span>
     </Link>
   );
 }

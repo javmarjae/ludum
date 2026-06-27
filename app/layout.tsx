@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from 'next';
+import { Suspense } from 'react';
+import { cache } from 'react';
 import { Urbanist, Playfair } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
@@ -52,21 +54,37 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const user = await getAuthUser();
+// Cached per-request: shared between SidebarWithProfile and MobileNavWithProfile
+const getProfile = cache(async (userId: string) => {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('profiles')
+    .select('onboarding_completed, is_admin')
+    .eq('id', userId)
+    .single();
+  return data;
+});
 
-  let showTutorial = false;
-  let isAdmin = false;
-  if (user) {
-    const supabase = await createClient();
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('onboarding_completed, is_admin')
-      .eq('id', user.id)
-      .single();
-    showTutorial = !profile?.onboarding_completed;
-    isAdmin = profile?.is_admin ?? false;
-  }
+// Async server component: renders sidebar + tutorial once profile loads
+async function SidebarWithProfile({ userId }: { userId: string }) {
+  const profile = await getProfile(userId);
+  return (
+    <>
+      <SidebarNav isAdmin={profile?.is_admin ?? false} />
+      {!profile?.onboarding_completed && <TutorialModal />}
+    </>
+  );
+}
+
+// Async server component: renders mobile nav once profile loads (reuses same query via cache)
+async function MobileNavWithProfile({ userId }: { userId: string }) {
+  const profile = await getProfile(userId);
+  return <MobileBottomNav isAdmin={profile?.is_admin ?? false} />;
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Only 1 blocking call: auth. Profile query runs non-blocking in Suspense.
+  const user = await getAuthUser();
 
   return (
     <html lang="es" suppressHydrationWarning data-authed={user ? 'true' : undefined}>
@@ -77,14 +95,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('ludum-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();` }}
         />
         <div className="app-shell">
-          {user && <SidebarNav isAdmin={isAdmin} />}
+          {user && (
+            <Suspense fallback={<SidebarNav isAdmin={false} />}>
+              <SidebarWithProfile userId={user.id} />
+            </Suspense>
+          )}
           <div className="app-shell-main">
             {children}
             <Footer />
           </div>
         </div>
-        {user && <MobileBottomNav isAdmin={isAdmin} />}
-        {showTutorial && <TutorialModal />}
+        {user && (
+          <Suspense fallback={<MobileBottomNav isAdmin={false} />}>
+            <MobileNavWithProfile userId={user.id} />
+          </Suspense>
+        )}
         <BetaBanner />
         <SpeedInsights />
         <Analytics />

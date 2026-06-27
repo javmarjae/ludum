@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, getAuthUser } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -17,9 +17,9 @@ const CATEGORY_ICONS: Record<string, string> = {
 };
 
 export default async function GruposPage({ searchParams }: { searchParams: Promise<{ org_request?: string }> }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getAuthUser();
   if (!user) redirect('/auth/login?next=/grupos');
+  const supabase = await createClient();
   const { org_request } = await searchParams;
 
   const [

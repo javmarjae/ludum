@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, getAuthUser } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { redirect } from 'next/navigation';
 import { AdminUserCard } from './AdminUserCard';
@@ -21,10 +21,11 @@ export default async function AdminPage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // Reuses cached auth from layout — no extra network call
+  const user = await getAuthUser();
   if (!user) redirect('/auth/login');
 
+  const supabase = await createClient();
   const { data: selfProfile } = await supabase
     .from('profiles')
     .select('is_admin')

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, getAuthUser } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { TrackerClient, type TrackerPlay, type TrackerRating } from './TrackerClient';
@@ -7,9 +7,9 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = { title: 'Tracker' };
 
 export default async function TrackerPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getAuthUser();
   if (!user) redirect('/auth/login?next=/partidas');
+  const supabase = await createClient();
 
   // Get play IDs where the user participated
   const { data: userPlayResults } = await supabase

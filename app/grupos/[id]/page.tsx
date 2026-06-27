@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, getAuthUser } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -33,9 +33,9 @@ interface Props { params: Promise<{ id: string }>; }
 
 export default async function GrupoDetailPage({ params }: Props) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getAuthUser();
   if (!user) redirect('/auth/login');
+  const supabase = await createClient();
 
   const [
     { data: group },
@@ -222,87 +222,93 @@ export default async function GrupoDetailPage({ params }: Props) {
                       const winnerName = winner?.profiles?.display_name ?? winner?.guest_name ?? null;
                       const winnerAvatar = winner?.profiles?.avatar_url ?? null;
                       const playerCount = play.play_results?.length ?? 0;
-                      const userResult = play.play_results?.find((r: any) => r.profile_id === user.id);
-                      const userScore = userResult?.score ?? null;
-                      let userPosition: number | null = null;
-                      if (userScore !== null) {
+
+                      // Score: use actual score if available, else 100 for winner
+                      const winnerScore = winner?.score ?? 100;
+
+                      // Position: calculate from scores if available, else 1 for winner / 2 for rest
+                      const hasScores = (play.play_results ?? []).some((r: any) => r.score !== null && r.score !== undefined);
+                      let winnerPosition = 1;
+                      if (hasScores && winner) {
                         const sorted = [...(play.play_results ?? [])].sort((a: any, b: any) => (b.score ?? 0) - (a.score ?? 0));
-                        userPosition = sorted.findIndex((r: any) => r.profile_id === user.id) + 1;
+                        winnerPosition = sorted.findIndex((r: any) => r.is_winner) + 1;
+                        if (winnerPosition < 1) winnerPosition = 1;
                       }
 
                       return (
                         <Link key={play.id} href={`/grupos/${id}/partidas/${play.id}`} style={{ textDecoration: 'none' }}>
                           <div className="hover-scale" style={{
-                            display: 'flex', alignItems: 'center', gap: 14,
-                            borderRadius: 20, padding: '14px 18px',
+                            display: 'flex', alignItems: 'center', gap: 18,
+                            borderRadius: 20, padding: '18px 22px',
                             background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
                           }}>
+                            {/* Game image */}
                             {play.games?.image_url
-                              ? <div style={{ position: 'relative', width: 52, height: 70, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
+                              ? <div style={{ position: 'relative', width: 68, height: 92, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
                                   <Image src={play.games.image_url} alt={play.games.name} fill style={{ objectFit: 'cover' }} />
                                 </div>
-                              : <div style={{ width: 52, height: 70, borderRadius: 14, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26 }}>🎲</div>
+                              : <div style={{ width: 68, height: 92, borderRadius: 14, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30 }}>🎲</div>
                             }
+
+                            {/* Game name + meta */}
                             <div style={{ flex: 1, minWidth: 0 }}>
-                              <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 4 }}>
+                              <p style={{ fontWeight: 800, fontSize: 17, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 8 }}>
                                 {play.games?.name ?? 'Juego desconocido'}
                               </p>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                                <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+                                <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-4)' }}>
                                   📅 {relativeDate(play.played_at)}
                                 </span>
                                 {playerCount > 0 && (
-                                  <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                                    <img src={playerIcon(playerCount)} alt="" aria-hidden="true" style={{ width: 13, height: 13 }} />
+                                  <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-4)', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                                    <img src={playerIcon(playerCount)} alt="" aria-hidden="true" style={{ width: 16, height: 16 }} />
                                     {playerCount} jugadores
                                   </span>
                                 )}
                                 {play.duration_minutes && (
-                                  <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>
+                                  <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-4)' }}>
                                     ⏱ {play.duration_minutes} min
                                   </span>
                                 )}
                               </div>
                             </div>
-                            <div className="grupo-play-meta" style={{ display: 'flex', alignItems: 'center', gap: 20, flexShrink: 0 }}>
-                              {winnerName && (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                  {winnerAvatar ? (
-                                    <img src={winnerAvatar} alt={winnerName} style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-                                  ) : (
-                                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 800, color: 'var(--brand)', flexShrink: 0 }}>
-                                      {(winnerName[0] ?? '?').toUpperCase()}
-                                    </div>
-                                  )}
-                                  <div>
-                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)', marginBottom: 2 }}>Ganador</p>
-                                    <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', whiteSpace: 'nowrap' }}>
-                                      {winnerName} 👑
-                                    </p>
+
+                            {/* Winner block */}
+                            {winnerName && (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 }}>
+                                {/* Avatar */}
+                                {winnerAvatar ? (
+                                  <img src={winnerAvatar} alt={winnerName} style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                                ) : (
+                                  <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 19, fontWeight: 800, color: 'var(--brand)', flexShrink: 0 }}>
+                                    {(winnerName[0] ?? '?').toUpperCase()}
                                   </div>
+                                )}
+                                {/* Name */}
+                                <div style={{ minWidth: 0 }}>
+                                  <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: 3 }}>Ganador</p>
+                                  <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', whiteSpace: 'nowrap' }}>
+                                    {winnerName} 👑
+                                  </p>
                                 </div>
-                              )}
-                              {userScore !== null && (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                  <div>
-                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)', marginBottom: 2 }}>Tu puntuación</p>
-                                    <p style={{ fontSize: 14, fontWeight: 800, color: 'var(--text)' }}>{userScore} pts</p>
-                                  </div>
-                                  {userPosition !== null && (
-                                    <div style={{
-                                      width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-                                      background: userPosition === 1 ? 'var(--brand-tint)' : 'var(--bg-inset)',
-                                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                      fontSize: 12, fontWeight: 800,
-                                      color: userPosition === 1 ? 'var(--brand)' : 'var(--text-3)',
-                                      border: userPosition === 1 ? '1.5px solid rgba(62,94,59,0.2)' : '1px solid var(--border)',
-                                    }}>
-                                      {userPosition}º
-                                    </div>
-                                  )}
+                                {/* Score */}
+                                <div style={{ textAlign: 'center', minWidth: 54 }}>
+                                  <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: 3 }}>Puntos</p>
+                                  <p style={{ fontSize: 16, fontWeight: 800, color: 'var(--text)' }}>{winnerScore}</p>
                                 </div>
-                              )}
-                            </div>
+                                {/* Position badge */}
+                                <div style={{
+                                  width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
+                                  background: winnerPosition === 1 ? 'var(--brand-tint)' : 'var(--bg-inset)',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  fontSize: 14, fontWeight: 800,
+                                  color: winnerPosition === 1 ? 'var(--brand)' : 'var(--text-3)',
+                                  border: winnerPosition === 1 ? '1.5px solid rgba(62,94,59,0.25)' : '1px solid var(--border)',
+                                }}>
+                                  {winnerPosition}º
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </Link>
                       );

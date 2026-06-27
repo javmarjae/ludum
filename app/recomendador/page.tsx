@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, getAuthUser } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { GroupSelector, type SelectorGroup } from './GroupSelector';
@@ -138,37 +138,27 @@ interface Props {
 
 export default async function RecomendadorPage({ searchParams }: Props) {
   const params = await searchParams;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
 
+  // Reuses the cached auth result from the layout — no extra network call
+  const user = await getAuthUser();
   if (!user) redirect('/auth/login');
 
-  // Load user's groups + member counts in parallel
+  const supabase = await createClient();
+
+  // Single query: groups + their member counts via embedded count
   const { data: memberships } = await supabase
     .from('group_members')
-    .select('group_id, groups(id, name)')
+    .select('group_id, groups(id, name, group_members(count))')
     .eq('profile_id', user.id);
 
-  const groupsRaw = (memberships ?? [])
-    .map((m: any) => m.groups)
-    .filter(Boolean) as Array<{ id: string; name: string }>;
-
-  const groupIds = groupsRaw.map((g) => g.id);
-
-  const { data: allMembers } = groupIds.length > 0
-    ? await supabase.from('group_members').select('group_id').in('group_id', groupIds).limit(500)
-    : { data: [] };
-
-  const countMap: Record<string, number> = {};
-  for (const row of allMembers ?? []) {
-    countMap[row.group_id] = (countMap[row.group_id] ?? 0) + 1;
-  }
-
-  const groups: SelectorGroup[] = groupsRaw.map((g) => ({
-    id: g.id,
-    name: g.name,
-    memberCount: countMap[g.id] ?? 1,
-  }));
+  const groups: SelectorGroup[] = (memberships ?? [])
+    .map((m: any) => {
+      const g = m.groups;
+      if (!g) return null;
+      const memberCount = (g.group_members?.[0]?.count as number) ?? 1;
+      return { id: g.id as string, name: g.name as string, memberCount };
+    })
+    .filter(Boolean) as SelectorGroup[];
 
   const activeGroupId = params.grupo ?? groups[0]?.id ?? null;
   const activeGroup = groups.find((g) => g.id === activeGroupId) ?? null;
