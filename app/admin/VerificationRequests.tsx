@@ -73,7 +73,7 @@ export function VerificationRequests({ requests }: { requests: VerificationReque
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 14 }}>
               {req.profiles?.avatar_url ? (
-                <img src={req.profiles.avatar_url} alt={name} style={{ width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                <img src={req.profiles.avatar_url} alt={name} loading="lazy" decoding="async" style={{ width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
               ) : (
                 <div style={{ width: 44, height: 44, borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 18, color: 'white', background: 'linear-gradient(135deg, #89BA86, #3E5E3B)' }}>
                   {name[0]?.toUpperCase()}

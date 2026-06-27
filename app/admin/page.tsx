@@ -1,11 +1,20 @@
+import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { redirect } from 'next/navigation';
 import { AdminUserCard } from './AdminUserCard';
-import { OrgRequests } from './OrgRequests';
-import { VerificationRequests } from './VerificationRequests';
+import OrgRequestsSection from './OrgRequestsSection';
+import VerificationRequestsSection from './VerificationRequestsSection';
 
 export const metadata = { title: 'Admin — Ludum' };
+
+function RequestsSkeleton() {
+  return (
+    <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-4)', padding: '20px 0' }}>
+      Cargando…
+    </p>
+  );
+}
 
 export default async function AdminPage({
   searchParams,
@@ -29,20 +38,24 @@ export default async function AdminPage({
 
   const admin = createAdminClient();
 
+  // Fetch auth users (capped at 200) + count-only queries in parallel.
+  // Org/verif full data is deferred to Suspense sections below.
   const [
     { data: authData },
+    { count: totalUsers },
     { count: adminCount },
     { count: blogCount },
     { count: eventsCount },
-    { data: orgRequestsRaw },
-    { data: verifRequestsRaw },
+    { count: pendingOrgs },
+    { count: pendingVerifs },
   ] = await Promise.all([
-    admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
+    admin.auth.admin.listUsers({ page: 1, perPage: 200 }),
+    admin.from('profiles').select('*', { count: 'exact', head: true }),
     admin.from('profiles').select('*', { count: 'exact', head: true }).eq('is_admin', true),
     admin.from('profiles').select('*', { count: 'exact', head: true }).eq('can_write_blog', true),
     admin.from('profiles').select('*', { count: 'exact', head: true }).eq('can_create_events', true),
-    admin.from('organization_requests').select('id, name, type, description, location, website, created_at, profiles(display_name, avatar_url)').eq('status', 'pendiente').order('created_at', { ascending: true }),
-    admin.from('verification_requests').select('id, user_id, reason, category, social_links, created_at, profiles!user_id(display_name, avatar_url)').eq('status', 'pendiente').order('created_at', { ascending: true }),
+    admin.from('organization_requests').select('*', { count: 'exact', head: true }).eq('status', 'pendiente'),
+    admin.from('verification_requests').select('*', { count: 'exact', head: true }).eq('status', 'pendiente'),
   ]);
 
   const authUsers = authData?.users ?? [];
@@ -78,20 +91,12 @@ export default async function AdminPage({
     email: emailMap[p.id] ?? '',
   }));
 
-  const orgRequests = (orgRequestsRaw ?? []) as any[];
-  const verifRequests = ((verifRequestsRaw ?? []) as any[]).map(r => ({
-    ...r,
-    email: emailMap[r.user_id] ?? '',
-  }));
-  const pendingOrgs = orgRequests.length;
-  const pendingVerifs = verifRequests.length;
-
   const stats = [
-    { label: 'Usuarios totales', value: authUsers.length },
+    { label: 'Usuarios totales', value: totalUsers ?? authUsers.length },
     { label: 'Admins',           value: adminCount ?? 0 },
     { label: 'Blog',             value: blogCount ?? 0 },
-    { label: 'Orgs pendientes',  value: pendingOrgs,   alert: pendingOrgs > 0 },
-    { label: 'Verificaciones',   value: pendingVerifs, alert: pendingVerifs > 0 },
+    { label: 'Orgs pendientes',  value: pendingOrgs ?? 0,   alert: (pendingOrgs ?? 0) > 0 },
+    { label: 'Verificaciones',   value: pendingVerifs ?? 0, alert: (pendingVerifs ?? 0) > 0 },
   ];
 
   return (
@@ -119,30 +124,34 @@ export default async function AdminPage({
         ))}
       </div>
 
-      {/* Org requests */}
+      {/* Org requests — streamed independently */}
       <div style={{ marginBottom: 36 }}>
         <h2 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 10 }}>
           Solicitudes de organizaciones
-          {pendingOrgs > 0 && (
+          {(pendingOrgs ?? 0) > 0 && (
             <span style={{ fontSize: 12, fontWeight: 700, color: 'white', background: '#dc2626', borderRadius: 20, padding: '2px 8px' }}>
               {pendingOrgs}
             </span>
           )}
         </h2>
-        <OrgRequests requests={orgRequests} />
+        <Suspense fallback={<RequestsSkeleton />}>
+          <OrgRequestsSection />
+        </Suspense>
       </div>
 
-      {/* Verification requests */}
+      {/* Verification requests — streamed independently */}
       <div style={{ marginBottom: 36 }}>
         <h2 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 10 }}>
           Solicitudes de verificación
-          {pendingVerifs > 0 && (
+          {(pendingVerifs ?? 0) > 0 && (
             <span style={{ fontSize: 12, fontWeight: 700, color: 'white', background: '#dc2626', borderRadius: 20, padding: '2px 8px' }}>
               {pendingVerifs}
             </span>
           )}
         </h2>
-        <VerificationRequests requests={verifRequests} />
+        <Suspense fallback={<RequestsSkeleton />}>
+          <VerificationRequestsSection />
+        </Suspense>
       </div>
 
       {/* Search */}

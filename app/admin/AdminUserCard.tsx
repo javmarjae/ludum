@@ -55,7 +55,7 @@ export function AdminUserCard({ user, currentUserId }: { user: AdminUser; curren
         fontSize: 17, color: 'var(--text-3)', fontWeight: 700,
       }}>
         {user.avatar_url
-          ? <img src={user.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ? <img src={user.avatar_url} alt="" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           : initials}
       </div>
 
