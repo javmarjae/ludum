@@ -165,7 +165,9 @@ function CarouselHeader({ icon, title, subtitle, href }: { icon: string; title: 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 20 }}>{icon}</span>
+        {icon.startsWith('/')
+          ? <img src={icon} alt="" aria-hidden="true" style={{ width: 22, height: 22, objectFit: 'contain' }} />
+          : <span style={{ fontSize: 20 }}>{icon}</span>}
         <div>
           <p className="buscar-section-title">{title}</p>
           <p className="buscar-section-sub">{subtitle}</p>
@@ -423,9 +425,9 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
         )}
 
         {/* Recomendados para ti */}
-        {topRatedGames.length > 0 && (
+        {topRatedGames.length > 0 && !showResults && (
           <div>
-            <CarouselHeader icon="👤" title="Recomendados para ti" subtitle="Basado en tus partidas y gustos" href="/recomendador" />
+            <CarouselHeader icon="/icons/solo.svg" title="Recomendados para ti" subtitle="Basado en tus partidas y gustos" href="/recomendador" />
             <div className="h-scroll">
               {topRatedGames.map(g => (
                 <GameCarouselCard key={g.bgg_id} game={g} badge={{ text: 'Te puede gustar', color: 'var(--brand)', bg: 'var(--brand-tint)' }} />
@@ -437,7 +439,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
         {/* ¿Cuántos vais a jugar? */}
         <div className="buscar-players-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-            <span style={{ fontSize: 20 }}>👥</span>
+            <img src="/icons/pandilla.svg" alt="" aria-hidden="true" style={{ width: 22, height: 22, objectFit: 'contain' }} />
             <div>
               <p style={{ fontWeight: 800, fontSize: 15, color: 'var(--text)', lineHeight: 1.2 }}>¿Cuántos vais a jugar?</p>
               <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', marginTop: 1 }}>Filtra recomendaciones al instante</p>
