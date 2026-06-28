@@ -110,7 +110,7 @@ export default async function GrupoDetailPage({ params }: Props) {
       <VisitTracker groupId={id} />
 
       {/* Sticky group header */}
-      <div style={{
+      <div className="grupo-header-inner" style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         width: '100%', boxSizing: 'border-box',
         padding: '0 clamp(14px,4vw,32px)', height: 72, gap: 16,
@@ -237,17 +237,17 @@ export default async function GrupoDetailPage({ params }: Props) {
 
                       return (
                         <Link key={play.id} href={`/grupos/${id}/partidas/${play.id}`} style={{ textDecoration: 'none' }}>
-                          <div className="hover-scale" style={{
+                          <div className="hover-scale grupo-play-card" style={{
                             display: 'flex', alignItems: 'center', gap: 18,
                             borderRadius: 20, padding: '18px 22px',
                             background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
                           }}>
                             {/* Game image */}
                             {play.games?.image_url
-                              ? <div style={{ position: 'relative', width: 68, height: 92, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
+                              ? <div className="grupo-play-img" style={{ position: 'relative', width: 68, height: 92, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
                                   <Image src={play.games.image_url} alt={play.games.name} fill style={{ objectFit: 'cover' }} />
                                 </div>
-                              : <div style={{ width: 68, height: 92, borderRadius: 14, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30 }}>🎲</div>
+                              : <div className="grupo-play-img" style={{ width: 68, height: 92, borderRadius: 14, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30 }}>🎲</div>
                             }
 
                             {/* Game name + meta */}
@@ -255,7 +255,7 @@ export default async function GrupoDetailPage({ params }: Props) {
                               <p style={{ fontWeight: 800, fontSize: 17, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 8 }}>
                                 {play.games?.name ?? 'Juego desconocido'}
                               </p>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+                              <div className="grupo-play-meta" style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
                                 <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-4)' }}>
                                   📅 {relativeDate(play.played_at)}
                                 </span>
@@ -275,12 +275,12 @@ export default async function GrupoDetailPage({ params }: Props) {
 
                             {/* Winner block */}
                             {winnerName && (
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 }}>
+                              <div className="grupo-winner" style={{ display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 }}>
                                 {/* Avatar */}
                                 {winnerAvatar ? (
-                                  <img src={winnerAvatar} alt={winnerName} style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                                  <img className="grupo-winner-avatar" src={winnerAvatar} alt={winnerName} style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
                                 ) : (
-                                  <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 19, fontWeight: 800, color: 'var(--brand)', flexShrink: 0 }}>
+                                  <div className="grupo-winner-avatar" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 19, fontWeight: 800, color: 'var(--brand)', flexShrink: 0 }}>
                                     {(winnerName[0] ?? '?').toUpperCase()}
                                   </div>
                                 )}
@@ -292,12 +292,12 @@ export default async function GrupoDetailPage({ params }: Props) {
                                   </p>
                                 </div>
                                 {/* Score */}
-                                <div style={{ textAlign: 'center', minWidth: 54 }}>
+                                <div className="grupo-play-score" style={{ textAlign: 'center', minWidth: 54 }}>
                                   <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: 3 }}>Puntos</p>
                                   <p style={{ fontSize: 16, fontWeight: 800, color: 'var(--text)' }}>{winnerScore}</p>
                                 </div>
                                 {/* Position badge */}
-                                <div style={{
+                                <div className="grupo-play-badge" style={{
                                   width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
                                   background: winnerPosition === 1 ? 'var(--brand-tint)' : 'var(--bg-inset)',
                                   display: 'flex', alignItems: 'center', justifyContent: 'center',

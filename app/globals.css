@@ -716,13 +716,19 @@ html[data-authed="true"] .app-nav {
 
 /* Móvil (≤640px) */
 @media (max-width: 640px) {
-  .grupo-header-inner { padding: 0 16px !important; }
+  .grupo-header-inner { padding: 0 14px !important; }
   .grupo-stats  { gap: 8px !important; }
   .grupo-invite-btn { display: none !important; }
   .grupo-btn-long { display: none !important; }
   .grupo-btn-short { display: inline !important; }
   .grupo-stat-value { font-size: 22px !important; }
   .grupo-play-meta { display: none !important; }
+  .grupo-play-card { padding: 12px 14px !important; gap: 12px !important; }
+  .grupo-play-img  { width: 52px !important; height: 70px !important; border-radius: 10px !important; }
+  .grupo-play-score { display: none !important; }
+  .grupo-play-badge { display: none !important; }
+  .grupo-winner { gap: 8px !important; }
+  .grupo-winner-avatar { width: 38px !important; height: 38px !important; font-size: 15px !important; }
 }
 
 /* ── Tracker responsive ─────────────────────────────── */
