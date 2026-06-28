@@ -134,6 +134,9 @@ body {
   font-family: 'Urbanist', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   min-height: 100vh;
 }
 
@@ -347,7 +350,7 @@ h6 { font-size: var(--fs-h6); line-height: var(--lh-h6); }
 /* ── App shell (sidebar layout) ───────────────────────── */
 .app-shell {
   display: flex;
-  min-height: 100vh;
+  flex: 1;
 }
 
 .app-shell-main {
@@ -781,7 +784,6 @@ html[data-authed="true"] .app-nav {
 .site-footer {
   background: var(--olive);
   padding: 52px 32px 28px;
-  margin-top: auto;
 }
 
 [data-theme="dark"] .site-footer {

@@ -102,9 +102,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           )}
           <div className="app-shell-main">
             {children}
-            <Footer />
           </div>
         </div>
+        <Footer />
         {user && (
           <Suspense fallback={<MobileBottomNav isAdmin={false} />}>
             <MobileNavWithProfile userId={user.id} />
