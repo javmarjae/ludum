@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { unstable_cache } from 'next/cache';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getCachedRecommenderGames } from '@/lib/cached-queries';
 
@@ -399,7 +399,9 @@ export async function getGroupRecommendations(
   memberCount: number,
   filters?: GroupFilters
 ): Promise<GroupRecommendationsResult | null> {
-  const supabase = await createClient();
+  // Admin client: no session needed — data is group-scoped, not user-scoped.
+  // This also allows the function to be wrapped in unstable_cache safely.
+  const supabase = createAdminClient();
 
   // Parallel: plays, members, cached games + trending
   const [{ data: plays }, { data: members }, cachedGames] =
@@ -457,9 +459,8 @@ export async function getGroupRecommendations(
   };
 
   if (memberIds.length > 0) {
-    const adminClient = createAdminClient();
     const [{ data: ownedRows }, { data: ratedRows }] = await Promise.all([
-      adminClient
+      supabase
         .from('user_games')
         .select('game_id')
         .in('profile_id', memberIds)
@@ -609,6 +610,15 @@ export async function getGroupRecommendations(
 
   return { top, alternatives, wildcard, trending };
 }
+
+// Cached version for initial page load (no skipped games). 5-minute TTL.
+// Uses admin client so it's safe to cache across requests without session context.
+export const getCachedGroupRecommendations = unstable_cache(
+  (groupId: string, memberCount: number, filters?: GroupFilters) =>
+    getGroupRecommendations(groupId, memberCount, filters),
+  ['group-recs-v2'],
+  { revalidate: 300 }
+);
 
 export async function getGameByBggId(bggId: number): Promise<GameResult | null> {
   const supabase = await createClient();

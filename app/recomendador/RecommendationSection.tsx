@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  getGroupRecommendations,
+  getCachedGroupRecommendations,
   type GroupRecommendation,
   type GroupFilters,
   type GameResult,
@@ -197,7 +197,7 @@ interface Props {
 }
 
 export async function RecommendationSection({ groupId, memberCount, filters }: Props) {
-  const recs = await getGroupRecommendations(groupId, memberCount, filters);
+  const recs = await getCachedGroupRecommendations(groupId, memberCount, filters);
 
   if (!recs) return <NoRecs />;
 

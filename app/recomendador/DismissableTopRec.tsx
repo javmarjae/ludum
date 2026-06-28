@@ -272,6 +272,10 @@ export function DismissableTopRec({ initial, groupId, memberCount, filters }: Pr
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, opacity: isPending ? 0.7 : 1, transition: 'opacity 0.2s' }}>
+      {/* Loading bar — visible while fetching next recommendation */}
+      <div style={{ height: 4, borderRadius: 999, background: 'var(--bg-inset)', overflow: 'hidden', opacity: isPending ? 1 : 0, transition: 'opacity 0.15s' }}>
+        <div className="rec-loading-bar-fill" />
+      </div>
       <TopGameCard rec={rec} onDismiss={handleDismiss} isPending={isPending} />
       <CompatibilityStats stats={rec.stats} />
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
