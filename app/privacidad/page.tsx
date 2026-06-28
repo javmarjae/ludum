@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function Privacidad() {
   return (
     <>
-      <Nav right={<NavButton href="/auth/login" variant="brand">Entrar</NavButton>} />
+      <Nav right={<NavButton href="/auth/login" variant="brand">Entrar</NavButton>} mobileItems={[{ href: '/auth/login', label: 'Entrar', variant: 'brand' }]} />
       <main style={{ maxWidth: 720, margin: '0 auto', padding: '64px 32px 80px' }}>
         <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--brand)', marginBottom: 16 }}>
           Legal

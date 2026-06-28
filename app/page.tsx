@@ -144,6 +144,11 @@ export default async function Home() {
                 <NavButton href="/auth/login" variant="brand">Entrar</NavButton>
               </>
             }
+            mobileItems={[
+              { href: '/buscar',        label: 'Buscar' },
+              { href: '/recomendador',  label: 'Recomendador' },
+              { href: '/auth/login',    label: 'Entrar', variant: 'brand' },
+            ]}
           />
 
           <section className="home-hero" style={{ maxWidth: 1120, margin: '0 auto', padding: '72px 32px 80px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>

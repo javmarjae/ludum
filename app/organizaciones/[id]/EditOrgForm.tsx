@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { updateOrganization, uploadOrgLogo } from '../actions';
 
 interface Props {
@@ -28,8 +28,6 @@ export function EditOrgForm({ orgId, initialDescription, initialLocation, initia
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [saved, setSaved] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
-
   async function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -91,14 +89,10 @@ export function EditOrgForm({ orgId, initialDescription, initialLocation, initia
           )}
         </div>
         <div>
-          <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleLogoChange} />
-          <button
-            onClick={() => fileRef.current?.click()}
-            disabled={uploadingLogo}
-            style={{ padding: '8px 16px', borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', background: 'var(--bg-inset)', border: '1px solid var(--border)', color: 'var(--text-2)' }}
-          >
+          <label style={{ display: 'inline-block', padding: '8px 16px', borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: uploadingLogo ? 'default' : 'pointer', fontFamily: 'inherit', background: 'var(--bg-inset)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
+            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleLogoChange} disabled={uploadingLogo} />
             {uploadingLogo ? 'Subiendo...' : 'Cambiar logo'}
-          </button>
+          </label>
           <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', marginTop: 4 }}>JPG, PNG o WebP · máx. 2 MB</p>
         </div>
       </div>

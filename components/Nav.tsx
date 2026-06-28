@@ -27,7 +27,8 @@ export function Nav({ back, right, mobileItems }: NavProps) {
         </div>
         {right && <div className="nav-desktop-links" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>{right}</div>}
         {mobileItems && (
-          <div className="nav-mobile-menu">
+          <div className="nav-mobile-menu" style={{ alignItems: 'center', gap: 8 }}>
+            <ThemeToggle />
             <MobileNavMenu items={mobileItems} />
           </div>
         )}

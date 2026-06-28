@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { updateGroup, uploadGroupImage } from '../actions';
 
 interface Props {
@@ -27,8 +27,6 @@ export function EditGroupForm({ groupId, initialName, initialDescription, initia
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [saved, setSaved] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
-
   async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -86,14 +84,10 @@ export function EditGroupForm({ groupId, initialName, initialDescription, initia
           )}
         </div>
         <div>
-          <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
-          <button
-            onClick={() => fileRef.current?.click()}
-            disabled={uploadingImage}
-            style={{ padding: '8px 16px', borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', background: 'var(--bg-inset)', border: '1px solid var(--border)', color: 'var(--text-2)' }}
-          >
+          <label style={{ display: 'inline-block', padding: '8px 16px', borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: uploadingImage ? 'default' : 'pointer', fontFamily: 'inherit', background: 'var(--bg-inset)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
+            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} disabled={uploadingImage} />
             {uploadingImage ? 'Subiendo...' : 'Cambiar foto'}
-          </button>
+          </label>
           <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', marginTop: 4 }}>JPG, PNG o WebP · máx. 2 MB</p>
         </div>
       </div>

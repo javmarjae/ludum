@@ -149,10 +149,13 @@ export function ChatLayout({
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--bg)' }}>
+    <div
+      className={selectedId ? 'chat-container chat-selected' : 'chat-container'}
+      style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--bg)' }}
+    >
 
       {/* ── Conversation list ── */}
-      <div style={{
+      <div className="chat-sidebar" style={{
         width: 320, flexShrink: 0, display: 'flex', flexDirection: 'column',
         borderRight: '1px solid var(--border)', background: 'var(--bg-card)',
       }}>
@@ -218,7 +221,7 @@ export function ChatLayout({
 
       {/* ── Chat window ── */}
       {selected ? (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div className="chat-main" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
           {/* Header */}
           <div style={{
@@ -335,7 +338,7 @@ export function ChatLayout({
           </div>
         </div>
       ) : (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+        <div className="chat-main" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
           <p style={{ fontSize: 52 }}>💬</p>
           <p style={{ fontWeight: 800, fontSize: 18, color: 'var(--text)' }}>Tus mensajes</p>
           <p style={{ fontSize: 14, color: 'var(--text-3)', fontWeight: 500 }}>Selecciona una conversación para chatear</p>

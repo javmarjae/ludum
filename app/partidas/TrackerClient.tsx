@@ -325,7 +325,7 @@ export function TrackerClient({ plays, ratings, totalUsers, userRank, userId }: 
       </div>
 
       {/* ── Stats cards ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="tracker-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
         {statCards.map(s => (
           <div key={s.label} style={{ borderRadius: 16, padding: '20px 22px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
             <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
@@ -343,7 +343,7 @@ export function TrackerClient({ plays, ratings, totalUsers, userRank, userId }: 
       </div>
 
       {/* ── 3-column grid ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 0.85fr', gap: 20, alignItems: 'flex-start' }}>
+      <div className="tracker-main-grid" style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 0.85fr', gap: 20, alignItems: 'flex-start' }}>
 
         {/* ── Left: Juegos jugados ── */}
         <div style={{ borderRadius: 16, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', overflow: 'hidden' }}>

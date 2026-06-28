@@ -384,6 +384,13 @@ html[data-authed="true"] .app-nav {
   .nav-desktop-links { gap: 4px !important; }
   .nav-icon-btn      { padding: 7px 10px !important; }
 }
+
+/* En móvil estrecho: ocultar links de escritorio, mostrar hamburguesa + theme toggle */
+@media (max-width: 600px) {
+  .nav-desktop-links { display: none !important; }
+  .nav-mobile-menu   { display: flex !important; align-items: center; gap: 8px; }
+}
+
 .mobile-nav-link:hover { background: var(--bg-inset) !important; }
 
 /* Mobile bottom nav */
@@ -716,6 +723,52 @@ html[data-authed="true"] .app-nav {
   .grupo-btn-short { display: inline !important; }
   .grupo-stat-value { font-size: 22px !important; }
   .grupo-play-meta { display: none !important; }
+}
+
+/* ── Tracker responsive ─────────────────────────────── */
+@media (max-width: 860px) {
+  .tracker-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .tracker-main-grid  { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .tracker-stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+}
+
+/* ── Chat: split-view móvil ──────────────────────────── */
+@media (max-width: 640px) {
+  .chat-container {
+    height: calc(100vh - 62px - env(safe-area-inset-bottom, 0px)) !important;
+  }
+  /* Por defecto: mostrar lista, ocultar panel de chat */
+  .chat-container .chat-sidebar {
+    width: 100% !important;
+    flex-shrink: unset !important;
+    border-right: none !important;
+  }
+  .chat-container .chat-main {
+    display: none !important;
+  }
+  /* Con conversación seleccionada: ocultar lista, mostrar chat */
+  .chat-container.chat-selected .chat-sidebar {
+    display: none !important;
+  }
+  .chat-container.chat-selected .chat-main {
+    display: flex !important;
+  }
+}
+
+/* Buscador: quitar sticky del panel derecho en móvil */
+@media (max-width: 640px) {
+  .buscar-side-sticky {
+    position: static !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+  }
+  .buscar-col-right {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    margin-top: 4px;
+  }
 }
 
 /* ── Footer ──────────────────────────────────────────── */
