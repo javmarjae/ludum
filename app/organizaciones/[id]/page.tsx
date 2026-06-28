@@ -51,7 +51,7 @@ export default async function OrgPage({ params }: Props) {
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      <AppNav back={{ href: '/grupos', label: 'Grupos' }} />
+      <AppNav back={{ href: '/organizaciones', label: 'Organizaciones' }} />
 
       <main style={{ maxWidth: 860, margin: '0 auto', padding: '40px 24px 80px' }}>
 

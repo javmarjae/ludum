@@ -3,6 +3,11 @@ const nextConfig = {
   reactStrictMode: true,
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '5mb',
+    },
+  },
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [

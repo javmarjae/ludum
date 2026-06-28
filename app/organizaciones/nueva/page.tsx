@@ -22,7 +22,7 @@ export default async function NuevaOrganizacionPage() {
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      <AppNav back={{ href: '/grupos', label: 'Grupos' }} />
+      <AppNav back={{ href: '/organizaciones', label: 'Organizaciones' }} />
 
       <main style={{ maxWidth: 560, margin: '0 auto', padding: '48px 24px 80px' }}>
         <div style={{ marginBottom: 28 }}>

@@ -28,7 +28,7 @@ export default async function NuevaPartidaPage({ params }: Props) {
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      <AppNav back={{ href: `/grupos/${groupId}`, label: group.name }} />
+      <AppNav back={{ href: `/grupos/${groupId}/partidas`, label: 'Partidas' }} />
 
       <main style={{ maxWidth: 580, margin: '0 auto', padding: '48px 24px 80px' }}>
         <div style={{ marginBottom: 28 }}>

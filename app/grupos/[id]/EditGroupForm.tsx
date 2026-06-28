@@ -26,15 +26,25 @@ export function EditGroupForm({ groupId, initialName, initialDescription, initia
   const [image, setImage] = useState<string | null>(initialImage);
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    setImageError(null);
     setUploadingImage(true);
-    const fd = new FormData();
-    fd.append('image', file);
-    const res = await uploadGroupImage(groupId, fd);
-    if (res && 'url' in res) setImage(res.url);
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await uploadGroupImage(groupId, fd);
+      if (res && 'url' in res) {
+        setImage(res.url);
+      } else if (res && 'error' in res) {
+        setImageError(res.error as string);
+      }
+    } catch {
+      setImageError('Error al subir la imagen. Inténtalo de nuevo.');
+    }
     setUploadingImage(false);
   }
 
@@ -89,6 +99,9 @@ export function EditGroupForm({ groupId, initialName, initialDescription, initia
             {uploadingImage ? 'Subiendo...' : 'Cambiar foto'}
           </label>
           <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', marginTop: 4 }}>JPG, PNG o WebP · máx. 2 MB</p>
+          {imageError && (
+            <p style={{ fontSize: 11, fontWeight: 600, color: '#dc2626', marginTop: 4 }}>{imageError}</p>
+          )}
         </div>
       </div>
 

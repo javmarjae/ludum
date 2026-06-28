@@ -47,7 +47,7 @@ export default async function PlayDetailPage({ params }: Props) {
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      <AppNav back={{ href: `/grupos/${groupId}`, label: group?.name ?? 'Grupo' }} />
+      <AppNav back={{ href: `/grupos/${groupId}/partidas`, label: 'Partidas' }} />
       <GameRatingProvider gameId={game?.id ?? ''}>
 
       <main style={{ maxWidth: 560, margin: '0 auto', padding: '48px 24px 80px' }}>
