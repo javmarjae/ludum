@@ -75,7 +75,7 @@ export function AdminUserCard({ user, currentUserId }: { user: AdminUser; curren
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexShrink: 0 }}>
+      <div className="admin-toggle-group">
         <Toggle label="Blog" active={perms.can_write_blog} onToggle={() => toggle('can_write_blog')} disabled={isSelf} />
         <Toggle label="Eventos" active={perms.can_create_events} onToggle={() => toggle('can_create_events')} disabled={isSelf} />
         <Toggle label="Admin" active={perms.is_admin} onToggle={() => toggle('is_admin')} disabled={isSelf} danger />
