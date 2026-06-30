@@ -9,6 +9,11 @@ import { getAuthUser } from '@/lib/supabase/server';
 import { BeginnerSection } from '@/components/BeginnerSection';
 import { DashboardContent } from './DashboardContent';
 import { HomeDashboardSkeleton } from './HomeDashboardSkeleton';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  alternates: { canonical: 'https://ludumgames.es' },
+};
 
 function getPublicSupabase() {
   return createSupabaseClient(
@@ -62,8 +67,35 @@ export default async function Home() {
 
   /* ──────────────────────────────────────────────────── */
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        name: 'Ludum',
+        url: 'https://ludumgames.es',
+        description: 'Recomendador y tracker de juegos de mesa con más de 138.000 títulos.',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: 'https://ludumgames.es/buscar?q={search_term_string}',
+          'query-input': 'required name=search_term_string',
+        },
+      },
+      {
+        '@type': 'Organization',
+        name: 'Ludum',
+        url: 'https://ludumgames.es',
+        logo: 'https://ludumgames.es/logo.svg',
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ── NO LOGUEADO ─────────────────────────────────── */}
       {!user && (
         <div style={{ background: 'transparent', minHeight: '100vh' }}>
@@ -110,6 +142,7 @@ export default async function Home() {
                   key={g.bgg_id}
                   href={`/juegos/${g.bgg_id}`}
                   className="hover-cover"
+                  aria-label={g.name}
                   style={{
                     display: 'block', textDecoration: 'none', position: 'relative',
                     aspectRatio: '2/3', borderRadius: 6, overflow: 'hidden',

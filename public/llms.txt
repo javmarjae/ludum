@@ -1,0 +1,30 @@
+# Ludum
+
+> Plataforma española para descubrir, recomendar y registrar partidas de juegos de mesa.
+
+Ludum es una aplicación web gratuita con más de 138.000 juegos de mesa del catálogo de BoardGameGeek. Permite registrar partidas, llevar un historial de victorias con amigos, y descubrir nuevos juegos mediante un recomendador personalizado por mecánicas, número de jugadores y tiempo disponible.
+
+## Páginas principales
+
+- https://ludumgames.es/ — Inicio y dashboard personal
+- https://ludumgames.es/buscar — Catálogo completo con búsqueda y filtros
+- https://ludumgames.es/recomendador — Recomendador personalizado de juegos
+- https://ludumgames.es/blog — Artículos, reseñas y guías de juegos de mesa
+- https://ludumgames.es/eventos — Torneos y ferias de juegos de mesa en España
+- https://ludumgames.es/grupos — Grupos de juego entre amigos
+- https://ludumgames.es/torneos — Torneos organizados en la plataforma
+- https://ludumgames.es/comunidades — Comunidades de jugadores
+- https://ludumgames.es/sitemap.xml — Sitemap con fichas de juegos indexadas
+
+## Fichas de juegos
+
+Cada juego tiene su propia URL: https://ludumgames.es/juegos/{bgg_id}
+Ejemplo: https://ludumgames.es/juegos/174430 (Gloomhaven)
+
+Las fichas incluyen: nombre, año, jugadores, tiempo de partida, mecánicas, categorías, valoración BGG y datos estructurados schema.org/BoardGame.
+
+## Datos
+
+- Fuente: BoardGameGeek (BGG), sincronización diaria
+- Cobertura: 31.000+ juegos rankeados · 107.000+ juegos no rankeados
+- Idioma principal: Español (es-ES)

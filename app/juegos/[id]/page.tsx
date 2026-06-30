@@ -61,7 +61,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       images: game.image_url ? [game.image_url] : [],
     },
-    alternates: { canonical: `https://ludum.es/juegos/${game.bgg_id}` },
+    alternates: { canonical: `https://ludumgames.es/juegos/${game.bgg_id}` },
   };
 }
 

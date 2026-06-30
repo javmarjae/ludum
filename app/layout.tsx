@@ -17,7 +17,7 @@ const urbanist = Urbanist({ subsets: ['latin'], weight: ['400', '500', '600', '7
 const playfair = Playfair({ subsets: ['latin'], weight: ['700', '800'], variable: '--font-display' });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ludum.es'),
+  metadataBase: new URL('https://ludumgames.es'),
   title: {
     default: 'Ludum — Recomendador de Juegos de Mesa',
     template: '%s — Ludum',
@@ -36,15 +36,16 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Ludum — Recomendador de Juegos de Mesa',
-    description: 'Descubre tu próximo juego de mesa favorito.',
+    description: 'Descubre tu próximo juego de mesa favorito. Registra partidas, compara con amigos y encuentra el juego perfecto entre más de 138.000 títulos.',
     type: 'website',
+    url: 'https://ludumgames.es',
     locale: 'es_ES',
     siteName: 'Ludum',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Ludum — Recomendador de Juegos de Mesa',
-    description: 'Descubre tu próximo juego de mesa favorito.',
+    description: 'Descubre tu próximo juego de mesa favorito. Registra partidas, compara con amigos y encuentra el juego perfecto entre más de 138.000 títulos.',
   },
 };
 
