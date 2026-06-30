@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { updateProfile, uploadAvatar } from './actions';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
 import { ImageEditor } from '@/components/ImageEditor';
@@ -106,7 +107,7 @@ export function EditProfileForm({ initialName, initialBio, initialAvatar, initia
           {/* Avatar grande */}
           <div style={{ flexShrink: 0 }}>
             {avatar ? (
-              <img src={avatar} alt={name} style={{ width: 130, height: 130, borderRadius: '50%', objectFit: 'cover', boxShadow: '0 4px 20px rgba(62,94,59,0.2)' }} />
+              <Image src={avatar} alt={name} width={130} height={130} style={{ borderRadius: '50%', objectFit: 'cover', boxShadow: '0 4px 20px rgba(62,94,59,0.2)' }} />
             ) : (
               <div style={{ width: 130, height: 130, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, fontWeight: 800, color: 'white', background: 'linear-gradient(135deg, #89BA86, #3E5E3B)', boxShadow: '0 4px 20px rgba(62,94,59,0.25)' }}>
                 {name[0]?.toUpperCase()}
@@ -147,7 +148,7 @@ export function EditProfileForm({ initialName, initialBio, initialAvatar, initia
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <div style={{ position: 'relative', flexShrink: 0 }}>
               {avatar ? (
-                <img src={avatar} alt="Avatar" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }} />
+                <Image src={avatar} alt="Avatar" width={64} height={64} style={{ borderRadius: '50%', objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }} />
               ) : (
                 <div style={{ width: 64, height: 64, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 800, color: 'white', background: 'linear-gradient(135deg, #89BA86, #3E5E3B)' }}>
                   {name[0]?.toUpperCase()}

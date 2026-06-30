@@ -150,8 +150,7 @@ export default async function GamePage({ params, searchParams }: Props) {
       {/* ── Hero ─────────────────────────────────────── */}
       <div style={{ position: 'relative', height: 300, overflow: 'hidden' }}>
         {game.image_url ? (
-          <img src={game.image_url} alt="" aria-hidden style={{
-            position: 'absolute', inset: 0, width: '100%', height: '100%',
+          <Image src={game.image_url} alt="" aria-hidden fill sizes="100vw" style={{
             objectFit: 'cover', objectPosition: 'center',
             filter: 'blur(20px) saturate(1.4)',
             transform: 'scale(1.14)',

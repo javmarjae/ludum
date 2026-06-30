@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import Image from 'next/image';
 import { setUserPermission } from './actions';
 
 type Permission = 'can_write_blog' | 'can_create_events' | 'is_admin';
@@ -56,7 +57,7 @@ export function AdminUserCard({ user, currentUserId, index }: { user: AdminUser;
         fontSize: 17, color: 'var(--text-3)', fontWeight: 700,
       }}>
         {user.avatar_url
-          ? <img src={user.avatar_url} alt="" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ? <Image src={user.avatar_url} alt="" width={42} height={42} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           : initials}
       </div>
 

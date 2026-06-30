@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import { AttendanceButtons } from './AttendanceButtons';
 import type { Metadata } from 'next';
@@ -67,7 +68,7 @@ export default async function EventoDetailPage({ params }: Props) {
           background: 'var(--bg-inset)', marginBottom: 28, position: 'relative',
         }}>
           {event.image_url ? (
-            <img src={event.image_url} alt={event.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <Image src={event.image_url} alt={event.title} fill sizes="(max-width: 720px) 100vw, 720px" style={{ objectFit: 'cover' }} />
           ) : (
             <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 80 }}>
               {event.type === 'tournament' ? '🏆' : '🎪'}

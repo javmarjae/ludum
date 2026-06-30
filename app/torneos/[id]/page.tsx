@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import { Avatar } from '@/components/Avatar';
 
@@ -104,7 +105,7 @@ export default async function TorneoPage({ params }: Props) {
         {/* Game cover banner */}
         {game?.image_url && (
           <div style={{ height: 160, borderRadius: 24, overflow: 'hidden', marginBottom: 24, position: 'relative' }}>
-            <img src={game.image_url} alt={game.name} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.65)' }} />
+            <Image src={game.image_url} alt={game.name} fill sizes="(max-width: 860px) 100vw, 860px" style={{ objectFit: 'cover', filter: 'brightness(0.65)' }} />
             <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', padding: '0 24px 20px' }}>
               <span style={{ fontSize: 28, fontWeight: 800, color: 'white', textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>{game.name}</span>
             </div>

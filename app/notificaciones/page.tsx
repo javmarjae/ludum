@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import { Avatar } from '@/components/Avatar';
 import type { Metadata } from 'next';
@@ -116,7 +117,7 @@ export default async function NotificacionesPage() {
                     }}
                   >
                     {gameImage ? (
-                      <img src={gameImage} alt={gameName} loading="lazy" decoding="async" style={{ width: 44, height: 44, borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} />
+                      <Image src={gameImage} alt={gameName} width={44} height={44} style={{ borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} />
                     ) : (
                       <div style={{ width: 44, height: 44, borderRadius: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, background: 'var(--bg-inset)' }}>
                         🎲

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface AvatarProps {
   name: string;
@@ -13,13 +14,11 @@ export function Avatar({ name, src, size = 40, style }: AvatarProps) {
 
   if (src) {
     return (
-      <img
+      <Image
         src={src}
         alt={name}
         width={size}
         height={size}
-        loading="lazy"
-        decoding="async"
         style={{
           width: size, height: size, borderRadius: '50%',
           objectFit: 'cover', flexShrink: 0,

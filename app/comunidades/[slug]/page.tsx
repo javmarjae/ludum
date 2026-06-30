@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import { Avatar } from '@/components/Avatar';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
@@ -112,7 +113,7 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
         {/* Community header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 28 }}>
           {community.image_url
-            ? <img src={community.image_url} alt={community.name} style={{ width: 56, height: 56, borderRadius: 16, objectFit: 'cover', flexShrink: 0, boxShadow: 'var(--shadow-card)' }} />
+            ? <Image src={community.image_url} alt={community.name} width={56} height={56} style={{ borderRadius: 16, objectFit: 'cover', flexShrink: 0, boxShadow: 'var(--shadow-card)' }} />
             : <div style={{
                 width: 56, height: 56, borderRadius: 16, flexShrink: 0,
                 background: 'var(--brand-tint)',
@@ -340,7 +341,7 @@ function PlayFeedCard({ play, index }: { play: any; index: number }) {
         background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
       }}>
         {play.games?.image_url
-          ? <img src={play.games.image_url} alt={play.games.name} loading="lazy" decoding="async" style={{ width: 48, height: 48, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
+          ? <Image src={play.games.image_url} alt={play.games.name} width={48} height={48} style={{ borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
           : <div style={{ width: 48, height: 48, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, background: 'var(--bg-inset)' }}>🎲</div>
         }
         <div style={{ flex: 1, minWidth: 0 }}>

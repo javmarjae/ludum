@@ -141,7 +141,7 @@ export default async function PublicProfilePage({ params }: Props) {
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 28 }}>
               <div style={{ flexShrink: 0 }}>
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt={displayName} style={{ width: 130, height: 130, borderRadius: '50%', objectFit: 'cover', boxShadow: '0 4px 20px rgba(62,94,59,0.2)' }} />
+                  <Image src={avatarUrl} alt={displayName} width={130} height={130} style={{ borderRadius: '50%', objectFit: 'cover', boxShadow: '0 4px 20px rgba(62,94,59,0.2)' }} />
                 ) : (
                   <div style={{ width: 130, height: 130, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, fontWeight: 800, color: 'white', background: 'linear-gradient(135deg, #c4b5e8, #7c5cbf)', boxShadow: '0 4px 20px rgba(124,92,191,0.25)' }}>
                     {displayName[0]?.toUpperCase()}

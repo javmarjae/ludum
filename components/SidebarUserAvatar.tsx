@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 
 export function SidebarUserAvatar() {
@@ -31,10 +32,12 @@ export function SidebarUserAvatar() {
       style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, padding: '7px 6px', borderRadius: 12, textDecoration: 'none', width: 66 }}
     >
       {avatarUrl ? (
-        <img
+        <Image
           src={avatarUrl}
           alt="Tu perfil"
-          style={{ width: 46, height: 46, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+          width={46}
+          height={46}
+          style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
         />
       ) : (
         <div style={{

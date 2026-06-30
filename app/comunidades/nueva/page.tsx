@@ -5,13 +5,11 @@ import Link from 'next/link';
 
 export default async function NuevaComunidadPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const [{ data: { user } }, { data: categories }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from('categories').select('id, name').order('name'),
+  ]);
   if (!user) redirect('/auth/login');
-
-  const { data: categories } = await supabase
-    .from('categories')
-    .select('id, name')
-    .order('name');
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>

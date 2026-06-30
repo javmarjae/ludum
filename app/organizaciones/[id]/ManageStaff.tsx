@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { addStaffMember, removeStaffMember } from './actions';
 
 interface Member {
@@ -43,7 +44,7 @@ export function ManageStaff({ orgId, members, isAdmin }: { orgId: string; member
             return (
               <div key={m.profile_id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 12, background: 'var(--bg-inset)' }}>
                 {avatar ? (
-                  <img src={avatar} alt={name} loading="lazy" decoding="async" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                  <Image src={avatar} alt={name} width={32} height={32} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
                 ) : (
                   <div style={{ width: 32, height: 32, borderRadius: '50%', flexShrink: 0, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, color: 'var(--brand)' }}>
                     {name[0].toUpperCase()}

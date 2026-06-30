@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const CATEGORY_ICONS: Record<string, string> = {
   'Estrategia': '♟️',
@@ -125,7 +126,7 @@ export async function GruposContent({ userId }: { userId: string }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
                     {group.image_url ? (
-                      <img src={group.image_url} alt={group.name} loading="lazy" decoding="async" style={{ width: 48, height: 48, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
+                      <Image src={group.image_url} alt={group.name} width={48} height={48} style={{ borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
                     ) : (
                       <div style={{ width: 48, height: 48, borderRadius: 12, flexShrink: 0, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>🎲</div>
                     )}
@@ -260,7 +261,7 @@ export async function GruposContent({ userId }: { userId: string }) {
                   background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
                 }}>
                   {org.logo_url ? (
-                    <img src={org.logo_url} alt={org.name} loading="lazy" decoding="async" style={{ width: 44, height: 44, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
+                    <Image src={org.logo_url} alt={org.name} width={44} height={44} style={{ borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
                   ) : (
                     <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>
                       {org.type === 'tienda' ? '🏪' : '🎲'}

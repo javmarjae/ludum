@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { updateGroup, uploadGroupImage } from '../actions';
 import { ImageEditor } from '@/components/ImageEditor';
 
@@ -103,7 +104,7 @@ export function EditGroupForm({ groupId, initialName, initialDescription, initia
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
         <div style={{ position: 'relative', flexShrink: 0 }}>
           {image ? (
-            <img src={image} alt={name} style={{ width: 64, height: 64, borderRadius: 18, objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }} />
+            <Image src={image} alt={name} width={64} height={64} style={{ borderRadius: 18, objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }} />
           ) : (
             <div style={{ width: 64, height: 64, borderRadius: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, background: 'var(--bg-inset)' }}>🎲</div>
           )}

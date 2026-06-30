@@ -1,6 +1,7 @@
 import { createClient, getAuthUser } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Suspense } from 'react';
 import { Avatar } from '@/components/Avatar';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
@@ -67,7 +68,7 @@ export default async function GrupoDetailPage({ params }: Props) {
             ←
           </Link>
           {(group as any).image_url ? (
-            <img src={(group as any).image_url} alt={group.name} style={{ width: 40, height: 40, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
+            <Image src={(group as any).image_url} alt={group.name} width={40} height={40} style={{ borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
           ) : (
             <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <img src={playerIcon(memberCount)} alt="" aria-hidden="true" style={{ width: 22, height: 22 }} />

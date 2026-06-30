@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import Image from 'next/image';
 import { createTournament, searchGames } from '../actions';
 
 interface Org { id: string; name: string; type: string }
@@ -73,7 +74,7 @@ export function TorneoForm({ orgs }: { orgs: Org[] }) {
         {selectedGame ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 14, background: 'var(--bg-inset)', border: '1px solid var(--brand)' }}>
             {selectedGame.image_url && (
-              <img src={selectedGame.image_url} alt={selectedGame.name} style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover' }} />
+              <Image src={selectedGame.image_url} alt={selectedGame.name} width={36} height={36} style={{ borderRadius: 8, objectFit: 'cover' }} />
             )}
             <span style={{ flex: 1, fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{selectedGame.name}</span>
             <button type="button" onClick={() => { setSelectedGame(null); setGameQuery(''); setGameResults([]); }}
@@ -94,7 +95,7 @@ export function TorneoForm({ orgs }: { orgs: Org[] }) {
                 {gameResults.map(g => (
                   <button key={g.id} type="button" onClick={() => { setSelectedGame(g); setGameResults([]); }}
                     style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: 'none', border: 'none', borderTop: '1px solid var(--border)', cursor: 'pointer', textAlign: 'left' }}>
-                    {g.image_url && <img src={g.image_url} alt={g.name} loading="lazy" decoding="async" style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover' }} />}
+                    {g.image_url && <Image src={g.image_url} alt={g.name} width={32} height={32} style={{ borderRadius: 6, objectFit: 'cover' }} />}
                     <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{g.name}</span>
                     {g.year_published && <span style={{ fontSize: 12, color: 'var(--text-4)' }}>{g.year_published}</span>}
                   </button>

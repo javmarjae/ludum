@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import { ManageStaff } from './ManageStaff';
 import { EditOrgForm } from './EditOrgForm';
@@ -58,7 +59,7 @@ export default async function OrgPage({ params }: Props) {
         {/* ── Header ─────────────────────────────────── */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20, marginBottom: 36, flexWrap: 'wrap' }}>
           {org.logo_url
-            ? <img src={org.logo_url} alt={org.name} style={{ width: 80, height: 80, borderRadius: 20, objectFit: 'cover', flexShrink: 0, boxShadow: 'var(--shadow-card)' }} />
+            ? <Image src={org.logo_url} alt={org.name} width={80} height={80} style={{ borderRadius: 20, objectFit: 'cover', flexShrink: 0, boxShadow: 'var(--shadow-card)' }} />
             : <div style={{ width: 80, height: 80, borderRadius: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, flexShrink: 0 }}>
                 {org.type === 'tienda' ? '🏪' : '🎲'}
               </div>
@@ -142,7 +143,7 @@ export default async function OrgPage({ params }: Props) {
                     <Link key={t.id} href={`/torneos/${t.id}`} className="stagger-in" style={{ ['--stagger-i' as any]: i, textDecoration: 'none' }}>
                       <div className="hover-ghost" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', borderRadius: 16, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
                         {game?.image_url
-                          ? <img src={game.image_url} alt={game.name} loading="lazy" decoding="async" style={{ width: 48, height: 48, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
+                          ? <Image src={game.image_url} alt={game.name} width={48} height={48} style={{ borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
                           : <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>🏆</div>
                         }
                         <div style={{ flex: 1, minWidth: 0 }}>

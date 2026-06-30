@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Props {
   params: Promise<{ playId: string }>;
@@ -66,7 +67,7 @@ export default async function PublicPlayPage({ params }: Props) {
         {/* Cabecera juego */}
         <div style={{ borderRadius: 32, padding: 24, marginBottom: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', display: 'flex', gap: 16, alignItems: 'center' }}>
           {play.game_image
-            ? <img src={play.game_image} alt={play.game_name} style={{ width: 72, height: 72, borderRadius: 16, objectFit: 'cover', flexShrink: 0 }} />
+            ? <Image src={play.game_image} alt={play.game_name} width={72} height={72} style={{ borderRadius: 16, objectFit: 'cover', flexShrink: 0 }} />
             : <div style={{ width: 72, height: 72, borderRadius: 16, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, background: 'var(--bg-inset)' }}>🎲</div>
           }
           <div>

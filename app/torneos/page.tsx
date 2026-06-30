@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
+import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 
 const FORMAT_LABEL: Record<string, string> = {
@@ -21,20 +22,21 @@ export const metadata = { title: 'Torneos' };
 
 export default async function TorneosPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  const { data: tournaments } = await supabase
-    .from('tournaments')
-    .select(`
-      id, name, format, status, start_date, end_date, location, max_participants,
-      organizations(id, name, type, logo_url),
-      games(name, image_url),
-      tournament_participants(count)
-    `)
-    .eq('is_public', true)
-    .neq('status', 'cancelado')
-    .order('created_at', { ascending: false })
-    .limit(50);
+  const [{ data: { user } }, { data: tournaments }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from('tournaments')
+      .select(`
+        id, name, format, status, start_date, end_date, location, max_participants,
+        organizations(id, name, type, logo_url),
+        games(name, image_url),
+        tournament_participants(count)
+      `)
+      .eq('is_public', true)
+      .neq('status', 'cancelado')
+      .order('created_at', { ascending: false })
+      .limit(50),
+  ]);
 
   // Fetch user's organizations to show "crear torneo" button
   const { data: myOrgs } = user
@@ -132,7 +134,7 @@ export default async function TorneosPage() {
                       {org && (
                         <div style={{ marginTop: 'auto', paddingTop: 10, borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
                           {org.logo_url
-                            ? <img src={org.logo_url} alt={org.name} loading="lazy" decoding="async" style={{ width: 24, height: 24, borderRadius: 6, objectFit: 'cover' }} />
+                            ? <Image src={org.logo_url} alt={org.name} width={24} height={24} style={{ borderRadius: 6, objectFit: 'cover' }} />
                             : <span style={{ fontSize: 16 }}>{org.type === 'tienda' ? '🏪' : '🎲'}</span>
                           }
                           <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)' }}>{org.name}</span>

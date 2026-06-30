@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 
 interface EventRow {
@@ -55,7 +56,7 @@ function EventCard({ event }: { event: EventRow }) {
         {/* Image */}
         <div style={{ position: 'relative', width: '100%', height: 140, background: 'var(--bg-inset)', flexShrink: 0 }}>
           {event.image_url ? (
-            <img src={event.image_url} alt={event.title} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <Image src={event.image_url} alt={event.title} fill sizes="(max-width: 600px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
           ) : (
             <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>
               {event.type === 'tournament' ? '🏆' : '🎪'}
