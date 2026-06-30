@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { updateOrganization, uploadOrgLogo } from '../actions';
 import { ImageEditor } from '@/components/ImageEditor';
 
@@ -21,6 +22,7 @@ const fieldStyle: React.CSSProperties = {
 };
 
 export function EditOrgForm({ orgId, initialDescription, initialLocation, initialMapsUrl, initialLogo, orgType }: Props) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState(initialDescription);
   const [location, setLocation] = useState(initialLocation);
@@ -44,7 +46,10 @@ export function EditOrgForm({ orgId, initialDescription, initialLocation, initia
     const fd = new FormData();
     fd.append('logo', file);
     const res = await uploadOrgLogo(orgId, fd);
-    if (res && 'url' in res) setLogo(res.url);
+    if (res && 'url' in res) {
+      setLogo(res.url);
+      router.refresh();
+    }
     setUploadingLogo(false);
   }
 

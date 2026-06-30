@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { updateGroup, uploadGroupImage } from '../actions';
 import { ImageEditor } from '@/components/ImageEditor';
 
@@ -21,6 +22,7 @@ const fieldStyle: React.CSSProperties = {
 };
 
 export function EditGroupForm({ groupId, initialName, initialDescription, initialImage, inviteCode, isOwner }: Props) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(initialName);
   const [description, setDescription] = useState(initialDescription);
@@ -43,7 +45,10 @@ export function EditGroupForm({ groupId, initialName, initialDescription, initia
     const fd = new FormData();
     fd.append('image', file);
     const res = await uploadGroupImage(groupId, fd);
-    if (res && 'url' in res) setImage(res.url);
+    if (res && 'url' in res) {
+      setImage(res.url);
+      router.refresh(); // re-renderiza el header del grupo (server component) con la foto nueva
+    }
     setUploadingImage(false);
   }
 

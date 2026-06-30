@@ -107,6 +107,7 @@ export async function uploadGroupImage(groupId: string, formData: FormData) {
 
   await supabase.from('groups').update({ image_url: imageUrl }).eq('id', groupId);
   revalidatePath(`/grupos/${groupId}`);
+  revalidatePath('/grupos'); // el listado también muestra la foto del grupo
   return { url: imageUrl };
 }
 

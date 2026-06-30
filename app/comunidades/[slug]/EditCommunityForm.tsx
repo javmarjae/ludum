@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { updateCommunity, uploadCommunityImage } from '../actions';
 import { ImageEditor } from '@/components/ImageEditor';
 
@@ -21,6 +22,7 @@ const fieldStyle: React.CSSProperties = {
 };
 
 export function EditCommunityForm({ communityId, communitySlug, initialDescription, initialLocation, initialMapsUrl, initialImage }: Props) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState(initialDescription);
   const [location, setLocation] = useState(initialLocation);
@@ -44,7 +46,10 @@ export function EditCommunityForm({ communityId, communitySlug, initialDescripti
     const fd = new FormData();
     fd.append('image', file);
     const res = await uploadCommunityImage(communityId, communitySlug, fd);
-    if (res && 'url' in res) setImage(res.url);
+    if (res && 'url' in res) {
+      setImage(res.url);
+      router.refresh();
+    }
     setUploadingImage(false);
   }
 

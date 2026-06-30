@@ -201,5 +201,6 @@ export async function uploadCommunityImage(communityId: string, communitySlug: s
 
   await supabase.from('communities').update({ image_url: imageUrl }).eq('id', communityId);
   revalidatePath(`/comunidades/${communitySlug}`);
+  revalidatePath('/comunidades'); // el listado también muestra la imagen
   return { url: imageUrl };
 }

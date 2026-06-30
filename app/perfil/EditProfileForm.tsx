@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { updateProfile, uploadAvatar } from './actions';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
 import { ImageEditor } from '@/components/ImageEditor';
@@ -42,6 +43,7 @@ function formatJoinDate(iso: string): string {
 }
 
 export function EditProfileForm({ initialName, initialBio, initialAvatar, initialSocialLinks, email, createdAt, isVerified }: Props) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(initialName);
   const [bio, setBio] = useState(initialBio);
@@ -67,7 +69,10 @@ export function EditProfileForm({ initialName, initialBio, initialAvatar, initia
     const fd = new FormData();
     fd.append('avatar', file);
     const res = await uploadAvatar(fd);
-    if (res && 'url' in res) setAvatar(res.url);
+    if (res && 'url' in res) {
+      setAvatar(res.url);
+      router.refresh();
+    }
     setUploadingAvatar(false);
   }
 
