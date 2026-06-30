@@ -77,6 +77,7 @@ export function TorneoForm({ orgs }: { orgs: Org[] }) {
             )}
             <span style={{ flex: 1, fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{selectedGame.name}</span>
             <button type="button" onClick={() => { setSelectedGame(null); setGameQuery(''); setGameResults([]); }}
+              aria-label="Quitar juego seleccionado"
               style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-4)', fontSize: 18, padding: '0 4px' }}>×</button>
           </div>
         ) : (

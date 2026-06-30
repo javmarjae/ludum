@@ -108,7 +108,7 @@ export function EditProfileForm({ initialName, initialBio, initialAvatar, initia
             {avatar ? (
               <img src={avatar} alt={name} style={{ width: 130, height: 130, borderRadius: '50%', objectFit: 'cover', boxShadow: '0 4px 20px rgba(62,94,59,0.2)' }} />
             ) : (
-              <div style={{ width: 130, height: 130, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, fontWeight: 800, color: 'white', background: 'linear-gradient(135deg, #c4b5e8, #7c5cbf)', boxShadow: '0 4px 20px rgba(124,92,191,0.25)' }}>
+              <div style={{ width: 130, height: 130, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, fontWeight: 800, color: 'white', background: 'linear-gradient(135deg, #89BA86, #3E5E3B)', boxShadow: '0 4px 20px rgba(62,94,59,0.25)' }}>
                 {name[0]?.toUpperCase()}
               </div>
             )}
@@ -140,7 +140,7 @@ export function EditProfileForm({ initialName, initialBio, initialAvatar, initia
         <div style={{ borderRadius: 10, padding: 24, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Editar perfil</h2>
-            <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-4)', lineHeight: 1 }}>✕</button>
+            <button onClick={() => setOpen(false)} aria-label="Cerrar edición de perfil" style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-4)', lineHeight: 1 }}>✕</button>
           </div>
 
           {/* Avatar */}
@@ -168,8 +168,9 @@ export function EditProfileForm({ initialName, initialBio, initialAvatar, initia
 
           {/* Nombre */}
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Nombre</label>
+            <label htmlFor="profile-name" style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Nombre</label>
             <input
+              id="profile-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               style={fieldStyle}
@@ -180,8 +181,9 @@ export function EditProfileForm({ initialName, initialBio, initialAvatar, initia
 
           {/* Bio */}
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Descripción</label>
+            <label htmlFor="profile-bio" style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Descripción</label>
             <textarea
+              id="profile-bio"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               rows={3}
@@ -196,12 +198,13 @@ export function EditProfileForm({ initialName, initialBio, initialAvatar, initia
 
           {/* Redes sociales */}
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-3)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Redes sociales</label>
+            <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Redes sociales</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {SOCIALS.map(({ key, label, placeholder }) => (
                 <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', width: 112, flexShrink: 0 }}>{label}</span>
+                  <label htmlFor={`profile-social-${key}`} style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', width: 112, flexShrink: 0 }}>{label}</label>
                   <input
+                    id={`profile-social-${key}`}
                     value={socials[key] ?? ''}
                     onChange={(e) => setSocials((s) => ({ ...s, [key]: e.target.value }))}
                     placeholder={placeholder}

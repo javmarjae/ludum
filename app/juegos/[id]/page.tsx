@@ -8,7 +8,10 @@ import { CollectionButton } from './CollectionButton';
 import { WishlistButton } from './WishlistButton';
 import { StarRating } from './StarRating';
 import { GameRatingProvider } from './GameRatingContext';
-import { cache } from 'react';
+import { ExpansionBanner } from './ExpansionBanner';
+import { GameRelatedLists } from './GameRelatedLists';
+import { GamePlaysTab } from './GamePlaysTab';
+import { cache, Suspense } from 'react';
 import type { Metadata } from 'next';
 
 interface Props {
@@ -62,16 +65,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function StarDisplay() {
-  return (
-    <div style={{ display: 'flex', gap: 1 }}>
-      {[0, 1, 2, 3, 4].map(i => (
-        <span key={i} style={{ fontSize: 14, color: 'var(--sand)', lineHeight: 1 }}>★</span>
-      ))}
-    </div>
-  );
-}
-
 export default async function GamePage({ params, searchParams }: Props) {
   const { id } = await params;
   const { tab } = await searchParams;
@@ -92,54 +85,6 @@ export default async function GamePage({ params, searchParams }: Props) {
   const categories: string[] = (game as any).categories ?? [];
   const filterCol = mechanics.length > 0 ? 'mechanics' : 'categories';
   const filterArr = mechanics.length > 0 ? mechanics.slice(0, 5) : categories.slice(0, 5);
-
-  const [parentGameResult, expansionsResult, similarResult, playsResult] = await Promise.all([
-    (game as any).is_expansion && (game as any).parent_bgg_id
-      ? supabase.from('games').select('bgg_id, name, image_url').eq('bgg_id', (game as any).parent_bgg_id).single()
-      : Promise.resolve({ data: null }),
-    !(game as any).is_expansion
-      ? supabase.from('games').select('bgg_id, name, image_url, year_published').eq('parent_bgg_id', game.bgg_id).order('year_published', { ascending: true }).limit(20)
-      : Promise.resolve({ data: [] }),
-    filterArr.length > 0
-      ? supabase.from('games')
-          .select('bgg_id, name, image_url, bgg_rating, year_published')
-          .neq('bgg_id', game.bgg_id)
-          .not('bgg_rank', 'is', null)
-          .not('bgg_rating', 'is', null)
-          .overlaps(filterCol, filterArr)
-          .order('bgg_rating', { ascending: false })
-          .limit(6)
-      : Promise.resolve({ data: [] }),
-    user
-      ? supabase.from('plays')
-          .select('id, played_at, group_id, groups(name), play_results!inner(profile_id, is_winner, score)')
-          .eq('game_id', game.id)
-          .eq('play_results.profile_id', user.id)
-          .order('played_at', { ascending: false })
-          .limit(20)
-      : Promise.resolve({ data: [] }),
-  ]);
-
-  const parentGame = parentGameResult.data;
-  const expansions = (expansionsResult.data ?? []) as any[];
-  const similarGames = (similarResult.data ?? []) as any[];
-  const userPlays = (playsResult.data ?? []) as any[];
-
-  const playIds = userPlays.map((p: any) => p.id);
-  let winnersByPlay: Record<string, string> = {};
-  if (playIds.length > 0) {
-    const { data: winnerRows } = await supabase
-      .from('play_results')
-      .select('play_id, profile_id, guest_name, profiles(display_name)')
-      .in('play_id', playIds)
-      .eq('is_winner', true);
-
-    for (const r of winnerRows ?? []) {
-      winnersByPlay[(r as any).play_id] = (r as any).profile_id
-        ? ((r as any).profiles?.display_name ?? 'Jugador')
-        : ((r as any).guest_name ?? 'Invitado');
-    }
-  }
 
   const playersText = game.min_players && game.max_players
     ? game.min_players === game.max_players
@@ -291,16 +236,10 @@ export default async function GamePage({ params, searchParams }: Props) {
           {/* Expansion banner */}
           {(game as any).is_expansion && (
             <div style={{ marginBottom: 24 }}>
-              {parentGame ? (
-                <Link href={`/juegos/${(parentGame as any).bgg_id}`} style={{ textDecoration: 'none' }}>
-                  <div style={{ borderRadius: 16, padding: '10px 16px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
-                    {(parentGame as any).image_url && (
-                      <Image src={(parentGame as any).image_url} alt="" width={28} height={28} style={{ borderRadius: 8, objectFit: 'cover' }} />
-                    )}
-                    <span className="t-card-sub" style={{ color: 'var(--text-3)' }}>Expansión de </span>
-                    <span className="t-card-sub" style={{ color: 'var(--brand)' }}>{(parentGame as any).name} →</span>
-                  </div>
-                </Link>
+              {(game as any).parent_bgg_id ? (
+                <Suspense fallback={<span className="t-card-sub skeleton">🧩 Expansión</span>}>
+                  <ExpansionBanner parentBggId={(game as any).parent_bgg_id} />
+                </Suspense>
               ) : (
                 <span className="t-card-sub">🧩 Expansión</span>
               )}
@@ -371,63 +310,15 @@ export default async function GamePage({ params, searchParams }: Props) {
                 </div>
               )}
 
-              {/* Juegos similares */}
-              {similarGames.length > 0 && (
-                <div style={{ marginTop: 32 }}>
-                  <p className="t-label" style={{ marginBottom: 16 }}>También te puede gustar</p>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {similarGames.map((sg: any, i: number) => (
-                      <Link key={sg.bgg_id} href={`/juegos/${sg.bgg_id}`} className="hover-ghost" style={{
-                        textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12,
-                        padding: '10px 0',
-                        borderBottom: i < similarGames.length - 1 ? '1px solid var(--border)' : 'none',
-                      }}>
-                        {sg.image_url
-                          ? <Image src={sg.image_url} alt={sg.name} width={52} height={52} style={{ borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
-                          : <div style={{ width: 52, height: 52, borderRadius: 10, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 22 }}>🎲</div>
-                        }
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p className="t-card-title" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sg.name}</p>
-                          {sg.bgg_rating && (
-                            <p className="t-meta" style={{ color: sg.bgg_rating >= 8 ? 'var(--brand)' : 'var(--text-4)' }}>★ {sg.bgg_rating.toFixed(1)}</p>
-                          )}
-                        </div>
-                        <span style={{ color: 'var(--text-4)', fontSize: 18 }}>›</span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Expansiones del juego base */}
-              {expansions.length > 0 && (
-                <div style={{ marginTop: 32 }}>
-                  <p className="t-label" style={{ marginBottom: 16 }}>
-                    Expansiones ({expansions.length})
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {expansions.map((exp: any, i: number) => (
-                      <Link key={exp.bgg_id} href={`/juegos/${exp.bgg_id}`} className="hover-ghost" style={{
-                        textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12,
-                        padding: '10px 0',
-                        borderBottom: i < expansions.length - 1 ? '1px solid var(--border)' : 'none',
-                      }}>
-                        {exp.image_url
-                          ? <Image src={exp.image_url} alt={exp.name} width={52} height={52} style={{ borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
-                          : <div style={{ width: 52, height: 52, borderRadius: 10, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 22 }}>🧩</div>
-                        }
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p className="t-card-title" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{exp.name}</p>
-                          {exp.year_published && (
-                            <p className="t-meta">{exp.year_published}</p>
-                          )}
-                        </div>
-                        <span style={{ color: 'var(--text-4)', fontSize: 18, flexShrink: 0 }}>›</span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <Suspense fallback={<div className="skeleton" style={{ height: 60, borderRadius: 10, marginTop: 32, background: 'var(--bg-inset)' }} />}>
+                <GameRelatedLists
+                  gameId={game.id}
+                  bggId={game.bgg_id}
+                  isExpansion={!!(game as any).is_expansion}
+                  mechanics={mechanics}
+                  categories={categories}
+                />
+              </Suspense>
 
               <a
                 href={`https://boardgamegeek.com/boardgame/${game.bgg_id}`}
@@ -548,58 +439,16 @@ export default async function GamePage({ params, searchParams }: Props) {
               <p className="t-section-title" style={{ marginBottom: 8 }}>Inicia sesión para ver tus partidas</p>
               <Link href="/auth/login" style={{ fontSize: 14, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none' }}>Iniciar sesión →</Link>
             </div>
-          ) : userPlays.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '64px 0' }}>
-              <p style={{ fontSize: 32, marginBottom: 12 }}>🎲</p>
-              <p className="t-section-title" style={{ marginBottom: 6 }}>Sin partidas de {game.name}</p>
-              <p className="t-card-sub">Registra una partida desde tu grupo</p>
-            </div>
           ) : (
-            <div>
-              {userPlays.map((play: any) => {
-                const userResult = (play.play_results ?? [])[0] as any;
-                const winnerName = winnersByPlay[play.id] ?? null;
-                const dateStr = new Date(play.played_at).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
-                return (
-                  <Link
-                    key={play.id}
-                    href={`/grupos/${play.group_id}/partidas/${play.id}`}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 16,
-                      padding: '20px 0', borderBottom: '1px solid var(--border)',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    <div style={{
-                      width: 64, height: 64, borderRadius: 14, flexShrink: 0,
-                      background: 'var(--bg-inset)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
-                    }}>
-                      🎲
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p className="t-card-title" style={{ marginBottom: 4 }}>
-                        {play.groups?.name ?? 'Partida'}
-                      </p>
-                      <p className="t-meta">
-                        {dateStr}
-                        {winnerName ? ` · Ganador: ${winnerName}` : ''}
-                      </p>
-                      {userResult?.score != null && (
-                        <p className="t-meta" style={{ marginTop: 3 }}>
-                          Puntuación: {userResult.score > 0 ? '+' : ''}{userResult.score} ptos.
-                        </p>
-                      )}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-                      <StarDisplay />
-                      <span style={{ fontSize: 18, color: 'var(--text-4)' }}>♡</span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
+            <Suspense fallback={
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {[0, 1, 2].map(i => (
+                  <div key={i} className="skeleton" style={{ height: 64, borderRadius: 14, background: 'var(--bg-inset)' }} />
+                ))}
+              </div>
+            }>
+              <GamePlaysTab gameId={game.id} gameName={game.name} userId={user.id} />
+            </Suspense>
           )}
         </main>
       )}

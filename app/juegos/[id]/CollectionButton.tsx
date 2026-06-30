@@ -51,6 +51,8 @@ export function CollectionButton({ gameId }: { gameId: string }) {
       <button
         onClick={toggle}
         title={isIn ? 'Quitar de mi colección' : 'Añadir a mi colección'}
+        aria-label={isIn ? 'Quitar de mi colección' : 'Añadir a mi colección'}
+        aria-pressed={isIn}
         style={{
           width: 36, height: 36, borderRadius: '50%',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -67,6 +69,8 @@ export function CollectionButton({ gameId }: { gameId: string }) {
 
       {toast && (
         <div
+          role="status"
+          aria-live="polite"
           style={{
             position: 'fixed', top: 80, left: '50%',
             transform: 'translateX(-50%)',

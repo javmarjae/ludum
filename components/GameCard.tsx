@@ -33,7 +33,7 @@ export function GameCard({ game, index, inCollection, onCollectionToggle }: Prop
   const showBtn = onCollectionToggle !== undefined;
 
   return (
-    <Link href={`/juegos/${game.bgg_id}`} style={{ display: 'block', textDecoration: 'none' }}>
+    <Link href={`/juegos/${game.bgg_id}`} className="stagger-in" style={{ ['--stagger-i' as any]: index, display: 'block', textDecoration: 'none' }}>
       <div
         className="hover-scale-md"
         style={{ borderRadius: 10, padding: 14, display: 'flex', gap: 14, alignItems: 'flex-start', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}

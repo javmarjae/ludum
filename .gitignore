@@ -41,6 +41,12 @@ yarn-error.log*
 /.claude/
 /graphify-out/
 
+# Skills de agentes instalados localmente (impeccable, frontend-design, emilkowalski/skills)
+/.agents/
+/.github/skills/
+/.github/hooks/
+/skills-lock.json
+
 # IDE
 .vscode/
 .idea/

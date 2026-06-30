@@ -178,8 +178,8 @@ export default async function AdminPage({
                 {query ? `Sin resultados para "${query}"` : 'No hay usuarios'}
               </p>
             ) : (
-              users.map(u => (
-                <AdminUserCard key={u.id} user={u} currentUserId={user.id} />
+              users.map((u, i) => (
+                <AdminUserCard key={u.id} user={u} currentUserId={user.id} index={i} />
               ))
             )}
           </div>

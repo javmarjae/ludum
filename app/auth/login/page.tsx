@@ -55,15 +55,15 @@ function LoginForm() {
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Email</label>
-          <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com" style={inputStyle} />
+          <label htmlFor="login-email" style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Email</label>
+          <input id="login-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com" style={inputStyle} />
         </div>
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-            <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>Contraseña</label>
+            <label htmlFor="login-password" style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>Contraseña</label>
             <Link href="/auth/reset-password" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', textDecoration: 'none' }}>¿Olvidaste tu contraseña?</Link>
           </div>
-          <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={inputStyle} />
+          <input id="login-password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={inputStyle} />
         </div>
 
         {error && (

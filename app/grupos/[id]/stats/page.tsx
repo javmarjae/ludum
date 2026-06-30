@@ -159,10 +159,11 @@ export default async function StatsPage({ params }: Props) {
                     <div key={m.key} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, height: '100%', justifyContent: 'flex-end' }}>
                       <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)', visibility: m.count > 0 ? 'visible' : 'hidden' }}>{m.count}</span>
                       <div style={{
-                        width: '100%', borderRadius: 8,
+                        width: '100%', height: 52, borderRadius: 8,
                         background: m.count > 0 ? 'var(--brand)' : 'var(--bg-inset)',
-                        height: m.count > 0 ? `${Math.max(8, (m.count / maxMonthCount) * 52)}px` : '4px',
-                        transition: 'height 0.3s',
+                        transform: `scaleY(${m.count > 0 ? Math.max(8 / 52, m.count / maxMonthCount) : 4 / 52})`,
+                        transformOrigin: 'bottom',
+                        transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)',
                         boxShadow: m.count > 0 ? '0 2px 8px rgba(62,94,59,0.2)' : 'none',
                       }} />
                     </div>

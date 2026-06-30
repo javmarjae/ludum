@@ -110,9 +110,9 @@ function GameThumb({ src, alt, size = 44 }: { src: string | null; alt: string; s
   );
 }
 
-function SideCard({ game, badge }: { game: FeaturedGame; badge: React.ReactNode }) {
+function SideCard({ game, badge, index }: { game: FeaturedGame; badge: React.ReactNode; index?: number }) {
   return (
-    <Link href={`/juegos/${game.bgg_id}`} style={{ display: 'block', textDecoration: 'none' }}>
+    <Link href={`/juegos/${game.bgg_id}`} className={index !== undefined ? 'stagger-in' : undefined} style={{ ...(index !== undefined ? { ['--stagger-i' as any]: index } : {}), display: 'block', textDecoration: 'none' }}>
       <div className="hover-ghost" style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
         <GameThumb src={game.image_url} alt={game.name} />
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -182,14 +182,15 @@ function CarouselHeader({ icon, title, subtitle, href }: { icon: string; title: 
   );
 }
 
-function GameCarouselCard({ game, rank, badge }: {
+function GameCarouselCard({ game, rank, badge, index }: {
   game: TrendingGame | FeaturedGame;
   rank?: number;
   badge?: { text: string; color: string; bg: string };
+  index?: number;
 }) {
   const rating = 'bgg_rating' in game ? game.bgg_rating : null;
   return (
-    <Link href={`/juegos/${game.bgg_id}`} className="buscar-carousel-card" style={{ display: 'block', textDecoration: 'none' }}>
+    <Link href={`/juegos/${game.bgg_id}`} className={`buscar-carousel-card${index !== undefined ? ' stagger-in' : ''}`} style={{ ...(index !== undefined ? { ['--stagger-i' as any]: index } : {}), display: 'block', textDecoration: 'none' }}>
       <div className="hover-scale-lg" style={{ cursor: 'pointer' }}>
         <div className="buscar-carousel-img">
           {game.image_url
@@ -289,10 +290,11 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
       <aside className="buscar-col-left buscar-side-sticky">
         <SectionHeader icon="⭐" title="Novedades" subtitle="Últimos juegos publicados" />
         <div>
-          {newGames.map(g => (
+          {newGames.map((g, i) => (
             <SideCard
               key={g.bgg_id}
               game={g}
+              index={i}
               badge={<span style={{ fontSize: 11, color: 'var(--text-4)', fontWeight: 500 }}>{g.year_published}</span>}
             />
           ))}
@@ -418,7 +420,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
             <CarouselHeader icon="🔥" title="Tendencias ahora" subtitle="Lo más jugado esta semana" href="/buscar" />
             <div className="h-scroll">
               {mostPlayedGames.slice(0, 8).map((g, i) => (
-                <GameCarouselCard key={g.bgg_id} game={g} rank={i + 1} badge={{ text: '🔥 Muy tendencia', color: '#EA580C', bg: '#FFF7ED' }} />
+                <GameCarouselCard key={g.bgg_id} game={g} rank={i + 1} index={i} badge={{ text: '🔥 Muy tendencia', color: '#EA580C', bg: '#FFF7ED' }} />
               ))}
             </div>
           </div>
@@ -429,8 +431,8 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
           <div>
             <CarouselHeader icon="/icons/solo.svg" title="Recomendados para ti" subtitle="Basado en tus partidas y gustos" href="/recomendador" />
             <div className="h-scroll">
-              {topRatedGames.map(g => (
-                <GameCarouselCard key={g.bgg_id} game={g} badge={{ text: 'Te puede gustar', color: 'var(--brand)', bg: 'var(--brand-tint)' }} />
+              {topRatedGames.map((g, i) => (
+                <GameCarouselCard key={g.bgg_id} game={g} index={i} badge={{ text: 'Te puede gustar', color: 'var(--brand)', bg: 'var(--brand-tint)' }} />
               ))}
             </div>
           </div>
@@ -522,6 +524,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
             <SideCard
               key={g.bgg_id}
               game={g}
+              index={i}
               badge={
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   {g.bgg_rating && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)' }}>★ {g.bgg_rating.toFixed(1)}</span>}

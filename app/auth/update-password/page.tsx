@@ -60,16 +60,18 @@ export default function UpdatePasswordPage() {
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Nueva contraseña</label>
+              <label htmlFor="update-password" style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Nueva contraseña</label>
               <input
+                id="update-password"
                 type="password" required value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" style={inputStyle}
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Confirmar contraseña</label>
+              <label htmlFor="update-password-confirm" style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Confirmar contraseña</label>
               <input
+                id="update-password-confirm"
                 type="password" required value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 placeholder="••••••••" style={inputStyle}

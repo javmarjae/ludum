@@ -40,8 +40,8 @@ export default function NuevoGrupoPage() {
 
           <form action={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Nombre del grupo</label>
-              <input name="name" type="text" required placeholder="Ej: Los Dados Locos" style={inputStyle} />
+              <label htmlFor="grupo-nombre" style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Nombre del grupo</label>
+              <input id="grupo-nombre" name="name" type="text" required placeholder="Ej: Los Dados Locos" style={inputStyle} />
             </div>
             {error && (
               <p style={{ fontSize: 13, borderRadius: 16, padding: '10px 14px', fontWeight: 600, background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(62,94,59,0.2)' }}>

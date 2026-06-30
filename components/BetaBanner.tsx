@@ -50,8 +50,8 @@ export function BetaBanner() {
         alignItems: 'center',
         gap: 12,
         animation: leaving
-          ? 'beta-banner-out 0.35s ease forwards'
-          : 'beta-banner-in 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards',
+          ? 'beta-banner-out 0.3s cubic-bezier(0.5,0,0.75,0) forwards'
+          : 'beta-banner-in 0.45s cubic-bezier(0.16,1,0.3,1) forwards',
       }}
     >
       {/* Icono */}

@@ -15,7 +15,7 @@ interface AdminUser {
   can_create_events: boolean;
 }
 
-export function AdminUserCard({ user, currentUserId }: { user: AdminUser; currentUserId: string }) {
+export function AdminUserCard({ user, currentUserId, index }: { user: AdminUser; currentUserId: string; index?: number }) {
   const [perms, setPerms] = useState<Pick<AdminUser, Permission>>({
     is_admin: user.is_admin,
     can_write_blog: user.can_write_blog,
@@ -39,7 +39,8 @@ export function AdminUserCard({ user, currentUserId }: { user: AdminUser; curren
   const initials = ((user.display_name || user.email) ?? '?')[0]?.toUpperCase() ?? '?';
 
   return (
-    <div style={{
+    <div className={index !== undefined ? 'stagger-in' : undefined} style={{
+      ...(index !== undefined ? { ['--stagger-i' as any]: index } : {}),
       background: 'var(--bg-card)',
       border: '1px solid var(--border)',
       borderRadius: 14,

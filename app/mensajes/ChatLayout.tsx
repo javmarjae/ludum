@@ -182,7 +182,6 @@ export function ChatLayout({
                 width: '100%', display: 'flex', alignItems: 'center', gap: 12,
                 padding: '13px 18px', border: 'none', cursor: 'pointer', textAlign: 'left',
                 background: selectedId === conv.id ? 'var(--brand-tint)' : 'transparent',
-                borderLeft: `3px solid ${selectedId === conv.id ? 'var(--brand)' : 'transparent'}`,
                 transition: 'background 0.12s',
               }}
             >
@@ -229,7 +228,7 @@ export function ChatLayout({
             padding: '0 20px', height: 62, flexShrink: 0,
             borderBottom: '1px solid var(--border)', background: 'var(--bg-card)',
           }}>
-            <button onClick={() => setSelectedId(null)} style={{
+            <button onClick={() => setSelectedId(null)} aria-label="Volver a conversaciones" style={{
               width: 34, height: 34, borderRadius: '50%', border: 'none',
               background: 'var(--bg-inset)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -323,6 +322,7 @@ export function ChatLayout({
             <button
               onClick={() => handleSend()}
               disabled={!input.trim() || sending}
+              aria-label="Enviar mensaje"
               style={{
                 width: 44, height: 44, borderRadius: '50%', border: 'none', flexShrink: 0,
                 background: input.trim() ? 'var(--brand)' : 'var(--bg-inset)',

@@ -210,8 +210,8 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {posts.map((post: any) => (
-                  <PostCard key={post.id} post={post} communitySlug={slug} userId={user.id} />
+                {posts.map((post: any, i: number) => (
+                  <PostCard key={post.id} post={post} communitySlug={slug} userId={user.id} index={i} />
                 ))}
               </div>
             )}
@@ -233,8 +233,8 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {feed.map((play: any) => (
-                  <PlayFeedCard key={play.id} play={play} />
+                {feed.map((play: any, i: number) => (
+                  <PlayFeedCard key={play.id} play={play} index={i} />
                 ))}
               </div>
             )}
@@ -248,7 +248,9 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
               <Link
                 key={m.profile_id}
                 href={m.profile_id === user.id ? '/perfil' : `/perfil/${m.profile_id}`}
+                className="stagger-in"
                 style={{
+                  ['--stagger-i' as any]: i,
                   display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px',
                   borderTop: i > 0 ? '1px solid var(--border)' : 'none',
                   textDecoration: 'none',
@@ -284,12 +286,12 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
 
 /* ── Post card ── */
 
-function PostCard({ post, communitySlug, userId }: { post: any; communitySlug: string; userId: string }) {
+function PostCard({ post, communitySlug, userId, index }: { post: any; communitySlug: string; userId: string; index: number }) {
   const author = (post.profiles as any);
   const isOwn = post.author_id === userId;
 
   return (
-    <Link href={`/comunidades/${communitySlug}/posts/${post.id}`} style={{ textDecoration: 'none' }}>
+    <Link href={`/comunidades/${communitySlug}/posts/${post.id}`} className="stagger-in" style={{ ['--stagger-i' as any]: index, textDecoration: 'none' }}>
       <div className="hover-scale" style={{
         borderRadius: 18, padding: '18px 20px', background: 'var(--bg-card)',
         boxShadow: 'var(--shadow-card)', display: 'flex', flexDirection: 'column', gap: 8,
@@ -327,12 +329,12 @@ function PostCard({ post, communitySlug, userId }: { post: any; communitySlug: s
 
 /* ── Play feed card ── */
 
-function PlayFeedCard({ play }: { play: any }) {
+function PlayFeedCard({ play, index }: { play: any; index: number }) {
   const winner = (play.play_results ?? []).find((r: any) => r.is_winner);
   const winnerName = winner?.profiles?.display_name ?? winner?.guest_name ?? null;
 
   return (
-    <Link href={`/juegos/${play.games?.bgg_id}`} style={{ textDecoration: 'none' }}>
+    <Link href={`/juegos/${play.games?.bgg_id}`} className="stagger-in" style={{ ['--stagger-i' as any]: index, textDecoration: 'none' }}>
       <div className="hover-scale" style={{
         display: 'flex', alignItems: 'center', gap: 14, borderRadius: 18, padding: '14px 18px',
         background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',

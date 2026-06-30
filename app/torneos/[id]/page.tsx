@@ -192,7 +192,7 @@ export default async function TorneoPage({ params }: Props) {
                 const name = p.profiles?.display_name ?? p.guest_name ?? 'Invitado';
                 const isFirst = i === 0 && tournament.status === 'finalizado' && p.wins > 0;
                 return (
-                  <div key={p.id} style={{ display: 'grid', gridTemplateColumns: '40px 1fr 50px 50px 50px 50px', gap: 0, padding: '12px 16px', borderTop: i > 0 ? '1px solid var(--border)' : 'none', alignItems: 'center', background: isFirst ? 'rgba(250,204,21,0.08)' : 'transparent' }}>
+                  <div key={p.id} className="stagger-in" style={{ ['--stagger-i' as any]: i, display: 'grid', gridTemplateColumns: '40px 1fr 50px 50px 50px 50px', gap: 0, padding: '12px 16px', borderTop: i > 0 ? '1px solid var(--border)' : 'none', alignItems: 'center', background: isFirst ? 'rgba(250,204,21,0.08)' : 'transparent' }}>
                     <span style={{ fontSize: 14, fontWeight: 700, color: i < 3 ? ['#f59e0b','#9ca3af','#c2845a'][i] : 'var(--text-4)', textAlign: 'center' }}>
                       {i === 0 && tournament.status === 'finalizado' ? '🏆' : i + 1}
                     </span>

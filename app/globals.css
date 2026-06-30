@@ -153,6 +153,24 @@ h6 { font-size: var(--fs-h6); line-height: var(--lh-h6); }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--sand, #D8CBBC); border-radius: 3px; }
 
+/* ── Foco visible (WCAG 2.4.7) ──────────────────────────
+   Box-shadow en vez de outline: respeta el border-radius del
+   propio elemento sin necesidad de declararlo de nuevo. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: none !important;
+  /* !important porque la mayoría de inputs/tarjetas fijan su propio
+     box-shadow inline (var(--shadow-input), var(--shadow-card)...);
+     sin esto, la especificidad del style inline ganaría siempre y el
+     foco de teclado quedaría invisible en toda la app. */
+  box-shadow: 0 0 0 2px var(--brand) !important;
+  transition: box-shadow 0.12s;
+}
+
 /* Horizontal scroll row (home sections) */
 .h-scroll {
   display: flex;
@@ -684,7 +702,7 @@ html[data-authed="true"] .app-nav {
 .blog-content ul, .blog-content ol { padding-left: 1.6em; margin: 0 0 1.25em; }
 .blog-content li { margin-bottom: 0.4em; }
 .blog-content a { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
-.blog-content blockquote { border-left: 3px solid var(--brand-light); padding: 4px 0 4px 20px; color: var(--text-3); font-style: italic; margin: 1.5em 0; }
+.blog-content blockquote { background: var(--brand-tint); border-radius: 10px; padding: 14px 20px; color: var(--text-2); font-style: italic; margin: 1.5em 0; }
 .blog-content code { font-size: 14px; background: var(--bg-inset); border-radius: 4px; padding: 2px 6px; }
 .blog-content pre { background: var(--bg-inset); border-radius: 10px; padding: 18px 20px; overflow-x: auto; margin: 1.5em 0; }
 .blog-content pre code { background: none; padding: 0; }
@@ -828,4 +846,31 @@ html[data-authed="true"] .app-nav {
     grid-template-columns: 1fr 1fr;
     gap: 24px 16px;
   }
+}
+
+/* ── Animación de entrada para listas/filas (stagger) ────
+   Uso: className="stagger-in" style={{ '--stagger-i': i }}
+   donde `i` es el índice del item dentro de la lista. */
+@keyframes stagger-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.stagger-in {
+  animation: stagger-in 0.35s cubic-bezier(0.16,1,0.3,1) backwards;
+  animation-delay: calc(var(--stagger-i, 0) * 45ms);
+}
+
+/* ── Accesibilidad: respeta "reducir movimiento" del SO ──
+   Colapsa toda animación/transición a near-instant (equivalente
+   a un crossfade inmediato) en vez de desactivar el cambio de
+   estado por completo. Va al final del archivo a propósito: en
+   igualdad de especificidad, el orden de cascada decide. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .stagger-in { animation-delay: 0ms !important; }
 }

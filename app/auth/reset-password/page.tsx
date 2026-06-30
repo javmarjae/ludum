@@ -70,8 +70,9 @@ export default function ResetPasswordPage() {
               </p>
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Email</label>
+                  <label htmlFor="reset-email" style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Email</label>
                   <input
+                    id="reset-email"
                     type="email" required value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="tu@email.com" style={inputStyle}

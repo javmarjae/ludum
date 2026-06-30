@@ -70,7 +70,7 @@ export default async function HistorialPage({ searchParams }: Props) {
               Buscar
             </button>
             {q && (
-              <Link href="/partidas/historial" style={{
+              <Link href="/partidas/historial" aria-label="Limpiar filtro de búsqueda" style={{
                 padding: '12px 16px', borderRadius: 999, fontWeight: 700, fontSize: 14,
                 color: 'var(--text-3)', background: 'var(--bg-card)', boxShadow: 'var(--shadow-btn)',
                 textDecoration: 'none', flexShrink: 0, display: 'flex', alignItems: 'center',

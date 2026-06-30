@@ -135,11 +135,11 @@ export default async function OrgPage({ params }: Props) {
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {(tournaments as any[]).map(t => {
+                {(tournaments as any[]).map((t, i) => {
                   const game = t.games;
                   const count = t.tournament_participants?.[0]?.count ?? 0;
                   return (
-                    <Link key={t.id} href={`/torneos/${t.id}`} style={{ textDecoration: 'none' }}>
+                    <Link key={t.id} href={`/torneos/${t.id}`} className="stagger-in" style={{ ['--stagger-i' as any]: i, textDecoration: 'none' }}>
                       <div className="hover-ghost" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', borderRadius: 16, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
                         {game?.image_url
                           ? <img src={game.image_url} alt={game.name} loading="lazy" decoding="async" style={{ width: 48, height: 48, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
