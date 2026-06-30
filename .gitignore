@@ -37,6 +37,10 @@ yarn-error.log*
 # Otros proyectos en la misma carpeta
 /aigocy/
 
+# Config local del agente (Claude Code) y grafo generado (regenerable con `graphify update .`)
+/.claude/
+/graphify-out/
+
 # IDE
 .vscode/
 .idea/
