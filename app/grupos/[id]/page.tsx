@@ -311,22 +311,20 @@ export default async function GrupoDetailPage({ params }: Props) {
                                   <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: 3 }}>Puntos</p>
                                   <p style={{ fontSize: 16, fontWeight: 800, color: 'var(--text)' }}>{winnerScore}</p>
                                 </div>
-                                {/* Tu puesto en la partida */}
-                                {myPosition !== null && (
-                                  <div className="grupo-play-score" style={{ textAlign: 'center', minWidth: 54 }} title="Tu puesto en la partida">
-                                    <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: 3 }}>Tu puesto</p>
-                                    <div className="grupo-play-badge" style={{
-                                      width: 40, height: 40, borderRadius: '50%', flexShrink: 0, margin: '0 auto',
-                                      background: myPosition === 1 ? 'var(--brand-tint)' : 'var(--bg-inset)',
-                                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                      fontSize: 14, fontWeight: 800,
-                                      color: myPosition === 1 ? 'var(--brand)' : 'var(--text-3)',
-                                      border: myPosition === 1 ? '1.5px solid rgba(62,94,59,0.25)' : '1px solid var(--border)',
-                                    }}>
-                                      {myPosition}º
-                                    </div>
+                                {/* Tu puesto en la partida (N/A si no participaste) */}
+                                <div className="grupo-play-score" style={{ textAlign: 'center', minWidth: 54 }} title={myPosition !== null ? 'Tu puesto en la partida' : 'No participaste en esta partida'}>
+                                  <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: 3 }}>Tu puesto</p>
+                                  <div className="grupo-play-badge" style={{
+                                    width: 40, height: 40, borderRadius: '50%', flexShrink: 0, margin: '0 auto',
+                                    background: myPosition === 1 ? 'var(--brand-tint)' : 'var(--bg-inset)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontSize: myPosition !== null ? 14 : 11, fontWeight: 800,
+                                    color: myPosition === 1 ? 'var(--brand)' : 'var(--text-3)',
+                                    border: myPosition === 1 ? '1.5px solid rgba(62,94,59,0.25)' : '1px solid var(--border)',
+                                  }}>
+                                    {myPosition !== null ? `${myPosition}º` : 'N/A'}
                                   </div>
-                                )}
+                                </div>
                               </div>
                             )}
                           </div>

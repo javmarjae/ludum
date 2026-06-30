@@ -31,23 +31,28 @@ export function EditGroupForm({ groupId, initialName, initialDescription, initia
   const [uploadingImage, setUploadingImage] = useState(false);
   const [saved, setSaved] = useState(false);
   const [editorFile, setEditorFile] = useState<File | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
+    setUploadError(null);
     setEditorFile(file);
   }
 
   async function uploadEditedImage(file: File) {
     setEditorFile(null);
     setUploadingImage(true);
+    setUploadError(null);
     const fd = new FormData();
     fd.append('image', file);
     const res = await uploadGroupImage(groupId, fd);
     if (res && 'url' in res) {
       setImage(res.url);
       router.refresh(); // re-renderiza el header del grupo (server component) con la foto nueva
+    } else {
+      setUploadError(res?.error ?? 'No se pudo subir la imagen.');
     }
     setUploadingImage(false);
   }
@@ -112,6 +117,9 @@ export function EditGroupForm({ groupId, initialName, initialDescription, initia
             {uploadingImage ? 'Subiendo...' : 'Cambiar foto'}
           </label>
           <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', marginTop: 4 }}>JPG, PNG o WebP · máx. 2 MB</p>
+          {uploadError && (
+            <p style={{ fontSize: 12, fontWeight: 600, color: '#DC2626', marginTop: 6 }}>⚠️ {uploadError}</p>
+          )}
         </div>
       </div>
 
