@@ -69,9 +69,14 @@ export function ChatLayout({
       });
   }, [selectedId]);
 
-  /* ── Scroll to bottom ── */
+  /* ── Scroll to bottom ──
+     block: 'nearest' es clave: sin él, scrollIntoView intenta encuadrar
+     el elemento en TODOS los contenedores con scroll ancestros, incluida
+     la página entera (el layout añade un <Footer/> debajo del chat, así
+     que el documento es más alto que el viewport). Con 'nearest' solo
+     desplaza el contenedor interno de mensajes. */
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+    endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [messages]);
 
   /* ── Realtime: new messages in current conversation ── */
