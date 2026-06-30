@@ -44,6 +44,25 @@ export async function createEvent(formData: FormData): Promise<string> {
 
   if (error) throw new Error(error.message);
 
+  // Si el usuario adjuntó una imagen editada, la subimos ahora que ya tenemos el
+  // id del evento (la carpeta {eventId}/ es lo que valida la policy del bucket).
+  const imageFile = formData.get('image_file') as File | null;
+  if (imageFile && imageFile.size > 0) {
+    try {
+      const path = `${data.id}/cover.webp`;
+      const arrayBuffer = await imageFile.arrayBuffer();
+      const { error: uploadError } = await supabase.storage
+        .from('event-images')
+        .upload(path, arrayBuffer, { contentType: 'image/webp', upsert: true });
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from('event-images').getPublicUrl(path);
+        await supabase.from('events').update({ image_url: `${publicUrl}?v=${Date.now()}` }).eq('id', data.id);
+      }
+    } catch {
+      // Si falla la subida, el evento ya está creado sin imagen — no bloqueamos.
+    }
+  }
+
   revalidatePath('/eventos');
   return data.id;
 }

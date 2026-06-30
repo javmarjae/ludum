@@ -8,11 +8,22 @@ function getPublicSupabase() {
   );
 }
 
+/* Cliente admin (service role) para consultas globales sobre tablas con RLS.
+   `plays` tiene RLS "Group members can view plays", así que el cliente anónimo
+   devolvería siempre vacío. El service role solo se usa en servidor. */
+function getAdminSupabase() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  );
+}
+
 /* Juegos más jugados en las últimas 2 semanas (para buscar/page).
-   Caché 30 min. */
+   Caché 30 min. Lectura global → requiere admin client (RLS en plays). */
 export const getTrendingGames = unstable_cache(
   async () => {
-    const supabase = getPublicSupabase();
+    const supabase = getAdminSupabase();
     const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
     const { data, error } = await supabase
       .from('plays')

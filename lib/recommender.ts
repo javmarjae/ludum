@@ -1,6 +1,22 @@
 import { unstable_cache } from 'next/cache';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getCachedRecommenderGames } from '@/lib/cached-queries';
+
+// Cliente público (anon) reutilizable a nivel de módulo: la tabla `games`
+// tiene lectura pública (sin RLS), así que no necesitamos sesión ni cookies.
+// Crear una sola instancia evita reinstanciar el cliente en cada request.
+let _publicClient: ReturnType<typeof createSupabaseClient> | null = null;
+function getPublicSupabase() {
+  if (!_publicClient) {
+    _publicClient = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
+  }
+  return _publicClient;
+}
 
 export interface RecommenderFilters {
   players?: number;
@@ -32,12 +48,13 @@ export interface GameResult {
 const GAME_SELECT = 'id, bgg_id, name, year_published, bgg_rank, bgg_rating, min_players, max_players, min_playtime, max_playtime, complexity, image_url, mechanics, categories, description';
 
 export async function getRecommendations(filters: RecommenderFilters): Promise<GameResult[]> {
-  const supabase = await createClient();
+  const supabase = getPublicSupabase();
   let query = supabase
     .from('games')
     .select(GAME_SELECT)
     .not('bgg_rank', 'is', null)
-    .not('bgg_rating', 'is', null);
+    .not('bgg_rating', 'is', null)
+    .not('is_expansion', 'is', true);
 
   if (filters.era === 'moderno') {
     query = query.gte('year_published', 2010);
@@ -92,6 +109,23 @@ export async function getRecommendations(filters: RecommenderFilters): Promise<G
 
   if (error) throw new Error(error.message);
   return (data ?? []) as GameResult[];
+}
+
+// Versión cacheada para el recomendador público (resultados/page).
+// El espacio de filtros es pequeño y acotado (jugadores·duración·complejidad·era),
+// así que cachear comparte el resultado entre todos los usuarios y descarga la BD.
+// Solo se cachea cuando NO hay filtro de colección (que es por-usuario).
+export async function getCachedRecommendations(filters: RecommenderFilters): Promise<GameResult[]> {
+  if (filters.collectionGameIds && filters.collectionGameIds.length > 0) {
+    return getRecommendations(filters);
+  }
+  const key = [filters.players ?? 0, filters.duration ?? '-', filters.complexity ?? '-', filters.era ?? '-'].join('|');
+  const cached = unstable_cache(
+    () => getRecommendations(filters),
+    ['public-recommendations', key],
+    { revalidate: 3600 }
+  );
+  return cached();
 }
 
 // ── Group-based recommendations ──────────────────────────────────────────────
@@ -621,7 +655,7 @@ export const getCachedGroupRecommendations = unstable_cache(
 );
 
 export async function getGameByBggId(bggId: number): Promise<GameResult | null> {
-  const supabase = await createClient();
+  const supabase = getPublicSupabase();
   const { data, error } = await supabase
     .from('games')
     .select(GAME_SELECT)

@@ -65,7 +65,7 @@ export function ColeccionFilter({ games, groupId }: Props) {
               <Link href={`/juegos/${game.bgg_id}`} style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, textDecoration: 'none', flex: 1 }}>
                 {game.image_url
                   ? <div style={{ position: 'relative', width: 40, height: 54, borderRadius: 12, overflow: 'hidden', flexShrink: 0 }}>
-                      <Image src={game.image_url} alt={game.name} fill style={{ objectFit: 'cover' }} />
+                      <Image src={game.image_url} alt={game.name} fill sizes="40px" style={{ objectFit: 'cover' }} />
                     </div>
                   : <div style={{ width: 40, height: 54, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}>🎲</div>
                 }

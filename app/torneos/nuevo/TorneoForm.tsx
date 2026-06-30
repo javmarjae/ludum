@@ -93,7 +93,7 @@ export function TorneoForm({ orgs }: { orgs: Org[] }) {
                 {gameResults.map(g => (
                   <button key={g.id} type="button" onClick={() => { setSelectedGame(g); setGameResults([]); }}
                     style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: 'none', border: 'none', borderTop: '1px solid var(--border)', cursor: 'pointer', textAlign: 'left' }}>
-                    {g.image_url && <img src={g.image_url} alt={g.name} style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover' }} />}
+                    {g.image_url && <img src={g.image_url} alt={g.name} loading="lazy" decoding="async" style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover' }} />}
                     <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{g.name}</span>
                     {g.year_published && <span style={{ fontSize: 12, color: 'var(--text-4)' }}>{g.year_published}</span>}
                   </button>

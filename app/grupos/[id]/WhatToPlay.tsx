@@ -103,7 +103,7 @@ export function WhatToPlay({ games }: Props) {
             <Link href={`/juegos/${suggestion.bgg_id}`} style={{ display: 'flex', alignItems: 'center', gap: 14, borderRadius: 20, padding: '14px 16px', background: 'var(--brand-tint)', border: '1.5px solid rgba(62,94,59,0.15)', textDecoration: 'none', marginBottom: 10 }}>
               {suggestion.image_url
                 ? <div style={{ position: 'relative', width: 52, height: 70, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
-                    <Image src={suggestion.image_url} alt={suggestion.name} fill style={{ objectFit: 'cover' }} />
+                    <Image src={suggestion.image_url} alt={suggestion.name} fill sizes="52px" style={{ objectFit: 'cover' }} />
                   </div>
                 : <div style={{ width: 52, height: 70, borderRadius: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, background: 'var(--bg-inset)' }}>🎲</div>
               }

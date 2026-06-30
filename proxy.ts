@@ -39,5 +39,11 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  // Se ejecuta en páginas reales (para refrescar la sesión de Supabase y proteger
+  // rutas), pero NO en /api (cada ruta autentica por su cuenta → evita un getUser
+  // de red redundante por hit) ni en estáticos/metadata. Reduce llamadas al
+  // servicio de Auth bajo carga sin romper el refresco de sesión en navegación.
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 };

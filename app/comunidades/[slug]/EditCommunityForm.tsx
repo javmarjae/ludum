@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { updateCommunity, uploadCommunityImage } from '../actions';
+import { ImageEditor } from '@/components/ImageEditor';
 
 interface Props {
   communityId: string;
@@ -28,9 +29,17 @@ export function EditCommunityForm({ communityId, communitySlug, initialDescripti
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [saved, setSaved] = useState(false);
-  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const [editorFile, setEditorFile] = useState<File | null>(null);
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file) return;
+    setEditorFile(file);
+  }
+
+  async function uploadEditedImage(file: File) {
+    setEditorFile(null);
     setUploadingImage(true);
     const fd = new FormData();
     fd.append('image', file);
@@ -70,6 +79,15 @@ export function EditCommunityForm({ communityId, communitySlug, initialDescripti
 
   return (
     <div style={{ borderRadius: 24, padding: 24, marginBottom: 24, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {editorFile && (
+        <ImageEditor
+          file={editorFile}
+          title="Ajusta la imagen de la comunidad"
+          circular={false}
+          onCancel={() => setEditorFile(null)}
+          onConfirm={uploadEditedImage}
+        />
+      )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Editar comunidad</h2>
         <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-4)', lineHeight: 1 }}>✕</button>

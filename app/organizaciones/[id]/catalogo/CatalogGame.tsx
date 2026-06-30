@@ -71,7 +71,7 @@ export function CatalogGame({ orgId, game, entry }: Props) {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '16px 20px' }}>
         {game.image_url
-          ? <img src={game.image_url} alt={game.name} style={{ width: 54, height: 54, borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} />
+          ? <img src={game.image_url} alt={game.name} loading="lazy" decoding="async" style={{ width: 54, height: 54, borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} />
           : <div style={{ width: 54, height: 54, borderRadius: 14, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>🎲</div>
         }
         <div style={{ flex: 1, minWidth: 0 }}>

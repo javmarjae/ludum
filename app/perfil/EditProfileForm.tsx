@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { updateProfile, uploadAvatar } from './actions';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
+import { ImageEditor } from '@/components/ImageEditor';
 
 interface SocialLinks {
   instagram?: string;
@@ -49,9 +50,19 @@ export function EditProfileForm({ initialName, initialBio, initialAvatar, initia
   const [saving, setSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [saved, setSaved] = useState(false);
-  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const [editorFile, setEditorFile] = useState<File | null>(null);
+
+  // Al elegir archivo abrimos el editor en vez de subir directamente.
+  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = ''; // permite re-seleccionar el mismo archivo
     if (!file) return;
+    setEditorFile(file);
+  }
+
+  // El editor devuelve el archivo ya recortado/rotado → ahora sí subimos.
+  async function uploadEditedAvatar(file: File) {
+    setEditorFile(null);
     setUploadingAvatar(true);
     const fd = new FormData();
     fd.append('avatar', file);
@@ -76,6 +87,14 @@ export function EditProfileForm({ initialName, initialBio, initialAvatar, initia
 
   return (
     <div>
+      {editorFile && (
+        <ImageEditor
+          file={editorFile}
+          title="Ajusta tu foto de perfil"
+          onCancel={() => setEditorFile(null)}
+          onConfirm={uploadEditedAvatar}
+        />
+      )}
       {!open ? (
         /* Vista: avatar grande izquierda + info derecha */
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 28 }}>

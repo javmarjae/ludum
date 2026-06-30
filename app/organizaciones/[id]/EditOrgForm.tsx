@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { updateOrganization, uploadOrgLogo } from '../actions';
+import { ImageEditor } from '@/components/ImageEditor';
 
 interface Props {
   orgId: string;
@@ -28,9 +29,17 @@ export function EditOrgForm({ orgId, initialDescription, initialLocation, initia
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [saved, setSaved] = useState(false);
-  async function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const [editorFile, setEditorFile] = useState<File | null>(null);
+
+  function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file) return;
+    setEditorFile(file);
+  }
+
+  async function uploadEditedLogo(file: File) {
+    setEditorFile(null);
     setUploadingLogo(true);
     const fd = new FormData();
     fd.append('logo', file);
@@ -70,6 +79,15 @@ export function EditOrgForm({ orgId, initialDescription, initialLocation, initia
 
   return (
     <div style={{ borderRadius: 24, padding: 24, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {editorFile && (
+        <ImageEditor
+          file={editorFile}
+          title="Ajusta el logo"
+          circular={false}
+          onCancel={() => setEditorFile(null)}
+          onConfirm={uploadEditedLogo}
+        />
+      )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Editar organización</h2>
         <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-4)', lineHeight: 1 }}>✕</button>

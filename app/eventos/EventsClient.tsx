@@ -55,7 +55,7 @@ function EventCard({ event }: { event: EventRow }) {
         {/* Image */}
         <div style={{ position: 'relative', width: '100%', height: 140, background: 'var(--bg-inset)', flexShrink: 0 }}>
           {event.image_url ? (
-            <img src={event.image_url} alt={event.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={event.image_url} alt={event.title} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
             <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>
               {event.type === 'tournament' ? '🏆' : '🎪'}

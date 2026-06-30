@@ -17,10 +17,23 @@ export function SidebarNav({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Prefetch /recomendador shell + warm recommendation cache in background
+  // Prefetch /recomendador shell + warm recommendation cache in background.
+  // El caché del recomendador vive 5 min en servidor, así que re-calentarlo antes
+  // es trabajo desperdiciado. Gateamos con localStorage para deduplicar entre
+  // tabs y refrescos: como mucho una llamada cada ~4 min por usuario.
   useEffect(() => {
     router.prefetch('/recomendador');
-    fetch('/api/recomendador/warm', { keepalive: true }).catch(() => {});
+    const warm = () => fetch('/api/recomendador/warm', { keepalive: true }).catch(() => {});
+    try {
+      const KEY = 'ludum-rec-warmed';
+      const last = Number(localStorage.getItem(KEY) ?? 0);
+      if (Date.now() - last > 4 * 60 * 1000) {
+        localStorage.setItem(KEY, String(Date.now())); // optimista: evita thundering herd entre tabs
+        warm();
+      }
+    } catch {
+      warm();
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const baseItems = [

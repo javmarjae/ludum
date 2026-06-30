@@ -18,6 +18,8 @@ export function Avatar({ name, src, size = 40, style }: AvatarProps) {
         alt={name}
         width={size}
         height={size}
+        loading="lazy"
+        decoding="async"
         style={{
           width: size, height: size, borderRadius: '50%',
           objectFit: 'cover', flexShrink: 0,

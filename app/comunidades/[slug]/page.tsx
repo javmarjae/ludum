@@ -338,7 +338,7 @@ function PlayFeedCard({ play }: { play: any }) {
         background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
       }}>
         {play.games?.image_url
-          ? <img src={play.games.image_url} alt={play.games.name} style={{ width: 48, height: 48, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
+          ? <img src={play.games.image_url} alt={play.games.name} loading="lazy" decoding="async" style={{ width: 48, height: 48, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
           : <div style={{ width: 48, height: 48, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, background: 'var(--bg-inset)' }}>🎲</div>
         }
         <div style={{ flex: 1, minWidth: 0 }}>

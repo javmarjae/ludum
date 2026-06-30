@@ -5,6 +5,7 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { Nav, NavLink, NavButton } from '@/components/Nav';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { getAuthUser, createClient } from '@/lib/supabase/server';
+import { getTrendingGames } from '@/lib/cached-queries';
 import { BeginnerSection } from '@/components/BeginnerSection';
 
 function getPublicSupabase() {
@@ -63,9 +64,10 @@ export default async function Home() {
 
   if (user) {
     const supabase = await createClient();
-    const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
 
-    const [groupsRes, playsRes, userCollectionRes, allPlaysRes, trendingRes] = await Promise.all([
+    // trending es global y cacheado (30 min, compartido entre todos los usuarios):
+    // se resuelve en paralelo con las queries per-usuario sin tocar la BD en caliente.
+    const [groupsRes, playsRes, userCollectionRes, allPlaysRes, trendingResult] = await Promise.all([
       supabase
         .from('group_members')
         .select('group_id, groups(id, name)')
@@ -86,11 +88,7 @@ export default async function Home() {
         .select('games(bgg_id, name, image_url), play_results!inner(profile_id)')
         .eq('play_results.profile_id', user.id)
         .limit(100),
-      supabase
-        .from('plays')
-        .select('games(bgg_id, name, image_url)')
-        .gte('played_at', twoWeeksAgo)
-        .limit(150),
+      getTrendingGames(),
     ]);
 
     dashboardGroups = groupsRes.data ?? [];
@@ -111,16 +109,8 @@ export default async function Home() {
       .sort((a: any, b: any) => b.count - a.count)
       .slice(0, 10);
 
-    const trendingFreq: Record<string, any> = {};
-    (trendingRes.data ?? []).forEach((r: any) => {
-      const g = r.games;
-      if (!g?.bgg_id || !g?.image_url) return;
-      if (!trendingFreq[g.bgg_id]) trendingFreq[g.bgg_id] = { bgg_id: g.bgg_id, name: g.name, image_url: g.image_url, count: 0 };
-      trendingFreq[g.bgg_id].count++;
-    });
-    trendingGames = Object.values(trendingFreq)
-      .sort((a: any, b: any) => b.count - a.count)
-      .slice(0, 14);
+    // Trending global ya agregado y ordenado (excluye expansiones en el origen).
+    trendingGames = (trendingResult ?? []).filter((g: any) => !g.is_expansion);
   }
 
   const covers = featuredGames;

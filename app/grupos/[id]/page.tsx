@@ -245,7 +245,7 @@ export default async function GrupoDetailPage({ params }: Props) {
                             {/* Game image */}
                             {play.games?.image_url
                               ? <div className="grupo-play-img" style={{ position: 'relative', width: 68, height: 92, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
-                                  <Image src={play.games.image_url} alt={play.games.name} fill style={{ objectFit: 'cover' }} />
+                                  <Image src={play.games.image_url} alt={play.games.name} fill sizes="68px" style={{ objectFit: 'cover' }} />
                                 </div>
                               : <div className="grupo-play-img" style={{ width: 68, height: 92, borderRadius: 14, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30 }}>🎲</div>
                             }
@@ -278,7 +278,7 @@ export default async function GrupoDetailPage({ params }: Props) {
                               <div className="grupo-winner" style={{ display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 }}>
                                 {/* Avatar */}
                                 {winnerAvatar ? (
-                                  <img className="grupo-winner-avatar" src={winnerAvatar} alt={winnerName} style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                                  <img className="grupo-winner-avatar" src={winnerAvatar} alt={winnerName} loading="lazy" decoding="async" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
                                 ) : (
                                   <div className="grupo-winner-avatar" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 19, fontWeight: 800, color: 'var(--brand)', flexShrink: 0 }}>
                                     {(winnerName[0] ?? '?').toUpperCase()}

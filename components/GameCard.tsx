@@ -52,7 +52,7 @@ export function GameCard({ game, index, inCollection, onCollectionToggle }: Prop
         {/* Image */}
         {game.image_url ? (
           <div style={{ position: 'relative', width: 48, height: 64, borderRadius: 8, overflow: 'hidden', flexShrink: 0 }}>
-            <Image src={game.image_url} alt={game.name} fill style={{ objectFit: 'cover' }} />
+            <Image src={game.image_url} alt={game.name} fill sizes="48px" style={{ objectFit: 'cover' }} />
           </div>
         ) : (
           <div style={{ width: 48, height: 64, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, flexShrink: 0, background: 'var(--bg-inset)' }}>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { updateGroup, uploadGroupImage } from '../actions';
+import { ImageEditor } from '@/components/ImageEditor';
 
 interface Props {
   groupId: string;
@@ -27,9 +28,17 @@ export function EditGroupForm({ groupId, initialName, initialDescription, initia
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [saved, setSaved] = useState(false);
-  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const [editorFile, setEditorFile] = useState<File | null>(null);
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file) return;
+    setEditorFile(file);
+  }
+
+  async function uploadEditedImage(file: File) {
+    setEditorFile(null);
     setUploadingImage(true);
     const fd = new FormData();
     fd.append('image', file);
@@ -66,6 +75,15 @@ export function EditGroupForm({ groupId, initialName, initialDescription, initia
 
   return (
     <div style={{ borderRadius: 32, padding: 24, marginBottom: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {editorFile && (
+        <ImageEditor
+          file={editorFile}
+          title="Ajusta la foto del grupo"
+          circular={false}
+          onCancel={() => setEditorFile(null)}
+          onConfirm={uploadEditedImage}
+        />
+      )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Editar grupo</h2>
         <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-4)', lineHeight: 1 }}>✕</button>

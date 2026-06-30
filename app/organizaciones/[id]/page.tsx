@@ -142,7 +142,7 @@ export default async function OrgPage({ params }: Props) {
                     <Link key={t.id} href={`/torneos/${t.id}`} style={{ textDecoration: 'none' }}>
                       <div className="hover-ghost" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', borderRadius: 16, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
                         {game?.image_url
-                          ? <img src={game.image_url} alt={game.name} style={{ width: 48, height: 48, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
+                          ? <img src={game.image_url} alt={game.name} loading="lazy" decoding="async" style={{ width: 48, height: 48, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
                           : <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>🏆</div>
                         }
                         <div style={{ flex: 1, minWidth: 0 }}>

@@ -132,7 +132,7 @@ export default async function TorneosPage() {
                       {org && (
                         <div style={{ marginTop: 'auto', paddingTop: 10, borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
                           {org.logo_url
-                            ? <img src={org.logo_url} alt={org.name} style={{ width: 24, height: 24, borderRadius: 6, objectFit: 'cover' }} />
+                            ? <img src={org.logo_url} alt={org.name} loading="lazy" decoding="async" style={{ width: 24, height: 24, borderRadius: 6, objectFit: 'cover' }} />
                             : <span style={{ fontSize: 16 }}>{org.type === 'tienda' ? '🏪' : '🎲'}</span>
                           }
                           <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)' }}>{org.name}</span>

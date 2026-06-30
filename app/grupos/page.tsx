@@ -31,7 +31,7 @@ export default async function GruposPage({ searchParams }: { searchParams: Promi
   ] = await Promise.all([
     supabase
       .from('group_members')
-      .select('group_id, groups(id, name, invite_code, owner_id)')
+      .select('group_id, groups(id, name, invite_code, owner_id, image_url)')
       .eq('profile_id', user.id),
     supabase
       .from('communities')
@@ -139,21 +139,28 @@ export default async function GruposPage({ searchParams }: { searchParams: Promi
               {groups.map((group) => (
                 <Link key={group.id} href={`/grupos/${group.id}`} style={{ textDecoration: 'none' }}>
                   <div className="hover-ghost" style={{
-                    borderRadius: 16, padding: '16px 20px',
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    borderRadius: 16, padding: '14px 20px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14,
                     background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
                   }}>
-                    <div>
-                      <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)', marginBottom: 3 }}>{group.name}</p>
-                      <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>
-                        Código:{' '}
-                        <span style={{ fontWeight: 700, fontFamily: 'monospace', color: 'var(--brand)' }}>{group.invite_code}</span>
-                        {group.owner_id === user.id && (
-                          <span style={{ marginLeft: 8, padding: '2px 6px', borderRadius: 6, fontSize: 10, fontWeight: 700, background: 'var(--brand-tint)', color: 'var(--brand)' }}>
-                            Admin
-                          </span>
-                        )}
-                      </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
+                      {group.image_url ? (
+                        <img src={group.image_url} alt={group.name} loading="lazy" decoding="async" style={{ width: 48, height: 48, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
+                      ) : (
+                        <div style={{ width: 48, height: 48, borderRadius: 12, flexShrink: 0, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>🎲</div>
+                      )}
+                      <div style={{ minWidth: 0 }}>
+                        <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.name}</p>
+                        <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>
+                          Código:{' '}
+                          <span style={{ fontWeight: 700, fontFamily: 'monospace', color: 'var(--brand)' }}>{group.invite_code}</span>
+                          {group.owner_id === user.id && (
+                            <span style={{ marginLeft: 8, padding: '2px 6px', borderRadius: 6, fontSize: 10, fontWeight: 700, background: 'var(--brand-tint)', color: 'var(--brand)' }}>
+                              Admin
+                            </span>
+                          )}
+                        </p>
+                      </div>
                     </div>
                     <span style={{ color: 'var(--text-4)', fontSize: 20, flexShrink: 0 }}>›</span>
                   </div>
@@ -271,7 +278,7 @@ export default async function GruposPage({ searchParams }: { searchParams: Promi
                     background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
                   }}>
                     {org.logo_url ? (
-                      <img src={org.logo_url} alt={org.name} style={{ width: 44, height: 44, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
+                      <img src={org.logo_url} alt={org.name} loading="lazy" decoding="async" style={{ width: 44, height: 44, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
                     ) : (
                       <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>
                         {org.type === 'tienda' ? '🏪' : '🎲'}

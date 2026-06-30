@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
 const STORAGE_KEY = 'ludum-beginner-hidden';
@@ -123,9 +124,9 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
                 boxShadow: '0 4px 16px rgba(58,55,47,0.12), 0 0 0 1px rgba(216,203,188,0.7)',
               }}
             >
-              <div style={{ height: 154, background: 'var(--bg-inset)', overflow: 'hidden' }}>
+              <div style={{ position: 'relative', height: 154, background: 'var(--bg-inset)', overflow: 'hidden' }}>
                 {game.image_url ? (
-                  <img src={game.image_url} alt={game.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  <Image src={game.image_url} alt={game.name} fill sizes="120px" style={{ objectFit: 'cover' }} />
                 ) : (
                   <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}>🎲</div>
                 )}

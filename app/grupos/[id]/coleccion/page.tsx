@@ -86,7 +86,7 @@ export default async function ColeccionPage({ params, searchParams }: Props) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
                     {game.image_url
                       ? <div style={{ position: 'relative', width: 40, height: 54, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
-                          <Image src={game.image_url} alt={game.name} fill style={{ objectFit: 'cover' }} />
+                          <Image src={game.image_url} alt={game.name} fill sizes="40px" style={{ objectFit: 'cover' }} />
                         </div>
                       : <div style={{ width: 40, height: 54, borderRadius: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}>🎲</div>
                     }

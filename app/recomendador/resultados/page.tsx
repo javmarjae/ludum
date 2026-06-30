@@ -1,4 +1,4 @@
-import { getRecommendations, type RecommenderFilters, type GameResult } from '@/lib/recommender';
+import { getCachedRecommendations, type RecommenderFilters, type GameResult } from '@/lib/recommender';
 import { GameCard } from '@/components/GameCard';
 import Link from 'next/link';
 import { Nav } from '@/components/Nav';
@@ -47,7 +47,7 @@ export default async function ResultadosPage({ searchParams }: Props) {
 
   let games: GameResult[] = [];
   let error = false;
-  try { games = await getRecommendations(filters); } catch { error = true; }
+  try { games = await getCachedRecommendations(filters); } catch { error = true; }
 
   return (
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
