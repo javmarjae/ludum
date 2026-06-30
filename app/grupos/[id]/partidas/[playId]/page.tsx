@@ -33,11 +33,20 @@ export default async function PlayDetailPage({ params }: Props) {
 
   const { data: group } = await supabase.from('groups').select('name, owner_id').eq('id', groupId).single();
 
-  const results = ((play as any).play_results ?? []).sort((a: any, b: any) => {
+  const sortedResults = ((play as any).play_results ?? []).sort((a: any, b: any) => {
     if (a.is_winner && !b.is_winner) return -1;
     if (!a.is_winner && b.is_winner) return 1;
     if (a.score != null && b.score != null) return b.score - a.score;
     return 0;
+  });
+  // Defensa ante datos antiguos: una misma persona no debería aparecer dos veces.
+  // Deduplicamos por profile_id (los invitados sin profile_id se mantienen).
+  const seenProfiles = new Set<string>();
+  const results = sortedResults.filter((r: any) => {
+    if (!r.profile_id) return true;
+    if (seenProfiles.has(r.profile_id)) return false;
+    seenProfiles.add(r.profile_id);
+    return true;
   });
 
   const game = (play as any).games;

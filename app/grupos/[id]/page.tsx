@@ -218,21 +218,30 @@ export default async function GrupoDetailPage({ params }: Props) {
                 <>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {(recentPlays as any[]).map((play) => {
-                      const winner = play.play_results?.find((r: any) => r.is_winner);
-                      const winnerName = winner?.profiles?.display_name ?? winner?.guest_name ?? null;
-                      const winnerAvatar = winner?.profiles?.avatar_url ?? null;
-                      const playerCount = play.play_results?.length ?? 0;
+                      const results = play.play_results ?? [];
+                      const winners = results.filter((r: any) => r.is_winner);
+                      const multipleWinners = winners.length > 1;
+                      const firstWinner = winners[0] ?? null;
+                      // Si ganó más de una persona mostramos "Varios" en vez de un solo nombre
+                      const winnerName = multipleWinners
+                        ? 'Varios'
+                        : (firstWinner?.profiles?.display_name ?? firstWinner?.guest_name ?? null);
+                      const winnerAvatar = multipleWinners ? null : (firstWinner?.profiles?.avatar_url ?? null);
+                      const playerCount = results.length;
 
-                      // Score: use actual score if available, else 100 for winner
-                      const winnerScore = winner?.score ?? 100;
+                      // Score del ganador (los ganadores empatados suelen compartir puntuación)
+                      const winnerScore = firstWinner?.score ?? 100;
 
-                      // Position: calculate from scores if available, else 1 for winner / 2 for rest
-                      const hasScores = (play.play_results ?? []).some((r: any) => r.score !== null && r.score !== undefined);
-                      let winnerPosition = 1;
-                      if (hasScores && winner) {
-                        const sorted = [...(play.play_results ?? [])].sort((a: any, b: any) => (b.score ?? 0) - (a.score ?? 0));
-                        winnerPosition = sorted.findIndex((r: any) => r.is_winner) + 1;
-                        if (winnerPosition < 1) winnerPosition = 1;
+                      // Tu puesto: posición del usuario actual en esta partida
+                      const hasScores = results.some((r: any) => r.score !== null && r.score !== undefined);
+                      const myResult = results.find((r: any) => r.profile_id === user.id);
+                      let myPosition: number | null = null;
+                      if (myResult) {
+                        if (hasScores && myResult.score != null) {
+                          myPosition = 1 + results.filter((r: any) => r.score != null && r.score > myResult.score).length;
+                        } else if (myResult.is_winner) {
+                          myPosition = 1;
+                        }
                       }
 
                       return (
@@ -277,7 +286,11 @@ export default async function GrupoDetailPage({ params }: Props) {
                             {winnerName && (
                               <div className="grupo-winner" style={{ display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 }}>
                                 {/* Avatar */}
-                                {winnerAvatar ? (
+                                {multipleWinners ? (
+                                  <div className="grupo-winner-avatar" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
+                                    👑
+                                  </div>
+                                ) : winnerAvatar ? (
                                   <img className="grupo-winner-avatar" src={winnerAvatar} alt={winnerName} loading="lazy" decoding="async" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
                                 ) : (
                                   <div className="grupo-winner-avatar" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 19, fontWeight: 800, color: 'var(--brand)', flexShrink: 0 }}>
@@ -286,9 +299,11 @@ export default async function GrupoDetailPage({ params }: Props) {
                                 )}
                                 {/* Name */}
                                 <div style={{ minWidth: 0 }}>
-                                  <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: 3 }}>Ganador</p>
+                                  <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: 3 }}>
+                                    {multipleWinners ? 'Ganadores' : 'Ganador'}
+                                  </p>
                                   <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', whiteSpace: 'nowrap' }}>
-                                    {winnerName} 👑
+                                    {winnerName}{!multipleWinners && ' 👑'}
                                   </p>
                                 </div>
                                 {/* Score */}
@@ -296,17 +311,22 @@ export default async function GrupoDetailPage({ params }: Props) {
                                   <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: 3 }}>Puntos</p>
                                   <p style={{ fontSize: 16, fontWeight: 800, color: 'var(--text)' }}>{winnerScore}</p>
                                 </div>
-                                {/* Position badge */}
-                                <div className="grupo-play-badge" style={{
-                                  width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
-                                  background: winnerPosition === 1 ? 'var(--brand-tint)' : 'var(--bg-inset)',
-                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                  fontSize: 14, fontWeight: 800,
-                                  color: winnerPosition === 1 ? 'var(--brand)' : 'var(--text-3)',
-                                  border: winnerPosition === 1 ? '1.5px solid rgba(62,94,59,0.25)' : '1px solid var(--border)',
-                                }}>
-                                  {winnerPosition}º
-                                </div>
+                                {/* Tu puesto en la partida */}
+                                {myPosition !== null && (
+                                  <div className="grupo-play-score" style={{ textAlign: 'center', minWidth: 54 }} title="Tu puesto en la partida">
+                                    <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: 3 }}>Tu puesto</p>
+                                    <div className="grupo-play-badge" style={{
+                                      width: 40, height: 40, borderRadius: '50%', flexShrink: 0, margin: '0 auto',
+                                      background: myPosition === 1 ? 'var(--brand-tint)' : 'var(--bg-inset)',
+                                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                      fontSize: 14, fontWeight: 800,
+                                      color: myPosition === 1 ? 'var(--brand)' : 'var(--text-3)',
+                                      border: myPosition === 1 ? '1.5px solid rgba(62,94,59,0.25)' : '1px solid var(--border)',
+                                    }}>
+                                      {myPosition}º
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>

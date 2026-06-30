@@ -140,7 +140,12 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {players.map((player, i) => (
+          {players.map((player, i) => {
+            // Miembros ya elegidos en otros slots → se deshabilitan para no duplicar a la misma persona
+            const usedElsewhere = new Set(
+              players.filter(p => p.uid !== player.uid && p.type === 'member' && p.profile_id).map(p => p.profile_id)
+            );
+            return (
             <div key={player.uid} style={{
               borderRadius: 20, padding: 16,
               background: player.is_winner ? 'var(--brand-tint)' : 'var(--bg-card)',
@@ -177,7 +182,11 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
                 <select value={player.profile_id ?? ''} onChange={(e) => updatePlayer(player.uid, 'profile_id', e.target.value)}
                   style={{ ...inputStyle, marginBottom: 10, appearance: 'auto' } as React.CSSProperties}>
                   <option value="">— Seleccionar —</option>
-                  {members.map((m) => <option key={m.id} value={m.id}>{m.display_name}</option>)}
+                  {members.map((m) => (
+                    <option key={m.id} value={m.id} disabled={usedElsewhere.has(m.id)}>
+                      {m.display_name}{usedElsewhere.has(m.id) ? ' (ya añadido)' : ''}
+                    </option>
+                  ))}
                 </select>
               ) : (
                 <input type="text" placeholder="Nombre del invitado" value={player.guest_name}
@@ -200,7 +209,8 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
                 </button>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

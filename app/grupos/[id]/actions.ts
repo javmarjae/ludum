@@ -71,8 +71,18 @@ export async function createPlay(formData: FormData) {
 
   if (playError) return { error: 'Error al registrar la partida.' };
 
-  if (results.length > 0) {
-    const playResults = results.map((r) => ({
+  // Guard: una misma persona no puede aparecer dos veces en la misma partida.
+  // Deduplicamos por profile_id (los invitados sin profile_id se mantienen).
+  const seenProfiles = new Set<string>();
+  const dedupedResults = results.filter((r) => {
+    if (!r.profile_id) return true;
+    if (seenProfiles.has(r.profile_id)) return false;
+    seenProfiles.add(r.profile_id);
+    return true;
+  });
+
+  if (dedupedResults.length > 0) {
+    const playResults = dedupedResults.map((r) => ({
       play_id: play.id,
       profile_id: r.profile_id,
       guest_name: r.guest_name,
