@@ -1,5 +1,7 @@
+import { Suspense } from 'react';
 import { AppNav } from '@/components/AppNav';
 import { SearchClient } from './SearchClient';
+import { BuscarSkeleton } from './BuscarSkeleton';
 import { getTrendingGames, getTopRatedGames, getNewGames } from '@/lib/cached-queries';
 import type { Metadata } from 'next';
 
@@ -10,13 +12,25 @@ export const metadata: Metadata = {
   description: 'Busca entre más de 138.000 juegos de mesa.',
 };
 
-export default async function BuscarPage() {
+// Carga de datos en streaming: la cabecera y el esqueleto aparecen al instante
+// y las columnas se rellenan en cuanto resuelven las consultas (cacheadas).
+async function SearchData() {
   const [mostPlayedGames, topRatedGames, newGames] = await Promise.all([
     getTrendingGames(),
     getTopRatedGames(),
     getNewGames(),
   ]);
 
+  return (
+    <SearchClient
+      mostPlayedGames={mostPlayedGames}
+      topRatedGames={topRatedGames}
+      newGames={newGames}
+    />
+  );
+}
+
+export default function BuscarPage() {
   return (
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
       <AppNav />
@@ -29,11 +43,9 @@ export default async function BuscarPage() {
             Encuentra tu próximo juego favorito.
           </p>
         </div>
-        <SearchClient
-          mostPlayedGames={mostPlayedGames}
-          topRatedGames={topRatedGames}
-          newGames={newGames}
-        />
+        <Suspense fallback={<BuscarSkeleton />}>
+          <SearchData />
+        </Suspense>
       </main>
     </div>
   );

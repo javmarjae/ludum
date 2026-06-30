@@ -48,21 +48,25 @@ export const getTrendingGames = unstable_cache(
   { revalidate: 1800 }
 );
 
-/* Mejor valorados BGG (top 10). Caché 1 hora. */
+/* Mejor valorados BGG (top 10). Caché 1 hora.
+   Ordenamos por bgg_rank (índice ⇒ rápido). bgg_rating no está indexado y
+   ordenar 138K filas por él provoca un statement timeout en Supabase, dejando
+   la columna vacía. bgg_rank=0 marca juegos sin clasificar, así que exigimos >0. */
 export const getTopRatedGames = unstable_cache(
   async () => {
     const supabase = getPublicSupabase();
     const { data, error } = await supabase
       .from('games')
       .select('bgg_id, name, image_url, bgg_rating, year_published, is_expansion')
-      .not('bgg_rating', 'is', null)
+      .gt('bgg_rank', 0)
       .not('is_expansion', 'is', true)
-      .order('bgg_rating', { ascending: false })
+      .not('image_url', 'is', null)
+      .order('bgg_rank', { ascending: true })
       .limit(10);
     if (error) console.error('[cached-queries] getTopRatedGames:', error.message);
     return data ?? [];
   },
-  ['top-rated-games-v4'],
+  ['top-rated-games-v5'],
   { revalidate: 3600 }
 );
 
@@ -101,22 +105,30 @@ export const getCachedRecommenderGames = unstable_cache(
   { revalidate: 3600 }
 );
 
-/* Novedades (últimos 2 años, ordenados por rating). Caché 1 hora. */
+/* Novedades: los últimos juegos del año en curso (orden descendente por
+   recencia). Si el año en curso aún no tiene juegos, baja al año anterior
+   disponible. Ordenamos por bgg_id desc: la PK está indexada (rápido y sin
+   timeouts) y un bgg_id mayor ≈ alta más reciente en BGG ≈ juego más nuevo.
+   Ordenar por bgg_rating/num_ratings provoca statement timeout. Caché 1 hora. */
 export const getNewGames = unstable_cache(
   async () => {
     const supabase = getPublicSupabase();
-    const { data, error } = await supabase
-      .from('games')
-      .select('bgg_id, name, image_url, bgg_rating, year_published, is_expansion')
-      .not('year_published', 'is', null)
-      .not('bgg_rating', 'is', null)
-      .gte('year_published', new Date().getFullYear() - 1)
-      .lte('year_published', new Date().getFullYear())
-      .order('bgg_rating', { ascending: false })
-      .limit(15);
-    if (error) console.error('[cached-queries] getNewGames:', error.message);
-    return data ?? [];
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear; year >= currentYear - 4; year--) {
+      const { data, error } = await supabase
+        .from('games')
+        .select('bgg_id, name, image_url, bgg_rating, year_published, is_expansion')
+        .eq('year_published', year)
+        .not('is_expansion', 'is', true)
+        .not('image_url', 'is', null)
+        .order('bgg_id', { ascending: false })
+        .limit(15);
+      // Ante un error no seguimos bajando de año (mostraría novedades erróneas).
+      if (error) { console.error('[cached-queries] getNewGames:', error.message); break; }
+      if (data && data.length > 0) return data;
+    }
+    return [];
   },
-  ['new-games-v5'],
+  ['new-games-v6'],
   { revalidate: 3600 }
 );
