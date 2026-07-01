@@ -31,7 +31,7 @@ const getLandingGames = unstable_cache(
     const [featuredResult, beginnerResult] = await Promise.all([
       supabase
         .from('games')
-        .select('bgg_id, name, image_url')
+        .select('bgg_id, name, image_url, bgg_rating, year_published, categories')
         .not('image_url', 'is', null)
         .not('bgg_rank', 'is', null)
         .order('bgg_rank', { ascending: true })
@@ -64,6 +64,18 @@ export default async function Home() {
   const { featuredGames, beginnerGames } = await getLandingGames();
 
   const covers = featuredGames;
+
+  const topRatedForContent = (featuredGames as any[]).slice(0, 10);
+  const categoryCounts = new Map<string, number>();
+  for (const g of featuredGames as any[]) {
+    for (const c of g.categories ?? []) {
+      categoryCounts.set(c, (categoryCounts.get(c) ?? 0) + 1);
+    }
+  }
+  const popularCategories = [...categoryCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([name]) => name);
 
   /* ──────────────────────────────────────────────────── */
 
@@ -164,6 +176,82 @@ export default async function Home() {
                   )}
                 </Link>
               ))}
+            </div>
+          </section>
+
+          {/* ── Contenido indexable: qué es Ludum + top valorados + categorías ── */}
+          <section style={{ maxWidth: 1120, margin: '0 auto', padding: '0 clamp(16px,4vw,32px) 64px' }}>
+            <div style={{ maxWidth: 720, marginBottom: 48 }}>
+              <h2 className="t-section-title" style={{ marginBottom: 14, letterSpacing: '-0.01em' }}>
+                ¿Qué es Ludum?
+              </h2>
+              <p className="t-body" style={{ lineHeight: 1.7, color: 'var(--text-3)' }}>
+                Ludum es un recomendador y tracker de juegos de mesa en español, pensado para jugadores que quieren
+                llevar el control de sus partidas y descubrir su próximo juego favorito. Usa datos de más
+                de 138.000 títulos importados de BoardGameGeek, la mayor base de datos de juegos de mesa del mundo.
+                Puedes buscar por número de jugadores, tiempo de partida o nivel de complejidad, registrar el
+                resultado de cada sesión con tu grupo de amigos, y recibir recomendaciones personalizadas según
+                lo que ya habéis jugado. Es una herramienta gratuita y sin anuncios intrusivos, pensada para
+                quienes organizan noches de juego habitualmente y quieren tener a mano el historial, el ranking
+                de victorias y las mejores opciones para su próxima partida.
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 56 }} className="home-content-grid">
+              <div>
+                <h2 className="t-section-title" style={{ marginBottom: 18, letterSpacing: '-0.01em' }}>
+                  Los juegos mejor valorados
+                </h2>
+                <ol style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {topRatedForContent.map((g: any, i: number) => (
+                    <li key={g.bgg_id}>
+                      <Link
+                        href={`/juegos/${g.bgg_id}`}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 12,
+                          padding: '10px 8px', borderRadius: 8, textDecoration: 'none',
+                        }}
+                        className="hover-row"
+                      >
+                        <span style={{ width: 22, flexShrink: 0, fontSize: 13, fontWeight: 700, color: 'var(--text-4)' }}>
+                          {i + 1}
+                        </span>
+                        <span style={{ flex: 1, minWidth: 0, fontSize: 15, fontWeight: 600, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {g.name}
+                        </span>
+                        {g.year_published && (
+                          <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)', flexShrink: 0 }}>
+                            {g.year_published}
+                          </span>
+                        )}
+                        {g.bgg_rating && (
+                          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)', flexShrink: 0 }}>
+                            ★ {g.bgg_rating.toFixed(1)}
+                          </span>
+                        )}
+                      </Link>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              {popularCategories.length > 0 && (
+                <div>
+                  <h2 className="t-section-title" style={{ marginBottom: 18, letterSpacing: '-0.01em' }}>
+                    Categorías populares
+                  </h2>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {popularCategories.map((c) => (
+                      <span key={c} style={{
+                        display: 'inline-block', padding: '7px 16px', borderRadius: 999,
+                        fontSize: 14, fontWeight: 600, background: 'var(--brand-tint)', color: 'var(--brand)',
+                      }}>
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </section>
 

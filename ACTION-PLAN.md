@@ -3,187 +3,57 @@
 
 ---
 
-## Sprint 1 — Esta semana (Alto impacto, Bajo esfuerzo)
+## ✅ Completado
 
-### [DONE] ✅ Dominio correcto en robots/sitemap/canonical
-Corregido hoy: `ludum.es` → `ludumgames.es` en `robots.ts`, `sitemap.ts`, `layout.tsx`, y canonical de juegos.
-
----
-
-### 1. Añadir canonical en homepage
-**Archivo:** `app/page.tsx`  
-**Cambio:**
-```ts
-export const metadata: Metadata = {
-  alternates: { canonical: 'https://ludumgames.es' },
-};
-```
-**Impacto:** Alto | **Esfuerzo:** 5 min
-
----
-
-### 2. Crear og:image para la homepage
-**Archivo:** `public/og-home.png` + `app/layout.tsx`  
-**Cambio:** Diseñar imagen 1200×630 con logo + tagline, luego:
-```ts
-openGraph: {
-  images: [{ url: '/og-home.png', width: 1200, height: 630, alt: 'Ludum — Recomendador de Juegos de Mesa' }],
-  url: 'https://ludumgames.es',
-  description: 'Descubre tu próximo juego de mesa favorito con recomendaciones personalizadas.',
-}
-```
-**Impacto:** Alto | **Esfuerzo:** 30 min
+| # | Tarea | Verificación |
+|---|-------|--------------|
+| ✅ | Dominio correcto en robots/sitemap/canonical/JSON-LD | `ludum.es` → `ludumgames.es` en todos los archivos |
+| ✅ | Canonical en homepage | `app/page.tsx` |
+| ✅ | og:image dinámica (1200×630) | `app/opengraph-image.tsx` |
+| ✅ | og:url + og:description ampliada | `app/layout.tsx` |
+| ✅ | Cabeceras de seguridad (CSP-adjacent) | `next.config.js` — X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy |
+| ✅ | llms.txt | `public/llms.txt` |
+| ✅ | WebSite + Organization JSON-LD homepage | `app/page.tsx` (sitelinks searchbox) |
+| ✅ | Crawlers de IA explícitos en robots.ts | GPTBot, ClaudeBot, PerplexityBot, Google-Extended, etc. |
+| ✅ | Texto ancla en tarjetas de portada (aria-label) | `app/page.tsx` |
+| ✅ | PageSpeed / Core Web Vitals medido con API real | Ver tabla de resultados abajo |
+| ✅ | TTFB alto en `/juegos/[id]` corregido | Query migrada a `unstable_cache` (revalidate 3600s) — 1279ms → 340ms en mobile |
+| ✅ | Bug de dominio roto en JSON-LD de BoardGame | Corregido junto al fix de TTFB |
+| ✅ | Google Search Console verificado + sitemap enviado | Confirmado por el usuario 2026-07-01 |
+| ✅ | Sitemap fallaba en GSC ("No se ha podido obtener") | Causa: misma query sin cache que el TTFB alto — migrada a `unstable_cache`. Reenvío confirmado "Correcto", 1005 páginas descubiertas |
+| ✅ | Contenido indexable en homepage para no logueados | Sección "¿Qué es Ludum?" (texto ~190 palabras) + "Los juegos mejor valorados" (top 10 con nombre/año/rating enlazados) + "Categorías populares" (chips agregados de datos reales). Palabras totales: 107 → 298. H2 antes vacíos, ahora con 3 encabezados |
 
 ---
 
-### 3. Cabeceras de seguridad en next.config.js
-**Archivo:** `next.config.js` (o `next.config.ts`)  
-```js
-async headers() {
-  return [{
-    source: '/(.*)',
-    headers: [
-      { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-      { key: 'X-Content-Type-Options', value: 'nosniff' },
-      { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-      { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-    ],
-  }];
-}
-```
-**Impacto:** Medio-Alto | **Esfuerzo:** 15 min
+## Resultados de PageSpeed (post-fixes)
+
+| Página | Mobile | Desktop | LCP mobile | TTFB mobile | CLS |
+|---|---|---|---|---|---|
+| `/` | 96 | 100 | 2701ms ⚠️ | 87ms ✅ | 0 ✅ |
+| `/buscar` | 95 | 100 | 2930ms ⚠️ | 255ms ✅ | 0 ✅ |
+| `/juegos/174430` | 93 | 100 | 3001ms ⚠️ | **340ms** ✅ (antes 1279ms) | 0.026 ✅ |
+
+**Descartado del plan original:** la tarea de `width`/`height` en imágenes para reducir CLS — los datos reales muestran CLS ~0 en las tres páginas, no hay layout shift que corregir.
 
 ---
 
-### 4. Crear /llms.txt
-**Archivo:** `public/llms.txt`
-```
-# Ludum
+## Pendiente
 
-> Plataforma española para descubrir, recomendar y registrar partidas de juegos de mesa.
+### 1. LCP en mobile ligeramente por encima del umbral (2.7-3.0s vs objetivo 2.5s)
+Presente en las 3 páginas por igual — no es específico de ninguna, probablemente imágenes de portada + JS del framework en conexión móvil simulada. PageSpeed señala "Reduce unused JavaScript" (270-570ms de ahorro potencial) como única pista, pero es overhead genérico de React/Next.js sin una causa aislable sin herramientas de bundle-analysis.
 
-## Páginas clave
-
-- /buscar — Catálogo con más de 138.000 juegos de mesa
-- /recomendador — Recomendador personalizado por mecánicas, jugadores y tiempo
-- /juegos/[bgg_id] — Ficha detallada de cada juego con schema BoardGame
-- /blog — Artículos, reseñas y guías sobre juegos de mesa
-- /eventos — Torneos y ferias cerca del usuario
-
-## Datos
-
-Basado en BoardGameGeek (BGG). Catálogo sincronizado diariamente.
-```
-**Impacto:** Medio (futuro) | **Esfuerzo:** 10 min
+**Impacto:** Medio | **Esfuerzo:** requiere bundle analyzer para diagnosticar mejor
 
 ---
 
-### 5. WebSite + Organization schema en homepage
-**Archivo:** `app/page.tsx` (o layout.tsx)  
-```tsx
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebSite',
-      name: 'Ludum',
-      url: 'https://ludumgames.es',
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: 'https://ludumgames.es/buscar?q={search_term_string}',
-        'query-input': 'required name=search_term_string',
-      },
-    },
-    {
-      '@type': 'Organization',
-      name: 'Ludum',
-      url: 'https://ludumgames.es',
-      logo: 'https://ludumgames.es/logo.svg',
-    },
-  ],
-};
-```
-**Impacto:** Alto (sitelinks searchbox en Google) | **Esfuerzo:** 20 min
+### 2. Monitorizar cobertura en Search Console
+Con el sitemap ya enviado, revisar en 1-2 semanas:
+- Páginas indexadas vs enviadas (objetivo: sin errores de cobertura)
+- Core Web Vitals reales (field data) una vez haya tráfico suficiente
+- Errores de rastreo si aparecen
+
+**Impacto:** Seguimiento continuo | **Esfuerzo:** revisión periódica
 
 ---
 
-## Sprint 2 — Próximas 2 semanas (Medio impacto)
-
-### 6. Gestión explícita de crawlers de IA en robots.ts
-```ts
-rules: [
-  { userAgent: '*', allow: '/', disallow: ['/api/', '/auth/', '/admin/'] },
-  { userAgent: 'GPTBot', allow: '/' },
-  { userAgent: 'ClaudeBot', allow: '/' },
-  { userAgent: 'PerplexityBot', allow: '/' },
-  { userAgent: 'Google-Extended', allow: '/' },
-],
-```
-**Impacto:** Medio | **Esfuerzo:** 10 min
-
----
-
-### 7. Texto ancla en tarjetas de juego de la homepage
-Añadir `<span className="sr-only">{game.name}</span>` dentro de cada `<a>` de tarjeta, para que los links tengan texto semántico sin afectar el diseño visual.  
-**Impacto:** Medio | **Esfuerzo:** 30 min
-
----
-
-### 8. width/height en imágenes de juego
-En el componente de tarjeta de juego, pasar `width={246} height={300}` al `<Image>` de Next.js para eliminar CLS.  
-**Impacto:** CWV (CLS) | **Esfuerzo:** 1h
-
----
-
-## Sprint 3 — Antes del lanzamiento (Largo plazo)
-
-### 9. Contenido indexable en homepage para no logueados
-Añadir sección pública con:
-- Top 10 juegos más valorados (con links a fichas)
-- Categorías populares (estrategia, familia, party...)
-- Texto descriptivo de 200-300 palabras sobre qué es Ludum
-
-**Impacto:** Alto (contenido thin actual: 63 palabras) | **Esfuerzo:** 2-3h
-
----
-
-### 10. PageSpeed / Core Web Vitals
-Ejecutar [pagespeed.web.dev](https://pagespeed.web.dev) manualmente sobre:
-- `/` (homepage)
-- `/buscar`
-- `/juegos/174430` (Gloomhaven como referencia)
-
-Objetivos: LCP < 2.5s, INP < 200ms, CLS < 0.1  
-**Impacto:** Alto | **Esfuerzo:** Variable según resultados
-
----
-
-### 11. Google Search Console
-1. Verificar `ludumgames.es` en GSC
-2. Enviar sitemap: `https://ludumgames.es/sitemap.xml`
-3. Monitorizar errores de indexación, cobertura y CWV reales
-
-**Impacto:** Crítico para seguimiento | **Esfuerzo:** 30 min setup
-
----
-
-## Resumen de prioridades
-
-| # | Tarea | Impacto | Esfuerzo | Sprint |
-|---|-------|---------|---------|--------|
-| ✅ | Dominio correcto (robots/sitemap/canonical) | 🔴 Crítico | Hecho | — |
-| 1 | Canonical homepage | 🔴 Alto | 5 min | 1 |
-| 2 | og:image + og:url homepage | 🔴 Alto | 30 min | 1 |
-| 3 | Cabeceras de seguridad | ⚠️ Medio-Alto | 15 min | 1 |
-| 4 | llms.txt | ⚠️ Medio | 10 min | 1 |
-| 5 | WebSite + Organization schema | ⚠️ Alto | 20 min | 1 |
-| 6 | Crawlers IA en robots | ⚠️ Medio | 10 min | 2 |
-| 7 | Texto ancla tarjetas | ⚠️ Medio | 30 min | 2 |
-| 8 | width/height imágenes | ⚠️ CWV | 1h | 2 |
-| 9 | Contenido homepage | 🔴 Alto | 2-3h | 3 |
-| 10 | PageSpeed manual | 🔴 CWV | Variable | 3 |
-| 11 | Google Search Console | 🔴 Seguimiento | 30 min | 3 |
-
----
-
-*Generado por Agentic SEO Skill v3.0.1*
+*Generado por Agentic SEO Skill v3.0.1 — actualizado tras verificación con PageSpeed API y confirmación de Search Console*

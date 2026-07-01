@@ -452,6 +452,7 @@ html[data-authed="true"] .app-nav {
 @media (max-width: 640px) {
   .home-steps { grid-template-columns: 1fr !important; gap: 32px !important; padding: 40px 16px !important; }
   .home-hero  { padding: 40px 16px 56px !important; }
+  .home-content-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
 }
 
 /* Home sidebar nav (logged-in layout) */
