@@ -5,7 +5,7 @@ import { unstable_cache } from 'next/cache';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { Nav, NavLink, NavButton } from '@/components/Nav';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { getAuthUser } from '@/lib/supabase/server';
+import { getAuthUserLite } from '@/lib/supabase/server';
 import { BeginnerSection } from '@/components/BeginnerSection';
 import { DashboardContent } from './DashboardContent';
 import { HomeDashboardSkeleton } from './HomeDashboardSkeleton';
@@ -56,7 +56,7 @@ const getLandingGames = unstable_cache(
 );
 
 export default async function Home() {
-  const user = await getAuthUser();
+  const user = await getAuthUserLite();
   const displayName = user?.user_metadata?.display_name ?? user?.email?.split('@')[0] ?? null;
 
   /* getLandingGames usa el cliente público (tabla games, sin RLS).

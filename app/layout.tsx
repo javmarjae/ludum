@@ -4,7 +4,7 @@ import { cache } from 'react';
 import { Urbanist, Playfair } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
-import { getAuthUser, createClient } from '@/lib/supabase/server';
+import { getAuthUserLite, createClient } from '@/lib/supabase/server';
 import { SidebarNav } from '@/components/SidebarNav';
 import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { TutorialModal } from '@/components/TutorialModal';
@@ -84,8 +84,9 @@ async function MobileNavWithProfile({ userId }: { userId: string }) {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // Only 1 blocking call: auth. Profile query runs non-blocking in Suspense.
-  const user = await getAuthUser();
+  // Only 1 blocking call: auth (sesión local, sin red — ver getAuthUserLite).
+  // Profile query runs non-blocking in Suspense.
+  const user = await getAuthUserLite();
 
   return (
     <html lang="es" suppressHydrationWarning data-authed={user ? 'true' : undefined}>
