@@ -1,19 +1,29 @@
 import type { MetadataRoute } from 'next';
-import { createClient } from '@/lib/supabase/server';
+import { unstable_cache } from 'next/cache';
+import { supabase } from '@/lib/supabase';
 import { getBlogPosts } from '@/lib/blog';
 
 const BASE = 'https://ludumgames.es';
 
+/* games es una tabla pública sin RLS → se cachea entre requests para que el
+   sitemap responda desde caché en vez de repetir la query en cada rastreo
+   de Googlebot (revalidate coincide con la sincronización diaria de BGG). */
+const getRankedGames = unstable_cache(
+  async () => {
+    const { data } = await supabase
+      .from('games')
+      .select('bgg_id, name')
+      .not('bgg_rank', 'is', null)
+      .order('bgg_rank', { ascending: true })
+      .limit(5000);
+    return data ?? [];
+  },
+  ['sitemap-ranked-games'],
+  { revalidate: 3600 }
+);
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = await createClient();
-
-  const { data: games } = await supabase
-    .from('games')
-    .select('bgg_id, name')
-    .not('bgg_rank', 'is', null)
-    .order('bgg_rank', { ascending: true })
-    .limit(5000);
-
+  const games = await getRankedGames();
   const blogPosts = await getBlogPosts();
 
   const staticRoutes: MetadataRoute.Sitemap = [
