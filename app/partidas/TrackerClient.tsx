@@ -333,7 +333,7 @@ export function TrackerClient({ plays, ratings, totalUsers, userRank, userId }: 
                 {s.icon}
               </div>
               <div style={{ minWidth: 0 }}>
-                <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-3)', marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.label}</p>
+                <p className="tracker-stat-label" style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-3)', marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.label}</p>
                 <p style={{ fontSize: 34, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', lineHeight: 1 }}>{s.value}</p>
                 {s.delta && <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', marginTop: 5 }}>{s.delta}</p>}
               </div>

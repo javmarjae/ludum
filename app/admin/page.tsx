@@ -99,7 +99,7 @@ export default async function AdminPage({
   const hasPending = (pendingOrgs ?? 0) > 0 || (pendingVerifs ?? 0) > 0;
 
   return (
-    <div style={{ maxWidth: 1320, margin: '0 auto', padding: '40px 28px 80px' }}>
+    <div className="admin-page" style={{ maxWidth: 1320, margin: '0 auto', padding: '40px 28px 80px' }}>
 
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
@@ -112,7 +112,7 @@ export default async function AdminPage({
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 32 }}>
+      <div className="admin-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 12, marginBottom: 32 }}>
         {stats.map(s => (
           <div key={s.label} style={{
             background: 'var(--bg-card)',
@@ -133,7 +133,7 @@ export default async function AdminPage({
       </div>
 
       {/* Main two-column layout: users + sidebar when there are pending items */}
-      <div style={{ display: 'grid', gridTemplateColumns: hasPending ? '1fr 360px' : '1fr', gap: 28, alignItems: 'start' }}>
+      <div className="admin-main-grid" style={{ display: 'grid', gridTemplateColumns: hasPending ? 'minmax(0, 1fr) 360px' : '1fr', gap: 28, alignItems: 'start' }}>
 
         {/* Left — users */}
         <div>
@@ -160,7 +160,7 @@ export default async function AdminPage({
           </form>
 
           {/* Column headers */}
-          <div style={{ display: 'flex', paddingRight: 18, paddingLeft: 70, marginBottom: 6 }}>
+          <div className="admin-col-headers" style={{ display: 'flex', paddingRight: 18, paddingLeft: 70, marginBottom: 6 }}>
             <div style={{ flex: 1 }} />
             <div style={{ display: 'flex', gap: 16 }}>
               {['BLOG', 'EVENTOS', 'ADMIN'].map(h => (
@@ -221,7 +221,7 @@ export default async function AdminPage({
 
       {/* When nothing is pending, show requests below users in 2 columns */}
       {!hasPending && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginTop: 28 }}>
+        <div className="admin-requests-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginTop: 28 }}>
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: '20px 22px' }}>
             <h2 style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', marginBottom: 14 }}>
               Solicitudes de organizaciones

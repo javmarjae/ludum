@@ -77,7 +77,7 @@ export default async function AdminTorneoPage({ params }: Props) {
         </div>
 
         {/* Two-column layout */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.6fr)', gap: 24, alignItems: 'start' }}>
+        <div className="torneo-admin-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.6fr)', gap: 24, alignItems: 'start' }}>
 
           {/* LEFT: Participants */}
           <section>

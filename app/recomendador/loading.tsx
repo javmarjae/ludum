@@ -65,7 +65,7 @@ export default function Loading() {
             </div>
             <div style={{ borderRadius: 16, padding: '18px 20px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
               <div style={{ height: 16, width: 180, borderRadius: 6, background: 'var(--bg-inset)', marginBottom: 16 }} className="skeleton" />
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16 }}>
                 {[0, 1, 2, 3].map((i) => (
                   <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
                     <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--bg-inset)' }} className="skeleton" />

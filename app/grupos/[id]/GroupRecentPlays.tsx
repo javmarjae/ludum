@@ -138,11 +138,11 @@ export async function GroupRecentPlays({ groupId, userId }: { groupId: string; u
                             </div>
                           )}
                           {/* Name */}
-                          <div style={{ minWidth: 0 }}>
+                          <div style={{ minWidth: 0, maxWidth: 130, overflow: 'hidden' }}>
                             <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: 3 }}>
                               {multipleWinners ? 'Ganadores' : 'Ganador'}
                             </p>
-                            <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', whiteSpace: 'nowrap' }}>
+                            <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               {winnerName}{!multipleWinners && ' 👑'}
                             </p>
                           </div>

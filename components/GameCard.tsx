@@ -63,7 +63,11 @@ export function GameCard({ game, index, inCollection, onCollectionToggle }: Prop
         {/* Info */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 4 }}>
-            <h3 style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <h3 style={{
+              fontWeight: 700, fontSize: 14, color: 'var(--text)', lineHeight: 1.3,
+              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}>
               {game.name}
             </h3>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>

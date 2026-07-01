@@ -127,7 +127,7 @@ export function NuevoEventoForm() {
         <input name="address" style={inputStyle} placeholder="Calle Mayor 1" />
       </Field>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 14 }}>
         <Field label="Inicio" required>
           <input name="starts_at" type="datetime-local" required style={inputStyle} />
         </Field>

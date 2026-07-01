@@ -207,7 +207,7 @@ function CompatibilityStats({ stats }: { stats: GroupRecommendation['stats'] }) 
   return (
     <div style={{ borderRadius: 16, padding: '18px 20px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
       <p className="t-card-title" style={{ marginBottom: 16 }}>Compatibilidad del grupo</p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+      <div className="compat-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16 }}>
         <StatRing value={stats.membersEnjoy} label="jugadores disfrutan este tipo de juego" />
         <StatRing value={stats.durationFit} label="duración ideal para vuestras partidas" />
         <StatRing value={stats.complexityFit} label="nivel de complejidad habitual" />

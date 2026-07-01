@@ -343,12 +343,6 @@ select:focus-visible,
   .recom-skeleton-cols { grid-template-columns: 1fr; }
 }
 
-/* Responsive nav */
-@media (max-width: 600px) {
-  .nav-right-links { display: none; }
-  .nav-right-btn { display: flex; }
-}
-
 /* Hover helpers para Server Components (sin JS) */
 .hover-row { transition: background 0.1s; }
 .hover-row:hover { background: var(--bg-inset) !important; }
@@ -404,7 +398,8 @@ html[data-authed="true"] .app-nav {
 }
 
 /* En móvil estrecho: ocultar links de escritorio, mostrar hamburguesa + theme toggle */
-@media (max-width: 600px) {
+/* 640px para coincidir con el breakpoint del sidebar/bottom-nav autenticado */
+@media (max-width: 640px) {
   .nav-desktop-links { display: none !important; }
   .nav-mobile-menu   { display: flex !important; align-items: center; gap: 8px; }
 }
@@ -431,6 +426,9 @@ html[data-authed="true"] .app-nav {
   padding: 0 4px;
   box-shadow: 0 -2px 16px rgba(58,55,47,0.08);
   padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* Fade de borde: pista visual de que hay más iconos al hacer scroll horizontal */
+  mask-image: linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%);
 }
 .mobile-bottom-nav::-webkit-scrollbar { display: none; }
 
@@ -453,17 +451,6 @@ html[data-authed="true"] .app-nav {
   .home-steps { grid-template-columns: 1fr !important; gap: 32px !important; padding: 40px 16px !important; }
   .home-hero  { padding: 40px 16px 56px !important; }
   .home-content-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
-}
-
-/* Home sidebar nav (logged-in layout) */
-.home-side-nav {
-  scrollbar-width: none;
-}
-.home-side-nav::-webkit-scrollbar { display: none; }
-
-/* Hide sidebar on mobile; show bottom bar alternative */
-@media (max-width: 600px) {
-  .home-side-nav { display: none !important; }
 }
 
 /* Scrollable rows — hide webkit scrollbar */
@@ -717,11 +704,11 @@ html[data-authed="true"] .app-nav {
 
 /* Tablet (≤960px): 2 stats, 1 columna de contenido */
 @media (max-width: 960px) {
-  .grupo-stats { grid-template-columns: repeat(3, 1fr) !important; }
-  .grupo-cols  { grid-template-columns: 1fr !important; }
+  .grupo-stats { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .grupo-cols  { grid-template-columns: minmax(0, 1fr) !important; }
 }
 @media (max-width: 640px) {
-  .grupo-stats { grid-template-columns: repeat(2, 1fr) !important; }
+  .grupo-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
 }
 
 /* Tablet lateral: la barra derecha se convierte en grid horizontal */
@@ -752,11 +739,12 @@ html[data-authed="true"] .app-nav {
 
 /* ── Tracker responsive ─────────────────────────────── */
 @media (max-width: 860px) {
-  .tracker-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .tracker-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .tracker-main-grid  { grid-template-columns: 1fr !important; }
 }
 @media (max-width: 480px) {
-  .tracker-stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .tracker-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
+  .tracker-stat-label { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
 }
 
 /* ── Chat: split-view móvil ──────────────────────────── */
@@ -794,6 +782,30 @@ html[data-authed="true"] .app-nav {
     padding-top: 20px;
     margin-top: 4px;
   }
+}
+
+/* ── Recomendador: compatibilidad del grupo ─────────────── */
+@media (max-width: 480px) {
+  .compat-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; row-gap: 20px !important; }
+}
+
+/* ── Torneo admin: colapsa a 1 columna en móvil/tablet ── */
+@media (max-width: 860px) {
+  .torneo-admin-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── Admin responsive ────────────────────────────────── */
+@media (max-width: 860px) {
+  .admin-page { padding: 28px 18px 64px !important; }
+  .admin-stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .admin-main-grid { grid-template-columns: 1fr !important; }
+  .admin-requests-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .admin-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
+  .admin-user-row { flex-wrap: wrap !important; }
+  .admin-user-toggles { margin-left: 56px !important; }
+  .admin-col-headers { display: none !important; }
 }
 
 /* ── Footer ──────────────────────────────────────────── */

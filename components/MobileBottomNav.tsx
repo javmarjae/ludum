@@ -116,11 +116,11 @@ export function MobileBottomNav({ isAdmin = false }: { isAdmin?: boolean }) {
               style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
                 gap: 4, padding: '6px 10px', textDecoration: 'none',
-                minWidth: 58, flexShrink: 0,
+                minWidth: 60, flexShrink: 0,
               }}
             >
               <div style={{
-                width: 38, height: 38, borderRadius: 11,
+                width: 42, height: 42, borderRadius: 12,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 background: active ? 'var(--brand)' : 'transparent',
                 color: active ? 'white' : 'var(--text-3)',

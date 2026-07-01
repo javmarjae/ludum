@@ -40,7 +40,7 @@ export function AdminUserCard({ user, currentUserId, index }: { user: AdminUser;
   const initials = ((user.display_name || user.email) ?? '?')[0]?.toUpperCase() ?? '?';
 
   return (
-    <div className={index !== undefined ? 'stagger-in' : undefined} style={{
+    <div className={`admin-user-row${index !== undefined ? ' stagger-in' : ''}`} style={{
       ...(index !== undefined ? { ['--stagger-i' as any]: index } : {}),
       background: 'var(--bg-card)',
       border: '1px solid var(--border)',
@@ -49,6 +49,7 @@ export function AdminUserCard({ user, currentUserId, index }: { user: AdminUser;
       display: 'flex',
       alignItems: 'center',
       gap: 14,
+      rowGap: 10,
     }}>
       <div style={{
         width: 42, height: 42, borderRadius: '50%',
@@ -77,7 +78,7 @@ export function AdminUserCard({ user, currentUserId, index }: { user: AdminUser;
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexShrink: 0 }}>
+      <div className="admin-user-toggles" style={{ display: 'flex', gap: 16, alignItems: 'center', flexShrink: 0 }}>
         <Toggle label="Blog" active={perms.can_write_blog} onToggle={() => toggle('can_write_blog')} disabled={isSelf} />
         <Toggle label="Eventos" active={perms.can_create_events} onToggle={() => toggle('can_create_events')} disabled={isSelf} />
         <Toggle label="Admin" active={perms.is_admin} onToggle={() => toggle('is_admin')} disabled={isSelf} danger />
