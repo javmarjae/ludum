@@ -1,7 +1,9 @@
 import { createClient } from '@/lib/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { unstable_cache } from 'next/cache';
 import { AppNav } from '@/components/AppNav';
 import { DescriptionCollapse } from './DescriptionCollapse';
 import { CollectionButton } from './CollectionButton';
@@ -11,7 +13,7 @@ import { GameRatingProvider } from './GameRatingContext';
 import { ExpansionBanner } from './ExpansionBanner';
 import { GameRelatedLists } from './GameRelatedLists';
 import { GamePlaysTab } from './GamePlaysTab';
-import { cache, Suspense } from 'react';
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 
 interface Props {
@@ -19,15 +21,29 @@ interface Props {
   searchParams: Promise<{ tab?: string }>;
 }
 
-const getGame = cache(async (bggId: number) => {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from('games')
-    .select('id, bgg_id, name, year_published, bgg_rank, bgg_rating, num_ratings, min_players, max_players, min_playtime, max_playtime, complexity, image_url, mechanics, categories, description, is_expansion, parent_bgg_id')
-    .eq('bgg_id', bggId)
-    .single();
-  return data ?? null;
-});
+function getPublicSupabase() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
+
+/* games es una tabla pública sin RLS → se cachea entre requests (revalidate
+   coincide con la sincronización diaria de BGG) en vez de golpear Supabase
+   en cada carga, igual que el patrón de app/page.tsx. */
+const getGame = unstable_cache(
+  async (bggId: number) => {
+    const supabase = getPublicSupabase();
+    const { data } = await supabase
+      .from('games')
+      .select('id, bgg_id, name, year_published, bgg_rank, bgg_rating, num_ratings, min_players, max_players, min_playtime, max_playtime, complexity, image_url, mechanics, categories, description, is_expansion, parent_bgg_id')
+      .eq('bgg_id', bggId)
+      .single();
+    return data ?? null;
+  },
+  ['game-detail'],
+  { revalidate: 3600 }
+);
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
@@ -135,7 +151,7 @@ export default async function GamePage({ params, searchParams }: Props) {
         ratingCount: (game as any).num_ratings ?? 1000,
       },
     }),
-    url: `https://ludum.es/juegos/${game.bgg_id}`,
+    url: `https://ludumgames.es/juegos/${game.bgg_id}`,
   };
 
   return (
