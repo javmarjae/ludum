@@ -40,8 +40,10 @@ function LoginForm() {
       setPassword('');
       setLoading(false);
     } else {
-      router.push(next);
-      router.refresh();
+      // Navegación completa (no router.push): garantiza que el servidor ve las
+      // cookies de sesión recién escritas y evita render con caché de router
+      // obsoleta (bounce a /auth/login?next=… justo tras iniciar sesión).
+      window.location.assign(next);
     }
   }
 

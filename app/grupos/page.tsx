@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { getAuthUser } from '@/lib/supabase/server';
+import { getAuthUserLite } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { GruposContent } from './GruposContent';
@@ -8,7 +8,8 @@ import { GruposSkeleton } from './GruposSkeleton';
 export const metadata: Metadata = { title: 'Grupos y Comunidades' };
 
 export default async function GruposPage({ searchParams }: { searchParams: Promise<{ org_request?: string }> }) {
-  const user = await getAuthUser();
+  // Solo gating de UI: los datos reales van protegidos por RLS.
+  const user = await getAuthUserLite();
   if (!user) redirect('/auth/login?next=/grupos');
   const { org_request } = await searchParams;
 

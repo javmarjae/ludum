@@ -1,4 +1,4 @@
-import { createClient, getAuthUser } from '@/lib/supabase/server';
+import { createClient, getAuthUserLite } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -25,7 +25,8 @@ interface Props { params: Promise<{ id: string }>; }
 
 export default async function GrupoDetailPage({ params }: Props) {
   const { id } = await params;
-  const user = await getAuthUser();
+  // Solo gating de UI: la pertenencia al grupo se verifica abajo vía RLS.
+  const user = await getAuthUserLite();
   if (!user) redirect('/auth/login');
   const supabase = await createClient();
 

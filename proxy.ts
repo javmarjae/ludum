@@ -21,7 +21,13 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  // getSession lee la cookie y verifica el JWT localmente; solo va a la red
+  // (refresh) cuando el access token ha expirado. getUser() aquí costaba un
+  // round-trip a Supabase Auth en CADA página y CADA prefetch RSC — era el
+  // mayor contribuidor al TTFB de todo el sitio. La autorización real sigue
+  // en cada página/RLS; el proxy solo decide redirecciones de UI.
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user ?? null;
 
   // Protect /grupos and /dashboard routes
   const isProtected = request.nextUrl.pathname.startsWith('/grupos') ||

@@ -103,8 +103,11 @@ export async function getRecommendations(filters: RecommenderFilters): Promise<G
     query = query.not('id', 'in', `(${ids.join(',')})`);
   }
 
+  // Orden por bgg_rank (indexado): ordenar por bgg_rating recorre la tabla
+  // completa sin índice y provoca statement timeout en Supabase.
   const { data, error } = await query
-    .order('bgg_rating', { ascending: false })
+    .gt('bgg_rank', 0)
+    .order('bgg_rank', { ascending: true })
     .limit(100);
 
   if (error) throw new Error(error.message);
@@ -448,15 +451,15 @@ export async function getGroupRecommendations(
   let allGames: GameResult[] = cachedGames?.main ?? [];
   let trendingGames: GameResult[] = cachedGames?.trending ?? [];
 
-  // Cache miss or poisoned empty result — query directly
+  // Cache miss or poisoned empty result — query directly.
+  // Orden por bgg_rank (indexado): por bgg_rating dispara statement timeout.
   if (allGames.length === 0) {
     const { data: fallback } = await supabase
       .from('games')
       .select(GAME_SELECT)
-      .not('bgg_rank', 'is', null)
+      .gt('bgg_rank', 0)
       .not('bgg_rating', 'is', null)
-      .gte('bgg_rating', 7.0)
-      .order('bgg_rating', { ascending: false })
+      .order('bgg_rank', { ascending: true })
       .limit(80);
     allGames = (fallback ?? []) as GameResult[];
   }

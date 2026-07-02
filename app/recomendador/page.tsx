@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { createClient, getAuthUser } from '@/lib/supabase/server';
+import { createClient, getAuthUserLite } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { GroupSelector, type SelectorGroup } from './GroupSelector';
@@ -139,8 +139,8 @@ interface Props {
 export default async function RecomendadorPage({ searchParams }: Props) {
   const params = await searchParams;
 
-  // Reuses the cached auth result from the layout — no extra network call
-  const user = await getAuthUser();
+  // Sesión desde la cookie (sin red): solo gating de UI, los datos van por RLS.
+  const user = await getAuthUserLite();
   if (!user) redirect('/auth/login');
 
   const supabase = await createClient();

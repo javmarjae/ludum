@@ -381,6 +381,16 @@ select:focus-visible,
   .dash-stat:nth-child(odd) { border-left: none; }
 }
 
+/* Organizations public listing */
+.org-list-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+@media (max-width: 700px) {
+  .org-list-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
 /* Organizations admin two-column grid */
 .org-admin-cols {
   display: grid;

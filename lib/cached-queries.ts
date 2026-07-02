@@ -74,6 +74,11 @@ export const getTopRatedGames = unstable_cache(
 const RECOMMENDER_GAME_SELECT =
   'id, bgg_id, name, year_published, bgg_rank, bgg_rating, min_players, max_players, min_playtime, max_playtime, complexity, image_url, mechanics, categories, description';
 
+/* Orden por bgg_rank (indexado): ordenar por bgg_rating recorre 138K filas
+   sin índice y dispara el statement timeout de Supabase (mismo problema
+   documentado en getTopRatedGames). El rank de BGG ya ES el ranking por
+   valoración, así que el resultado es equivalente y la query pasa de
+   segundos/timeout a milisegundos. */
 export const getCachedRecommenderGames = unstable_cache(
   async () => {
     const supabase = getPublicSupabase();
@@ -81,18 +86,17 @@ export const getCachedRecommenderGames = unstable_cache(
       supabase
         .from('games')
         .select(RECOMMENDER_GAME_SELECT)
-        .not('bgg_rank', 'is', null)
+        .gt('bgg_rank', 0)
         .not('bgg_rating', 'is', null)
-        .gte('bgg_rating', 7.0)
-        .order('bgg_rating', { ascending: false })
+        .order('bgg_rank', { ascending: true })
         .limit(80),
       supabase
         .from('games')
         .select(RECOMMENDER_GAME_SELECT)
-        .not('bgg_rank', 'is', null)
-        .gte('bgg_rating', 7.5)
-        .order('bgg_rating', { ascending: false })
-        .range(8, 26),
+        .gt('bgg_rank', 0)
+        .not('bgg_rating', 'is', null)
+        .order('bgg_rank', { ascending: true })
+        .range(80, 118),
     ]);
     // Throw on error or empty so unstable_cache never stores a failed result
     if (mainErr) throw new Error(mainErr.message);
@@ -101,7 +105,7 @@ export const getCachedRecommenderGames = unstable_cache(
     // Use a slice of main as fallback so trending is never silently cached as []
     return { main, trending: (trending && trending.length > 0) ? trending : main.slice(8, 27) };
   },
-  ['recommender-games'],
+  ['recommender-games-v2'],
   { revalidate: 3600 }
 );
 
