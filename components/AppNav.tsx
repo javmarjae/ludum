@@ -98,20 +98,20 @@ export async function AppNav({ back }: { back?: { href: string; label: string } 
       back={back}
       right={
         <>
-          <NavLink href="/blog" icon={<BlogIcon />}>Blog</NavLink>
           <NavLink href="/buscar" icon={<SearchIcon />}>Buscar</NavLink>
           <NavLink href="/recomendador" icon={<StarIcon />}>Recomendador</NavLink>
           <NavLink href="/grupos" icon={<GroupsIcon />}>Mis grupos</NavLink>
+          <NavLink href="/blog" icon={<BlogIcon />}>Blog</NavLink>
           <ThemeToggle />
-          <NavButton href="/perfil" variant="brand" icon={<UserIcon />}>Perfil</NavButton>
+          <NavButton href="/auth/login" variant="brand" icon={<UserIcon />}>Entrar</NavButton>
         </>
       }
       mobileItems={[
-        { href: '/blog',          label: 'Blog' },
         { href: '/buscar',        label: 'Buscar' },
         { href: '/recomendador',  label: 'Recomendador' },
         { href: '/grupos',        label: 'Mis grupos' },
-        { href: '/perfil',        label: 'Entrar', variant: 'brand' },
+        { href: '/blog',          label: 'Blog' },
+        { href: '/auth/login',    label: 'Entrar', variant: 'brand' },
       ]}
     />
   );

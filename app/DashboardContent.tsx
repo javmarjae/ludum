@@ -12,7 +12,7 @@ interface Props {
 export async function DashboardContent({ userId, beginnerGames }: Props) {
   const supabase = await createClient();
 
-  const [groupsRes, playsRes, userCollectionRes, allPlaysRes, trendingResult] = await Promise.all([
+  const [groupsRes, playsRes, userCollectionRes, allPlaysRes, trendingResult, playCountRes, winCountRes] = await Promise.all([
     supabase
       .from('group_members')
       .select('group_id, groups(id, name)')
@@ -34,6 +34,15 @@ export async function DashboardContent({ userId, beginnerGames }: Props) {
       .eq('play_results.profile_id', userId)
       .limit(100),
     getTrendingGames(),
+    supabase
+      .from('play_results')
+      .select('id', { count: 'exact', head: true })
+      .eq('profile_id', userId),
+    supabase
+      .from('play_results')
+      .select('id', { count: 'exact', head: true })
+      .eq('profile_id', userId)
+      .eq('is_winner', true),
   ]);
 
   const dashboardGroups: any[] = groupsRes.data ?? [];
@@ -57,10 +66,56 @@ export async function DashboardContent({ userId, beginnerGames }: Props) {
   const trendingGames = (trendingResult ?? []).filter((g: any) => !g.is_expansion);
 
   const exploreGames = userCollectionGames.length > 0 ? userCollectionGames : trendingGames;
-  const totalUserPlays = playsPerGame.reduce((acc: number, g: any) => acc + (g.count ?? 0), 0);
+  const totalUserPlays = playCountRes.count ?? 0;
+  const totalWins = winCountRes.count ?? 0;
+  const winRate = totalUserPlays > 0 ? Math.round((totalWins / totalUserPlays) * 100) : 0;
 
   return (
     <>
+      {/* Acciones rápidas: los dos momentos clave del producto
+          (decidir qué jugar / registrar lo jugado) a un clic */}
+      <section aria-label="Acciones rápidas">
+        <div className="dash-quick-actions">
+          <QuickAction
+            href="/recomendador"
+            primary
+            title="¿Qué jugamos hoy?"
+            sub="Recomendación para tu grupo"
+            icon={<StarSvg />}
+          />
+          <QuickAction
+            href="/grupos"
+            title="Registrar partida"
+            sub="Anota quién ganó"
+            icon={<DiceSvg />}
+          />
+          <QuickAction
+            href="/buscar"
+            title="Buscar juegos"
+            sub="Más de 138.000 títulos"
+            icon={<SearchSvg />}
+          />
+          <QuickAction
+            href="/partidas"
+            title="Tus estadísticas"
+            sub="Historial y ranking"
+            icon={<ChartSvg />}
+          />
+        </div>
+      </section>
+
+      {/* Resumen del jugador */}
+      {totalUserPlays > 0 && (
+        <section aria-label="Tu resumen">
+          <div className="dash-stats">
+            <StatTile value={totalUserPlays} label={totalUserPlays === 1 ? 'Partida jugada' : 'Partidas jugadas'} />
+            <StatTile value={totalWins} label={totalWins === 1 ? 'Victoria' : 'Victorias'} />
+            <StatTile value={`${winRate}%`} label="Ratio de victoria" />
+            <StatTile value={dashboardGroups.length} label={dashboardGroups.length === 1 ? 'Grupo' : 'Grupos'} />
+          </div>
+        </section>
+      )}
+
       {/* Explora tus juegos */}
       <section>
         <RowHeader title="Explora tus juegos" href={userCollectionGames.length > 0 ? '/perfil' : '/buscar'} />
@@ -105,8 +160,9 @@ export async function DashboardContent({ userId, beginnerGames }: Props) {
         </section>
       )}
 
-      {/* Los más jugados esta semana */}
-      {trendingGames.length > 0 && (
+      {/* Los más jugados esta semana — si no hay colección, "Explora tus
+          juegos" ya muestra el trending y esta sección sería un duplicado */}
+      {trendingGames.length > 0 && userCollectionGames.length > 0 && (
         <section>
           <RowHeader title="¡Los más jugados esta semana!" href="/buscar" starred />
           <div className="h-scroll">
@@ -149,6 +205,43 @@ export async function DashboardContent({ userId, beginnerGames }: Props) {
   );
 }
 
+/* ── Acción rápida ──────────────────────────────────── */
+
+function QuickAction({ href, title, sub, icon, primary }: { href: string; title: string; sub: string; icon: React.ReactNode; primary?: boolean }) {
+  return (
+    <Link href={href} className="hover-lift" style={{
+      display: 'flex', alignItems: 'center', gap: 12, minWidth: 0,
+      padding: '14px 16px', borderRadius: 14, textDecoration: 'none',
+      background: primary ? 'var(--brand)' : 'var(--bg-card)',
+      boxShadow: primary ? 'var(--shadow-btn-brand)' : 'var(--shadow-card)',
+    }}>
+      <div style={{
+        width: 38, height: 38, borderRadius: 10, flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: primary ? 'rgba(255,255,255,0.18)' : 'var(--brand-tint)',
+        color: primary ? 'white' : 'var(--brand)',
+      }}>
+        {icon}
+      </div>
+      <div style={{ minWidth: 0 }}>
+        <p style={{ fontSize: 14, fontWeight: 800, color: primary ? 'white' : 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{title}</p>
+        <p style={{ fontSize: 12, fontWeight: 600, color: primary ? 'rgba(255,255,255,0.75)' : 'var(--text-4)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub}</p>
+      </div>
+    </Link>
+  );
+}
+
+/* ── Stat tile ──────────────────────────────────────── */
+
+function StatTile({ value, label }: { value: number | string; label: string }) {
+  return (
+    <div className="dash-stat">
+      <p style={{ fontSize: 'clamp(22px, 2.4vw, 28px)', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', lineHeight: 1.1, fontFamily: 'var(--font-display), Georgia, serif' }}>{value}</p>
+      <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginTop: 4 }}>{label}</p>
+    </div>
+  );
+}
+
 /* ── Section header ─────────────────────────────────── */
 
 function RowHeader({ title, href, starred }: { title: string; href: string; starred?: boolean }) {
@@ -162,7 +255,7 @@ function RowHeader({ title, href, starred }: { title: string; href: string; star
           </svg>
         )}
       </h2>
-      <Link href={href} aria-label={`Ver todo: ${title}`} style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-4)', textDecoration: 'none', lineHeight: 1 }}>→</Link>
+      <Link href={href} aria-label={`Ver todo: ${title}`} className="hover-ghost" style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-4)', textDecoration: 'none', lineHeight: 1, padding: '8px 12px', margin: '-8px -12px', borderRadius: 10 }}>→</Link>
     </div>
   );
 }
@@ -279,4 +372,20 @@ function PlaceholderSvg() {
 
 function PlusSvg() {
   return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+}
+
+function StarSvg() {
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>;
+}
+
+function DiceSvg() {
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="0.5" fill="currentColor"/><circle cx="15.5" cy="8.5" r="0.5" fill="currentColor"/><circle cx="8.5" cy="15.5" r="0.5" fill="currentColor"/><circle cx="15.5" cy="15.5" r="0.5" fill="currentColor"/></svg>;
+}
+
+function SearchSvg() {
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>;
+}
+
+function ChartSvg() {
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>;
 }

@@ -25,6 +25,14 @@ function SkeletonRow({ title, circles = true }: { title: string; circles?: boole
 export function HomeDashboardSkeleton() {
   return (
     <>
+      {/* Acciones rápidas */}
+      <section aria-hidden="true">
+        <div className="dash-quick-actions">
+          {[0, 1, 2, 3].map(i => (
+            <div key={i} className="skeleton" style={{ height: 66, borderRadius: 14, background: 'var(--bg-inset)' }} />
+          ))}
+        </div>
+      </section>
       <SkeletonRow title="Explora tus juegos" />
       <SkeletonRow title="Tus partidas" circles={false} />
     </>

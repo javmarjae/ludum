@@ -171,6 +171,25 @@ select:focus-visible,
   transition: box-shadow 0.12s;
 }
 
+/* ── Skip link (WCAG 2.4.1): oculto hasta recibir foco ── */
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 100;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: var(--brand);
+  color: white;
+  font-size: var(--fs-body2);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
 /* Horizontal scroll row (home sections) */
 .h-scroll {
   display: flex;
@@ -321,6 +340,47 @@ select:focus-visible,
   .home-dash-content { padding: 0 16px 80px; gap: 32px; }
 }
 
+/* Home dashboard: acciones rápidas y resumen del jugador */
+.dash-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 1080px) {
+  .dash-quick-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* Móvil: fila deslizable, como el resto de secciones del dashboard */
+@media (max-width: 640px) {
+  .dash-quick-actions {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dash-quick-actions::-webkit-scrollbar { display: none; }
+  .dash-quick-actions > * { flex: 0 0 auto; width: 220px; }
+}
+
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  padding: 20px 8px;
+}
+.dash-stat {
+  text-align: center;
+  padding: 0 10px;
+  border-left: 1px solid var(--border);
+}
+.dash-stat:first-child { border-left: none; }
+@media (max-width: 640px) {
+  .dash-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 20px; padding: 16px 4px; }
+  .dash-stat:nth-child(odd) { border-left: none; }
+}
+
 /* Organizations admin two-column grid */
 .org-admin-cols {
   display: grid;
@@ -367,6 +427,18 @@ select:focus-visible,
   min-width: 0;
   display: flex;
   flex-direction: column;
+}
+
+/* Landmark <main>: hereda el rol de columna flexible para que las
+   páginas que llenan la altura sigan comportándose igual */
+.app-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.app-main > * {
+  flex: 1;
 }
 
 /* Ocultar top nav cuando el sidebar está activo */

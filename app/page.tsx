@@ -58,6 +58,8 @@ const getLandingGames = unstable_cache(
 export default async function Home() {
   const user = await getAuthUserLite();
   const displayName = user?.user_metadata?.display_name ?? user?.email?.split('@')[0] ?? null;
+  const todayRaw = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+  const today = todayRaw.charAt(0).toUpperCase() + todayRaw.slice(1);
 
   /* getLandingGames usa el cliente público (tabla games, sin RLS).
      Se llama siempre (landing y dashboard necesitan beginnerGames). */
@@ -309,9 +311,14 @@ export default async function Home() {
             }}>
               <ProfileSvg />
             </Link>
-            <h1 style={{ fontSize: 'clamp(22px, 2.5vw, 32px)', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--text)', textAlign: 'center' }}>
-              Hola, {displayName}
-            </h1>
+            <div style={{ textAlign: 'center', minWidth: 0 }}>
+              <h1 style={{ fontSize: 'clamp(22px, 2.5vw, 32px)', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--text)' }}>
+                Hola, {displayName}
+              </h1>
+              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-4)', marginTop: 2 }}>
+                {today}
+              </p>
+            </div>
             <div />
           </div>
 

@@ -36,13 +36,15 @@ export function SidebarNav({ isAdmin = false }: { isAdmin?: boolean }) {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  /* Orden por prioridad de producto: primero decidir qué jugar
+     (recomendador, buscador), después registrar (grupos, tracker). */
   const baseItems = [
-    { href: '/grupos',       label: 'Grupos',      icon: <GroupsSvg />,    homeActive: true },
-    { href: '/partidas',     label: 'Tracker',     icon: <TrackerSvg /> },
     { href: '/recomendador', label: 'Recomend',    icon: <RecommendSvg /> },
+    { href: '/buscar',       label: 'Buscar',      icon: <SearchSvg /> },
+    { href: '/grupos',       label: 'Grupos',      icon: <GroupsSvg /> },
+    { href: '/partidas',     label: 'Tracker',     icon: <TrackerSvg /> },
     { href: '/torneos',      label: 'Torneos',     icon: <TorneosSvg /> },
     { href: '/eventos',      label: 'Eventos',     icon: <EventsSvg /> },
-    { href: '/buscar',       label: 'Buscar',      icon: <SearchSvg /> },
     { href: '/blog',         label: 'Blog',        icon: <BlogSvg /> },
   ];
   const items = isAdmin
@@ -52,6 +54,7 @@ export function SidebarNav({ isAdmin = false }: { isAdmin?: boolean }) {
   return (
     <nav
       className="app-sidebar"
+      aria-label="Navegación principal"
       style={{
         width: 76,
         flexShrink: 0,
@@ -81,13 +84,9 @@ export function SidebarNav({ isAdmin = false }: { isAdmin?: boolean }) {
 
       {/* Nav items */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, width: '100%' }}>
-        {items.map(({ href, label, icon, ...rest }) => {
-          const home = (rest as any).homeActive;
-          const active = matchesRoute(pathname, href) || (home && pathname === '/');
-          return (
-            <SidebarItem key={href} href={href} label={label} icon={icon} isActive={active} />
-          );
-        })}
+        {items.map(({ href, label, icon }) => (
+          <SidebarItem key={href} href={href} label={label} icon={icon} isActive={matchesRoute(pathname, href)} />
+        ))}
         <NotificationBell />
         <ChatIcon />
       </div>
@@ -99,6 +98,7 @@ export function SidebarNav({ isAdmin = false }: { isAdmin?: boolean }) {
           <button
             type="submit"
             title="Cerrar sesión"
+            aria-label="Cerrar sesión"
             style={{
               width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -119,6 +119,7 @@ function SidebarItem({ href, label, icon, isActive }: { href: string; label: str
   return (
     <Link
       href={href}
+      aria-current={isActive ? 'page' : undefined}
       style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, padding: '7px 6px', borderRadius: 12, textDecoration: 'none', width: 66 }}
     >
       <div

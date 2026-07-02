@@ -32,21 +32,34 @@ export function MobileBottomNav({ isAdmin = false }: { isAdmin?: boolean }) {
       if (btnRef.current?.contains(target)) return;
       setMoreOpen(false);
     }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setMoreOpen(false);
+        btnRef.current?.focus();
+      }
+    }
     document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKey);
+    };
   }, [moreOpen]);
 
+  /* Orden por prioridad de producto: primero decidir qué jugar
+     (recomendador, buscador), después registrar (grupos, tracker).
+     La barra hace scroll horizontal: los primeros ~5 son los visibles. */
   const baseItems = [
-    { href: '/perfil',        label: 'Perfil',   icon: <ProfileSvg /> },
+    { href: '/recomendador',  label: 'Recomend', icon: <RecommendSvg /> },
+    { href: '/buscar',        label: 'Buscar',   icon: <SearchSvg /> },
     { href: '/grupos',        label: 'Grupos',   icon: <GroupsSvg /> },
     { href: '/partidas',      label: 'Tracker',  icon: <TrackerSvg /> },
-    { href: '/recomendador',  label: 'Recomend', icon: <RecommendSvg /> },
+    { href: '/perfil',        label: 'Perfil',   icon: <ProfileSvg /> },
     { href: '/torneos',       label: 'Torneos',  icon: <TorneosSvg /> },
     { href: '/eventos',       label: 'Eventos',  icon: <EventsSvg /> },
-    { href: '/buscar',        label: 'Buscar',   icon: <SearchSvg /> },
-    { href: '/blog',          label: 'Blog',     icon: <BlogSvg /> },
     { href: '/notificaciones', label: 'Noti',    icon: <BellSvg /> },
     { href: '/mensajes',      label: 'Chat',     icon: <ChatSvg /> },
+    { href: '/blog',          label: 'Blog',     icon: <BlogSvg /> },
   ];
 
   const items = isAdmin
@@ -106,13 +119,14 @@ export function MobileBottomNav({ isAdmin = false }: { isAdmin?: boolean }) {
         </div>
       )}
 
-      <nav className="mobile-bottom-nav">
+      <nav className="mobile-bottom-nav" aria-label="Navegación principal">
         {items.map(({ href, label, icon }) => {
           const active = matchesRoute(pathname, href);
           return (
             <Link
               key={href}
               href={href}
+              aria-current={active ? 'page' : undefined}
               style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
                 gap: 4, padding: '6px 10px', textDecoration: 'none',
@@ -144,6 +158,9 @@ export function MobileBottomNav({ isAdmin = false }: { isAdmin?: boolean }) {
         <button
           ref={btnRef}
           onClick={() => setMoreOpen(v => !v)}
+          aria-expanded={moreOpen}
+          aria-haspopup="true"
+          aria-label="Más opciones"
           style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center',
             gap: 4, padding: '6px 10px',

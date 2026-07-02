@@ -96,6 +96,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('ludum-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();` }}
         />
+        <a href="#contenido" className="skip-link">Saltar al contenido</a>
         <div className="app-shell">
           {user && (
             <Suspense fallback={<SidebarNav isAdmin={false} />}>
@@ -103,7 +104,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </Suspense>
           )}
           <div className="app-shell-main">
-            {children}
+            <main id="contenido" className="app-main">
+              {children}
+            </main>
             <Footer />
           </div>
         </div>
