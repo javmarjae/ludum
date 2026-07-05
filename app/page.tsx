@@ -99,7 +99,9 @@ export default async function Home() {
         '@type': 'Organization',
         name: 'Ludum',
         url: 'https://ludumgames.es',
-        logo: 'https://ludumgames.es/logo.svg',
+        // Google's structured-data guidelines for el logo del Knowledge Panel
+        // piden un raster (no SVG); usamos el icono cuadrado de 512px.
+        logo: 'https://ludumgames.es/icons/icon-512.png',
       },
     ],
   };
