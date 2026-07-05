@@ -24,9 +24,11 @@ export const metadata: Metadata = {
   },
   description: 'Descubre tu próximo juego de mesa favorito. Recomendaciones personalizadas y seguimiento de partidas.',
   icons: {
-    icon: '/logo.svg',
-    shortcut: '/logo.svg',
-    apple: '/icons/icon-192.png',
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: { url: '/icons/icon-192.png', sizes: '192x192' },
   },
   manifest: '/manifest.webmanifest',
   appleWebApp: {
