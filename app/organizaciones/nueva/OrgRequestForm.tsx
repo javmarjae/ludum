@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Picto } from '@/components/Picto';
 
 const inputStyle = {
   background: 'var(--bg-inset)', boxShadow: 'var(--shadow-input)', border: '1px solid var(--border)',
@@ -37,7 +38,7 @@ export default function OrgRequestForm({ action }: { action: (f: FormData) => Pr
                   textAlign: 'center', cursor: 'pointer',
                   transition: 'border-color 0.15s, background 0.15s',
                 }}>
-                  <p style={{ fontSize: 28, marginBottom: 4 }}>{opt.icon}</p>
+                  <p style={{ fontSize: 28, marginBottom: 4 }}><Picto emoji={opt.icon} /></p>
                   <p style={{ fontWeight: 700, fontSize: 14, color: selected ? 'var(--brand)' : 'var(--text)' }}>{opt.label}</p>
                   <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', marginTop: 2 }}>{opt.desc}</p>
                 </div>

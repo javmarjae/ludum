@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
+import { Picto } from '@/components/Picto';
 
 function StarDisplay() {
   return (
@@ -43,7 +44,7 @@ export async function GamePlaysTab({ gameId, gameName, userId }: { gameId: numbe
   if (userPlays.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '64px 0' }}>
-        <p style={{ fontSize: 32, marginBottom: 12 }}>🎲</p>
+        <p style={{ fontSize: 32, marginBottom: 12 }}><Picto emoji="🎲" /></p>
         <p className="t-section-title" style={{ marginBottom: 6 }}>Sin partidas de {gameName}</p>
         <p className="t-card-sub">Registra una partida desde tu grupo</p>
       </div>
@@ -74,7 +75,7 @@ export async function GamePlaysTab({ gameId, gameName, userId }: { gameId: numbe
               background: 'var(--bg-inset)',
               display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
             }}>
-              🎲
+              <Picto emoji="🎲" />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <p className="t-card-title" style={{ marginBottom: 4 }}>

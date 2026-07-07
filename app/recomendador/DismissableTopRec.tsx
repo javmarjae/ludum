@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { GroupRecommendation, GroupFilters } from '@/lib/recommender';
 import { dismissAndGetNext } from './actions';
+import { Picto } from '@/components/Picto';
 
 // ── Affinity circle ────────────────────────────────────────────────────────────
 
@@ -110,7 +111,7 @@ function TopGameCard({ rec, onDismiss, isPending }: {
             background: 'rgba(22,163,74,0.12)', border: '1px solid rgba(22,163,74,0.2)',
             fontSize: 12, fontWeight: 700, color: '#16a34a',
           }}>
-            🌟 Muy recomendado
+            <Picto emoji="🌟" /> Muy recomendado
           </span>
         </div>
 
@@ -121,7 +122,7 @@ function TopGameCard({ rec, onDismiss, isPending }: {
               <Image src={game.image_url} alt={game.name} width={120} height={150} priority sizes="120px"
                 style={{ borderRadius: 12, objectFit: 'cover', display: 'block' }} />
             ) : (
-              <div style={{ width: 120, height: 150, borderRadius: 12, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>🎲</div>
+              <div style={{ width: 120, height: 150, borderRadius: 12, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}><Picto emoji="🎲" /></div>
             )}
           </Link>
 
@@ -251,7 +252,7 @@ export function DismissableTopRec({ initial, groupId, memberCount, filters }: Pr
         borderRadius: 20, padding: '40px 32px', textAlign: 'center',
         background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
       }}>
-        <p style={{ fontSize: 36, marginBottom: 12 }}>🎲</p>
+        <p style={{ fontSize: 36, marginBottom: 12 }}><Picto emoji="🎲" /></p>
         <p className="t-section-title" style={{ marginBottom: 6 }}>Sin más sugerencias</p>
         <p className="t-section-sub" style={{ marginBottom: 20 }}>
           Has descartado todas las recomendaciones disponibles para este grupo.

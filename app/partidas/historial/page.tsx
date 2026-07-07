@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
+import { Picto } from '@/components/Picto';
 
 export const metadata: Metadata = { title: 'Historial de partidas' };
 
@@ -83,7 +84,7 @@ export default async function HistorialPage({ searchParams }: Props) {
 
         {allPlays.length === 0 ? (
           <div style={{ borderRadius: 12, padding: 48, textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-            <p style={{ fontSize: 32, marginBottom: 12 }}>🎲</p>
+            <p style={{ fontSize: 32, marginBottom: 12 }}><Picto emoji="🎲" /></p>
             <p style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>
               {q ? `Sin partidas de "${q}"` : 'Sin partidas todavía'}
             </p>
@@ -97,7 +98,7 @@ export default async function HistorialPage({ searchParams }: Props) {
                 <Link key={play.id} href={`/grupos/${play.group_id}/partidas/${play.id}`} style={{ display: 'flex', alignItems: 'center', gap: 14, borderRadius: 10, padding: '12px 16px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', textDecoration: 'none' }}>
                   {play.games?.image_url
                     ? <Image src={play.games.image_url} alt={play.games.name} width={52} height={52} style={{ borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
-                    : <div style={{ width: 52, height: 52, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}>🎲</div>
+                    : <div style={{ width: 52, height: 52, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}><Picto emoji="🎲" /></div>
                   }
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -107,7 +108,7 @@ export default async function HistorialPage({ searchParams }: Props) {
                       {play.groups?.name} · {new Date(play.played_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </p>
                   </div>
-                  {isWinner && <span style={{ fontSize: 18, flexShrink: 0 }}>🏆</span>}
+                  {isWinner && <span style={{ fontSize: 18, flexShrink: 0 }}><Picto emoji="🏆" /></span>}
                   <span style={{ color: 'var(--text-4)', fontSize: 16, flexShrink: 0 }}>›</span>
                 </Link>
               );

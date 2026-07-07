@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useState, useEffect } from 'react';
+import { Picto } from '@/components/Picto';
 
 interface Play {
   id: string;
@@ -125,7 +126,7 @@ export function Achievements({ plays, collectionCount, userId, compact = false }
                 transition: 'transform 0.1s',
                 transform: hoveredId === a.id ? 'scale(1.06)' : 'scale(1)',
               }}>
-                <div style={{ fontSize: 22, marginBottom: 4, filter: a.unlocked ? 'none' : 'grayscale(1)' }}>{a.icon}</div>
+                <div style={{ fontSize: 22, marginBottom: 4, filter: a.unlocked ? 'none' : 'grayscale(1)' }}><Picto emoji={a.icon} /></div>
                 <p style={{ fontSize: 10, fontWeight: 700, color: a.unlocked ? 'var(--brand)' : 'var(--text)', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.title}</p>
               </div>
             </div>
@@ -146,7 +147,7 @@ export function Achievements({ plays, collectionCount, userId, compact = false }
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 8, marginBottom: locked.length > 0 ? 10 : 0 }}>
           {unlocked.map((a) => (
             <div key={a.id} style={{ borderRadius: 10, padding: '14px 12px', textAlign: 'center', background: 'var(--brand-tint)', boxShadow: 'var(--shadow-card)', border: '1.5px solid rgba(62,94,59,0.15)' }}>
-              <div style={{ fontSize: 28, marginBottom: 6 }}>{a.icon}</div>
+              <div style={{ fontSize: 28, marginBottom: 6 }}><Picto emoji={a.icon} /></div>
               <p style={{ fontSize: 13, fontWeight: 800, color: 'var(--brand)', marginBottom: 2 }}>{a.title}</p>
               <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-3)', lineHeight: 1.4 }}>{a.desc}</p>
             </div>
@@ -158,7 +159,7 @@ export function Achievements({ plays, collectionCount, userId, compact = false }
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 8 }}>
           {locked.map((a) => (
             <div key={a.id} style={{ borderRadius: 10, padding: '14px 12px', textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', opacity: 0.5 }}>
-              <div style={{ fontSize: 28, marginBottom: 6, filter: 'grayscale(1)' }}>{a.icon}</div>
+              <div style={{ fontSize: 28, marginBottom: 6, filter: 'grayscale(1)' }}><Picto emoji={a.icon} /></div>
               <p style={{ fontSize: 13, fontWeight: 800, color: 'var(--text)', marginBottom: 2 }}>{a.title}</p>
               <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', lineHeight: 1.4 }}>{a.desc}</p>
             </div>

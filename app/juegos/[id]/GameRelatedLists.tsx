@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Picto } from '@/components/Picto';
 
 interface Props {
   gameId: number;
@@ -49,7 +50,7 @@ export async function GameRelatedLists({ gameId, bggId, isExpansion, mechanics, 
               }}>
                 {sg.image_url
                   ? <Image src={sg.image_url} alt={sg.name} width={52} height={52} style={{ borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
-                  : <div style={{ width: 52, height: 52, borderRadius: 10, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 22 }}>🎲</div>
+                  : <div style={{ width: 52, height: 52, borderRadius: 10, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 22 }}><Picto emoji="🎲" /></div>
                 }
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p className="t-card-title" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sg.name}</p>

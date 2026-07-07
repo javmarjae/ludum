@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { deletePlay, updatePlayNotes, updatePlayVisibility } from '../../actions';
+import { Picto } from '@/components/Picto';
 
 interface Props {
   playId: string;
@@ -113,7 +114,7 @@ export function PlayActions({ playId, groupId, initialNotes, initialIsPublic, on
         <div style={{ borderRadius: 20, padding: '16px 20px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
-              {isPublic ? '🌐 Partida pública' : '🔒 Partida privada'}
+              {isPublic ? '🌐 Partida pública' : <><Picto emoji="🔒" /> Partida privada</>}
             </p>
             <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-3)' }}>
               {isPublic ? 'Cualquiera con el enlace puede verla' : 'Solo los miembros del grupo pueden verla'}

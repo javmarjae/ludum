@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import { Avatar } from '@/components/Avatar';
+import { Picto } from '@/components/Picto';
 
 interface Props { params: Promise<{ id: string }> }
 
@@ -126,12 +127,12 @@ export default async function TorneoPage({ params }: Props) {
 
           <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', fontSize: 14, fontWeight: 500, color: 'var(--text-3)' }}>
             {tournament.start_date && (
-              <span>📅 {new Date(tournament.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
+              <span><Picto emoji="📅" /> {new Date(tournament.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
                 {tournament.end_date && tournament.end_date !== tournament.start_date &&
                   ` – ${new Date(tournament.end_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}`}
               </span>
             )}
-            {tournament.location && <span>📍 {tournament.location}</span>}
+            {tournament.location && <span><Picto emoji="📍" /> {tournament.location}</span>}
             {tournament.max_participants && (
               <span>👥 Máx. {tournament.max_participants} jugadores</span>
             )}
@@ -154,7 +155,7 @@ export default async function TorneoPage({ params }: Props) {
             <div className="hover-scale" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '16px 20px', borderRadius: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', marginBottom: 24 }}>
               {org.logo_url
                 ? <img src={org.logo_url} alt={org.name} style={{ width: 44, height: 44, borderRadius: 12, objectFit: 'cover' }} />
-                : <span style={{ fontSize: 32 }}>{org.type === 'tienda' ? '🏪' : '🎲'}</span>
+                : <span style={{ fontSize: 32 }}><Picto emoji={org.type === 'tienda' ? '🏪' : '🎲'} /></span>
               }
               <div>
                 <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)' }}>{org.name}</p>
@@ -195,7 +196,7 @@ export default async function TorneoPage({ params }: Props) {
                 return (
                   <div key={p.id} className="stagger-in" style={{ ['--stagger-i' as any]: i, display: 'grid', gridTemplateColumns: '40px 1fr 50px 50px 50px 50px', gap: 0, padding: '12px 16px', borderTop: i > 0 ? '1px solid var(--border)' : 'none', alignItems: 'center', background: isFirst ? 'rgba(250,204,21,0.08)' : 'transparent' }}>
                     <span style={{ fontSize: 14, fontWeight: 700, color: i < 3 ? ['#f59e0b','#9ca3af','#c2845a'][i] : 'var(--text-4)', textAlign: 'center' }}>
-                      {i === 0 && tournament.status === 'finalizado' ? '🏆' : i + 1}
+                      {i === 0 && tournament.status === 'finalizado' ? <Picto emoji="🏆" /> : i + 1}
                     </span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                       {p.profile_id
@@ -245,7 +246,7 @@ export default async function TorneoPage({ params }: Props) {
                               const isWinner = r.is_winner;
                               return (
                                 <span key={r.id} style={{ fontSize: 13, fontWeight: isWinner ? 700 : 500, color: isWinner ? 'var(--brand)' : 'var(--text)', background: isWinner ? 'rgba(62,94,59,0.08)' : 'var(--bg-inset)', padding: '4px 12px', borderRadius: 20, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                                  {isWinner && '🏆 '}{name}
+                                  {isWinner && <><Picto emoji="🏆" />{' '}</>}{name}
                                   {r.score != null && ` (${r.score})`}
                                 </span>
                               );

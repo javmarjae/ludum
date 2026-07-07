@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import { getTrendingGames } from '@/lib/cached-queries';
 import { BeginnerSection } from '@/components/BeginnerSection';
+import { Picto } from '@/components/Picto';
 
 interface Props {
   userId: string;
@@ -283,7 +284,7 @@ function CircleGameItem({ game, index }: { game: { bgg_id: string; name: string;
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           />
         ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>🎲</div>
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}><Picto emoji="🎲" /></div>
         )}
       </div>
       <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)', textAlign: 'center', width: 104, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -353,7 +354,7 @@ function PlayCard({ item, index }: { item: { bgg_id: string; name: string; image
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.3) 100%)', zIndex: 1 }} />
           </>
         ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36 }}>🎲</div>
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36 }}><Picto emoji="🎲" /></div>
         )}
       </div>
       <div style={{ padding: '10px 12px 12px' }}>

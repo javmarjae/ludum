@@ -82,7 +82,7 @@ export function AddParticipantForm({ tournamentId, participants }: { tournamentI
           return (
             <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderTop: i > 0 ? '1px solid var(--border)' : 'none' }}>
               <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>
-                {p.profile_id ? '👤' : '🎮'}
+                <Picto emoji={p.profile_id ? '👤' : '🎮'} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</p>
@@ -109,7 +109,7 @@ export function AddParticipantForm({ tournamentId, participants }: { tournamentI
           {(['invitado', 'usuario'] as const).map(m => (
             <button key={m} type="button" onClick={() => { setMode(m); setError(''); }}
               style={{ padding: '6px 16px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 700, background: mode === m ? 'var(--brand)' : 'var(--bg-inset)', color: mode === m ? 'white' : 'var(--text-3)', transition: 'all 0.15s' }}>
-              {m === 'invitado' ? '🎮 Nombre libre' : '👤 Usuario Ludum'}
+              {m === 'invitado' ? <><Picto emoji="🎮" /> Nombre libre</> : '👤 Usuario Ludum'}
             </button>
           ))}
         </div>

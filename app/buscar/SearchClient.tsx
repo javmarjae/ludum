@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
+import { Picto } from '@/components/Picto';
 
 interface Game {
   bgg_id: number;
@@ -104,7 +105,7 @@ function GameThumb({ src, alt, size = 44 }: { src: string | null; alt: string; s
     <div style={{ position: 'relative', width: size, height: size, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: 'var(--bg-inset)' }}>
       {src
         ? <Image src={src} alt={alt} fill sizes={`${size}px`} style={{ objectFit: 'cover' }} />
-        : <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: size * 0.4 }}>🎲</span>
+        : <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: size * 0.4 }}><Picto emoji="🎲" /></span>
       }
     </div>
   );
@@ -152,7 +153,7 @@ function ResultRow({ game }: { game: Game }) {
 function SectionHeader({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-      <span style={{ fontSize: 18 }}>{icon}</span>
+      <span style={{ fontSize: 18 }}><Picto emoji={icon} /></span>
       <div>
         <p style={{ fontWeight: 800, fontSize: 14, color: 'var(--text)', lineHeight: 1.2 }}>{title}</p>
         <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', marginTop: 1 }}>{subtitle}</p>
@@ -195,7 +196,7 @@ function GameCarouselCard({ game, rank, badge, index }: {
         <div className="buscar-carousel-img">
           {game.image_url
             ? <Image src={game.image_url} alt={game.name} fill sizes="(max-width:480px) 136px, 160px" style={{ objectFit: 'cover' }} />
-            : <div style={{ width: '100%', height: '100%', background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>🎲</div>
+            : <div style={{ width: '100%', height: '100%', background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}><Picto emoji="🎲" /></div>
           }
           {rank !== undefined && (
             <div style={{ position: 'absolute', top: 8, left: 8, width: 28, height: 28, borderRadius: '50%', background: RANK_COLORS[(rank - 1) % RANK_COLORS.length], color: 'white', fontWeight: 900, fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 6px rgba(0,0,0,0.3)' }}>{rank}</div>
@@ -288,7 +289,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
 
       {/* ── COLUMNA IZQUIERDA: Novedades ── */}
       <aside className="buscar-col-left buscar-side-sticky">
-        <SectionHeader icon="⭐" title="Novedades" subtitle="Últimos juegos publicados" />
+        <SectionHeader icon="📰" title="Novedades" subtitle="Últimos juegos publicados" />
         <div>
           {newGames.map((g, i) => (
             <SideCard

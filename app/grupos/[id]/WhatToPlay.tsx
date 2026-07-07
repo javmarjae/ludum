@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Picto } from '@/components/Picto';
 
 interface Game {
   id: string;
@@ -105,7 +106,7 @@ export function WhatToPlay({ games }: Props) {
                 ? <div style={{ position: 'relative', width: 52, height: 70, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
                     <Image src={suggestion.image_url} alt={suggestion.name} fill sizes="52px" style={{ objectFit: 'cover' }} />
                   </div>
-                : <div style={{ width: 52, height: 70, borderRadius: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, background: 'var(--bg-inset)' }}>🎲</div>
+                : <div style={{ width: 52, height: 70, borderRadius: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, background: 'var(--bg-inset)' }}><Picto emoji="🎲" /></div>
               }
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{ fontWeight: 800, fontSize: 16, color: 'var(--brand)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{suggestion.name}</p>

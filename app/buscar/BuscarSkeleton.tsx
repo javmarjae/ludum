@@ -1,5 +1,6 @@
 /* Esqueleto del buscador. Reutilizado por loading.tsx (navegación) y por el
    Suspense de page.tsx (streaming mientras se resuelven las consultas). */
+import { Picto } from '@/components/Picto';
 
 function SideCardSkeleton() {
   return (
@@ -17,7 +18,7 @@ function SideColumnSkeleton({ icon, title, subtitle }: { icon: string; title: st
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-        <span style={{ fontSize: 18 }}>{icon}</span>
+        <span style={{ fontSize: 18 }}><Picto emoji={icon} /></span>
         <div>
           <p style={{ fontWeight: 800, fontSize: 14, color: 'var(--text)', lineHeight: 1.2 }}>{title}</p>
           <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', marginTop: 1 }}>{subtitle}</p>
@@ -35,7 +36,7 @@ export function BuscarSkeleton() {
     <div className="buscar-3col">
       {/* Izquierda: Novedades */}
       <aside className="buscar-col-left buscar-side-sticky">
-        <SideColumnSkeleton icon="⭐" title="Novedades" subtitle="Últimos juegos publicados" />
+        <SideColumnSkeleton icon="📰" title="Novedades" subtitle="Últimos juegos publicados" />
       </aside>
 
       {/* Centro: búsqueda */}

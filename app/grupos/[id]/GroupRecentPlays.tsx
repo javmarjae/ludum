@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import Image from 'next/image';
 import { WhatToPlay } from './WhatToPlay';
+import { Picto } from '@/components/Picto';
 
 function playerIcon(n: number): string {
   if (n <= 1) return '/icons/solo.svg';
@@ -47,7 +48,7 @@ export async function GroupRecentPlays({ groupId, userId }: { groupId: string; u
 
         {!recentPlays || recentPlays.length === 0 ? (
           <div style={{ borderRadius: 22, padding: 28, textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-            <p style={{ fontSize: 26, marginBottom: 8 }}>🎲</p>
+            <p style={{ fontSize: 26, marginBottom: 8 }}><Picto emoji="🎲" /></p>
             <p style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>Sin partidas todavía</p>
             <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-3)', marginBottom: 14 }}>Registrad vuestra primera partida.</p>
             <Link href={`/grupos/${groupId}/partidas/nueva`} style={{
@@ -96,7 +97,7 @@ export async function GroupRecentPlays({ groupId, userId }: { groupId: string; u
                         ? <div className="grupo-play-img" style={{ position: 'relative', width: 68, height: 92, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
                             <Image src={play.games.image_url} alt={play.games.name} fill sizes="68px" style={{ objectFit: 'cover' }} />
                           </div>
-                        : <div className="grupo-play-img" style={{ width: 68, height: 92, borderRadius: 14, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30 }}>🎲</div>
+                        : <div className="grupo-play-img" style={{ width: 68, height: 92, borderRadius: 14, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30 }}><Picto emoji="🎲" /></div>
                       }
 
                       {/* Game name + meta */}
@@ -106,7 +107,7 @@ export async function GroupRecentPlays({ groupId, userId }: { groupId: string; u
                         </p>
                         <div className="grupo-play-meta" style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
                           <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-4)' }}>
-                            📅 {relativeDate(play.played_at)}
+                            <Picto emoji="📅" /> {relativeDate(play.played_at)}
                           </span>
                           {playerCount > 0 && (
                             <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-4)', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
@@ -116,7 +117,7 @@ export async function GroupRecentPlays({ groupId, userId }: { groupId: string; u
                           )}
                           {play.duration_minutes && (
                             <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-4)' }}>
-                              ⏱ {play.duration_minutes} min
+                              <Picto emoji="⏱" /> {play.duration_minutes} min
                             </span>
                           )}
                         </div>

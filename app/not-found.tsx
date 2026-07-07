@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { Picto } from '@/components/Picto';
 
 export const metadata: Metadata = {
   title: 'Página no encontrada',
@@ -10,7 +11,7 @@ export default function NotFound() {
   return (
     <div style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 24px' }}>
       <div style={{ textAlign: 'center', maxWidth: 420 }}>
-        <p style={{ fontSize: 64, marginBottom: 12 }}>🎲</p>
+        <p style={{ fontSize: 64, marginBottom: 12 }}><Picto emoji="🎲" /></p>
         <h1 style={{ fontSize: 'clamp(26px, 5vw, 36px)', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 10 }}>
           Página no encontrada
         </h1>

@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { removeGameFromCollection } from '../actions';
+import { Picto } from '@/components/Picto';
 
 interface Game {
   id: string;
@@ -67,13 +68,13 @@ export function ColeccionFilter({ games, groupId }: Props) {
                   ? <div style={{ position: 'relative', width: 40, height: 54, borderRadius: 12, overflow: 'hidden', flexShrink: 0 }}>
                       <Image src={game.image_url} alt={game.name} fill sizes="40px" style={{ objectFit: 'cover' }} />
                     </div>
-                  : <div style={{ width: 40, height: 54, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}>🎲</div>
+                  : <div style={{ width: 40, height: 54, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}><Picto emoji="🎲" /></div>
                 }
                 <div style={{ minWidth: 0 }}>
                   <p style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>
                   <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>
                     {game.year_published}
-                    {game.bgg_rating != null && <span> · ⭐ {game.bgg_rating.toFixed(1)}</span>}
+                    {game.bgg_rating != null && <span> · <Picto emoji="⭐" /> {game.bgg_rating.toFixed(1)}</span>}
                   </p>
                 </div>
               </Link>

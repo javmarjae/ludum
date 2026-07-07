@@ -15,6 +15,7 @@ import { GameRelatedLists } from './GameRelatedLists';
 import { GamePlaysTab } from './GamePlaysTab';
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
+import { Picto } from '@/components/Picto';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -214,7 +215,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                   {playersText}
                 </span>
               )}
-              {playtimeText && <span style={chipStyle}>⏱️ {playtimeText}</span>}
+              {playtimeText && <span style={chipStyle}><Picto emoji="⏱" /> {playtimeText}</span>}
             </div>
           </div>
         </div>
@@ -284,7 +285,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                   width: '100%', aspectRatio: '2/3', borderRadius: 16,
                   background: 'var(--bg-inset)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40,
-                }}>🎲</div>
+                }}><Picto emoji="🎲" /></div>
               )}
               {user && (
                 <div style={{ marginTop: 12 }}>
@@ -357,7 +358,7 @@ export default async function GamePage({ params, searchParams }: Props) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {game.year_published && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <span style={{ fontSize: 24, flexShrink: 0 }}>📅</span>
+                    <span style={{ fontSize: 24, flexShrink: 0 }}><Picto emoji="📅" /></span>
                     <div>
                       <p className="t-label">Publicado</p>
                       <p className="t-meta">{game.year_published}</p>
@@ -375,7 +376,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                 )}
                 {game.min_playtime && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <span style={{ fontSize: 24, flexShrink: 0 }}>⏱️</span>
+                    <span style={{ fontSize: 24, flexShrink: 0 }}><Picto emoji="⏱" /></span>
                     <div>
                       <p className="t-label">Duración</p>
                       <p className="t-meta">
@@ -397,7 +398,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                 )}
                 {game.bgg_rating && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <span style={{ fontSize: 24, flexShrink: 0 }}>⭐</span>
+                    <span style={{ fontSize: 24, flexShrink: 0 }}><Picto emoji="⭐" /></span>
                     <div>
                       <p className="t-label">Rating BGG</p>
                       <p className="t-meta">{(game.bgg_rating as number).toFixed(1)}/10</p>
@@ -406,7 +407,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                 )}
                 {game.bgg_rank && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <span style={{ fontSize: 24, flexShrink: 0 }}>🏆</span>
+                    <span style={{ fontSize: 24, flexShrink: 0 }}><Picto emoji="🏆" /></span>
                     <div>
                       <p className="t-label">Ranking BGG</p>
                       <p className="t-meta">#{game.bgg_rank}</p>
@@ -415,7 +416,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                 )}
                 {categories.length > 0 && (
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                    <span style={{ fontSize: 24, flexShrink: 0, marginTop: 2 }}>🎭</span>
+                    <span style={{ fontSize: 24, flexShrink: 0, marginTop: 2 }}><Picto emoji="🎭" /></span>
                     <div>
                       <p className="t-label" style={{ marginBottom: 8 }}>Categorías</p>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -450,7 +451,7 @@ export default async function GamePage({ params, searchParams }: Props) {
         <main style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(20px,3vw,36px) clamp(16px,4vw,40px) 80px' }}>
           {!user ? (
             <div style={{ textAlign: 'center', padding: '64px 0' }}>
-              <p style={{ fontSize: 32, marginBottom: 12 }}>🎲</p>
+              <p style={{ fontSize: 32, marginBottom: 12 }}><Picto emoji="🎲" /></p>
               <p className="t-section-title" style={{ marginBottom: 8 }}>Inicia sesión para ver tus partidas</p>
               <Link href="/auth/login" style={{ fontSize: 14, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none' }}>Iniciar sesión →</Link>
             </div>

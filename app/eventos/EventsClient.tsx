@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
+import { Picto } from '@/components/Picto';
 
 interface EventRow {
   id: string;
@@ -59,7 +60,7 @@ function EventCard({ event }: { event: EventRow }) {
             <Image src={event.image_url} alt={event.title} fill sizes="(max-width: 600px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
           ) : (
             <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>
-              {event.type === 'tournament' ? '🏆' : '🎪'}
+              <Picto emoji={event.type === 'tournament' ? '🏆' : '🎪'} />
             </div>
           )}
           {/* Type badge */}
@@ -88,10 +89,10 @@ function EventCard({ event }: { event: EventRow }) {
             {event.title}
           </h3>
           <p style={{ margin: 0, fontSize: 12, color: 'var(--text-3)' }}>
-            📅 {formatDate(event.starts_at)}
+            <Picto emoji="📅" /> {formatDate(event.starts_at)}
           </p>
           <p style={{ margin: 0, fontSize: 12, color: 'var(--text-3)' }}>
-            📍 {event.location_name}, {event.city}
+            <Picto emoji="📍" /> {event.location_name}, {event.city}
           </p>
           {count > 0 && (
             <p style={{ margin: 0, fontSize: 12, color: 'var(--text-4)' }}>
@@ -161,7 +162,7 @@ export function EventsClient({
     setGeoError(null);
   }
 
-  const filterBtn = (type: FilterType, label: string) => {
+  const filterBtn = (type: FilterType, label: React.ReactNode) => {
     const active = filter === type;
     return (
       <button
@@ -215,8 +216,8 @@ export function EventsClient({
       {/* Controls */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20, alignItems: 'center' }}>
         {filterBtn('all', 'Todos')}
-        {filterBtn('tournament', '🏆 Torneos')}
-        {filterBtn('fair', '🎪 Ferias')}
+        {filterBtn('tournament', <><Picto emoji="🏆" /> Torneos</>)}
+        {filterBtn('fair', <><Picto emoji="🎪" /> Ferias</>)}
 
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
           {geoActive && (
@@ -244,7 +245,7 @@ export function EventsClient({
               transition: 'background 0.15s, color 0.15s',
             }}
           >
-            {geoLoading ? 'Buscando…' : '📍 Cerca de mí'}
+            {geoLoading ? 'Buscando…' : <><Picto emoji="📍" /> Cerca de mí</>}
           </button>
         </div>
       </div>
@@ -258,7 +259,7 @@ export function EventsClient({
       {/* Event grid */}
       {filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-4)' }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>🗓️</div>
+          <div style={{ fontSize: 48, marginBottom: 12 }}><Picto emoji="🗓" /></div>
           <p style={{ margin: 0, fontWeight: 600 }}>
             {geoActive ? 'No hay eventos en 100 km a tu alrededor.' : 'No hay eventos próximos.'}
           </p>

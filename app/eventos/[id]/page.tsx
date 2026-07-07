@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import { AttendanceButtons } from './AttendanceButtons';
+import { Picto } from '@/components/Picto';
 import type { Metadata } from 'next';
 
 interface Props { params: Promise<{ id: string }>; }
@@ -71,7 +72,7 @@ export default async function EventoDetailPage({ params }: Props) {
             <Image src={event.image_url} alt={event.title} fill sizes="(max-width: 720px) 100vw, 720px" style={{ objectFit: 'cover' }} />
           ) : (
             <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 80 }}>
-              {event.type === 'tournament' ? '🏆' : '🎪'}
+              <Picto emoji={event.type === 'tournament' ? '🏆' : '🎪'} />
             </div>
           )}
           <span style={{
@@ -160,7 +161,7 @@ function InfoCard({ icon, label, value }: { icon: string; label: string; value: 
       boxShadow: 'var(--shadow-card)', display: 'flex', flexDirection: 'column', gap: 3,
     }}>
       <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-        {icon} {label}
+        <Picto emoji={icon} /> {label}
       </span>
       <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)' }}>
         {value}

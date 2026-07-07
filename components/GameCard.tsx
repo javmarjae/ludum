@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import type { GameResult } from '@/lib/recommender';
+import { Picto } from '@/components/Picto';
 
 function playerIcon(min: number): string {
   if (min <= 1) return '/icons/solo.svg';
@@ -56,7 +57,7 @@ export function GameCard({ game, index, inCollection, onCollectionToggle }: Prop
           </div>
         ) : (
           <div style={{ width: 48, height: 64, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, flexShrink: 0, background: 'var(--bg-inset)' }}>
-            🎲
+            <Picto emoji="🎲" />
           </div>
         )}
 
@@ -112,7 +113,7 @@ export function GameCard({ game, index, inCollection, onCollectionToggle }: Prop
             )}
             {game.min_playtime && (
               <span style={{ fontSize: 11, padding: '2px 7px', borderRadius: 4, fontWeight: 600, background: 'var(--bg-inset)', color: 'var(--text-3)' }}>
-                ⏱ {game.max_playtime && game.min_playtime !== game.max_playtime ? `${game.min_playtime}–${game.max_playtime}` : game.min_playtime} min
+                <Picto emoji="⏱" /> {game.max_playtime && game.min_playtime !== game.max_playtime ? `${game.min_playtime}–${game.max_playtime}` : game.min_playtime} min
               </span>
             )}
             {game.complexity && (

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { Picto } from '@/components/Picto';
 
 const STORAGE_KEY = 'ludum-beginner-hidden';
 
@@ -104,7 +105,7 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
               boxShadow: '0 2px 12px rgba(58,55,47,0.09), 0 0 0 1px rgba(216,203,188,0.7)',
               display: 'flex', flexDirection: 'column', gap: 10,
             }}>
-              <span style={{ fontSize: 28 }}>{tip.icon}</span>
+              <span style={{ fontSize: 28 }}><Picto emoji={tip.icon} /></span>
               <p style={{ fontSize: 14, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.01em', lineHeight: 1.3 }}>{tip.title}</p>
               <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-3)', lineHeight: 1.6 }}>{tip.desc}</p>
             </div>
@@ -128,7 +129,7 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
                 {game.image_url ? (
                   <Image src={game.image_url} alt={game.name} fill sizes="120px" style={{ objectFit: 'cover' }} />
                 ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}>🎲</div>
+                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}><Picto emoji="🎲" /></div>
                 )}
               </div>
               <div style={{ padding: '8px 10px 10px' }}>

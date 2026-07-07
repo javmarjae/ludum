@@ -7,6 +7,7 @@ import { RecommendationSection } from './RecommendationSection';
 import { FiltersPanel } from './FiltersPanel';
 import type { GroupFilters } from '@/lib/recommender';
 import type { Metadata } from 'next';
+import { Picto } from '@/components/Picto';
 
 export const metadata: Metadata = {
   title: 'Recomendador',
@@ -106,7 +107,7 @@ function RecommendationSkeleton() {
 function EmptyState({ hasGroups }: { hasGroups: boolean }) {
   return (
     <div style={{ borderRadius: 24, padding: '48px 32px', textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-      <p style={{ fontSize: 48, marginBottom: 16 }}>🎲</p>
+      <p style={{ fontSize: 48, marginBottom: 16 }}><Picto emoji="🎲" /></p>
       <p style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>
         {hasGroups ? 'Selecciona un grupo' : 'Crea tu primer grupo'}
       </p>

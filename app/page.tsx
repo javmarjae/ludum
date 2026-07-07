@@ -10,6 +10,7 @@ import { BeginnerSection } from '@/components/BeginnerSection';
 import { DashboardContent } from './DashboardContent';
 import { HomeDashboardSkeleton } from './HomeDashboardSkeleton';
 import type { Metadata } from 'next';
+import { Picto } from '@/components/Picto';
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://ludumgames.es' },
@@ -176,7 +177,7 @@ export default async function Home() {
                       priority={i < 5}
                     />
                   ) : (
-                    <div style={{ width: '100%', height: '100%', background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>🎲</div>
+                    <div style={{ width: '100%', height: '100%', background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}><Picto emoji="🎲" /></div>
                   )}
                 </Link>
               ))}

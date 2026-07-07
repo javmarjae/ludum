@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { toggleAttendance } from '../actions';
+import { Picto } from '@/components/Picto';
 
 type Status = 'interested' | 'going' | null;
 
@@ -61,7 +62,7 @@ export function AttendanceButtons({ eventId, myStatus: initialStatus, goingCount
           boxShadow: myStatus === 'interested' ? '0 4px 14px rgba(124,58,237,0.35)' : 'var(--shadow-btn)',
         }}
       >
-        ⭐ Me interesa{interestedCount > 0 ? ` (${interestedCount})` : ''}
+        <Picto emoji="⭐" /> Me interesa{interestedCount > 0 ? ` (${interestedCount})` : ''}
       </button>
       <button
         onClick={() => handleToggle('going')}

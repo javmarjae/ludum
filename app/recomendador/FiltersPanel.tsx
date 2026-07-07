@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { Picto } from '@/components/Picto';
 
 interface FilterChip {
   value: string;
@@ -165,7 +166,7 @@ export function FiltersPanel({ activeGroupId }: Props) {
                         >
                           {chip.icon.startsWith('/')
                             ? <img src={chip.icon} alt="" aria-hidden="true" style={{ width: 18, height: 18 }} />
-                            : <span style={{ fontSize: 14 }}>{chip.icon}</span>
+                            : <span style={{ fontSize: 14 }}><Picto emoji={chip.icon} /></span>
                           }
                           {chip.label}
                         </button>

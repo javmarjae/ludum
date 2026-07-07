@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { Picto } from './Picto';
 
 export function ThemeToggle() {
   const [dark, setDark] = useState(false);
@@ -32,7 +33,7 @@ export function ThemeToggle() {
         transition: 'background 0.15s, color 0.15s',
       }}
     >
-      {dark ? '☀️' : '🌙'}
+      <Picto emoji={dark ? '☀' : '🌙'} />
     </button>
   );
 }

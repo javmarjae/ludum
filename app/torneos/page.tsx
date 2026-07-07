@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
+import { Picto } from '@/components/Picto';
 
 const FORMAT_LABEL: Record<string, string> = {
   libre: 'Libre',
@@ -80,7 +81,7 @@ export default async function TorneosPage() {
         {/* Tournament grid */}
         {!tournaments || tournaments.length === 0 ? (
           <div style={{ borderRadius: 24, padding: '56px 32px', textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-            <p style={{ fontSize: 40, marginBottom: 12 }}>🏆</p>
+            <p style={{ fontSize: 40, marginBottom: 12 }}><Picto emoji="🏆" /></p>
             <p style={{ fontWeight: 700, fontSize: 18, color: 'var(--text)', marginBottom: 8 }}>Aún no hay torneos</p>
             <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-3)' }}>
               Las asociaciones y tiendas pueden crear torneos aquí.
@@ -100,7 +101,7 @@ export default async function TorneosPage() {
                     {/* Game banner */}
                     <div style={{ height: 100, background: game?.image_url ? `url(${game.image_url}) center/cover` : 'var(--bg-inset)', display: 'flex', alignItems: 'flex-end', padding: '0 16px 12px', position: 'relative' }}>
                       {!game?.image_url && (
-                        <span style={{ fontSize: 40, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }}>🏆</span>
+                        <span style={{ fontSize: 40, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }}><Picto emoji="🏆" /></span>
                       )}
                       {/* Status badge */}
                       <span style={{ fontSize: 11, fontWeight: 700, color: 'white', background: st.color, padding: '3px 10px', borderRadius: 20, zIndex: 1, backdropFilter: 'blur(4px)' }}>
@@ -135,7 +136,7 @@ export default async function TorneosPage() {
                         <div style={{ marginTop: 'auto', paddingTop: 10, borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
                           {org.logo_url
                             ? <Image src={org.logo_url} alt={org.name} width={24} height={24} style={{ borderRadius: 6, objectFit: 'cover' }} />
-                            : <span style={{ fontSize: 16 }}>{org.type === 'tienda' ? '🏪' : '🎲'}</span>
+                            : <span style={{ fontSize: 16 }}><Picto emoji={org.type === 'tienda' ? '🏪' : '🎲'} /></span>
                           }
                           <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)' }}>{org.name}</span>
                         </div>

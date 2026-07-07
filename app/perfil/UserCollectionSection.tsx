@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { addGameToUserCollection, removeGameFromUserCollection } from './actions';
 import { ImportBGGCollection } from './ImportBGGCollection';
+import { Picto } from '@/components/Picto';
 
 interface Game {
   id: string;
@@ -122,7 +123,7 @@ function GameRow({ game, inCollection, loading, onToggle }: { game: Game; inColl
       <Link href={`/juegos/${game.bgg_id}`} style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, textDecoration: 'none', flex: 1 }}>
         {game.image_url
           ? <Image src={game.image_url} alt={game.name} width={40} height={40} style={{ borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
-          : <div style={{ width: 40, height: 40, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}>🎲</div>
+          : <div style={{ width: 40, height: 40, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}><Picto emoji="🎲" /></div>
         }
         <div style={{ minWidth: 0 }}>
           <p style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>

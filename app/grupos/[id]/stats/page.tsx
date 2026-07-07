@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
+import { Picto } from '@/components/Picto';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -230,7 +231,7 @@ export default async function StatsPage({ params }: Props) {
                       </span>
                       {game.image_url
                         ? <Image src={game.image_url} alt={game.name} width={36} height={36} style={{ borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
-                        : <div style={{ width: 36, height: 36, borderRadius: 10, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-inset)' }}>🎲</div>
+                        : <div style={{ width: 36, height: 36, borderRadius: 10, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-inset)' }}><Picto emoji="🎲" /></div>
                       }
                       <span style={{ flex: 1, fontWeight: 600, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</span>
                       <span style={{ fontSize: 14, fontWeight: 800, color: 'var(--brand)', flexShrink: 0 }}>{game.count}×</span>

@@ -8,6 +8,7 @@ import { VerifiedBadge } from '@/components/VerifiedBadge';
 import { JoinButton } from './JoinButton';
 import { CreatePostForm } from './CreatePostForm';
 import { EditCommunityForm } from './EditCommunityForm';
+import { Picto } from '@/components/Picto';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -140,8 +141,8 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
             {(community as any).location && (
               <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', marginTop: 4 }}>
                 {(community as any).maps_url
-                  ? <a href={(community as any).maps_url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>📍 {(community as any).location}</a>
-                  : `📍 ${(community as any).location}`
+                  ? <a href={(community as any).maps_url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}><Picto emoji="📍" /> {(community as any).location}</a>
+                  : <><Picto emoji="📍" /> {(community as any).location}</>
                 }
               </p>
             )}
@@ -224,7 +225,7 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
           <div>
             {feed.length === 0 ? (
               <div style={{ borderRadius: 20, padding: '40px 24px', textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-                <p style={{ fontSize: 28, marginBottom: 10 }}>🎲</p>
+                <p style={{ fontSize: 28, marginBottom: 10 }}><Picto emoji="🎲" /></p>
                 <p style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Sin actividad reciente</p>
                 <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-3)' }}>
                   {categoryName
@@ -342,7 +343,7 @@ function PlayFeedCard({ play, index }: { play: any; index: number }) {
       }}>
         {play.games?.image_url
           ? <Image src={play.games.image_url} alt={play.games.name} width={48} height={48} style={{ borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
-          : <div style={{ width: 48, height: 48, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, background: 'var(--bg-inset)' }}>🎲</div>
+          : <div style={{ width: 48, height: 48, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, background: 'var(--bg-inset)' }}><Picto emoji="🎲" /></div>
         }
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -350,7 +351,7 @@ function PlayFeedCard({ play, index }: { play: any; index: number }) {
           </p>
           <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>
             {new Date(play.played_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
-            {winnerName && <span> · 🏆 {winnerName}</span>}
+            {winnerName && <span> · <Picto emoji="🏆" /> {winnerName}</span>}
           </p>
         </div>
       </div>

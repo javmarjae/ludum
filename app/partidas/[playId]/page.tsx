@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Picto } from '@/components/Picto';
 
 interface Props {
   params: Promise<{ playId: string }>;
@@ -68,7 +69,7 @@ export default async function PublicPlayPage({ params }: Props) {
         <div style={{ borderRadius: 32, padding: 24, marginBottom: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', display: 'flex', gap: 16, alignItems: 'center' }}>
           {play.game_image
             ? <Image src={play.game_image} alt={play.game_name} width={72} height={72} style={{ borderRadius: 16, objectFit: 'cover', flexShrink: 0 }} />
-            : <div style={{ width: 72, height: 72, borderRadius: 16, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, background: 'var(--bg-inset)' }}>🎲</div>
+            : <div style={{ width: 72, height: 72, borderRadius: 16, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, background: 'var(--bg-inset)' }}><Picto emoji="🎲" /></div>
           }
           <div>
             <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.01em', color: 'var(--text)', marginBottom: 4 }}>
@@ -98,7 +99,7 @@ export default async function PublicPlayPage({ params }: Props) {
                   color: r.is_winner ? 'white' : 'var(--text-4)',
                   boxShadow: r.is_winner ? '0 2px 8px rgba(62,94,59,0.2)' : 'none',
                 }}>
-                  {r.is_winner ? '🏆' : i + 1}
+                  {r.is_winner ? <Picto emoji="🏆" /> : i + 1}
                 </div>
                 <span style={{ flex: 1, fontWeight: 700, fontSize: 15, color: r.is_winner ? 'var(--brand)' : 'var(--text)' }}>{r.player_name}</span>
                 {r.score != null && (

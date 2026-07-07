@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createEvent } from '../actions';
 import { ImageEditor } from '@/components/ImageEditor';
+import { Picto } from '@/components/Picto';
 
 const inputStyle: React.CSSProperties = {
   width: '100%', padding: '10px 14px', borderRadius: 12, fontSize: 14, fontWeight: 500,
@@ -109,8 +110,8 @@ export function NuevoEventoForm() {
 
       <Field label="Tipo" required>
         <select name="type" required style={inputStyle}>
-          <option value="tournament">🏆 Torneo</option>
-          <option value="fair">🎪 Feria / Convención</option>
+          <option value="tournament"><Picto emoji="🏆" /> Torneo</option>
+          <option value="fair"><Picto emoji="🎪" /> Feria / Convención</option>
         </select>
       </Field>
 
@@ -200,7 +201,7 @@ export function NuevoEventoForm() {
               flexShrink: 0,
             }}
           >
-            📍 {useGeo ? 'Obtenido' : 'Usar mi ubicación'}
+            <Picto emoji="📍" /> {useGeo ? 'Obtenido' : 'Usar mi ubicación'}
           </button>
         </div>
       </div>

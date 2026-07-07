@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { createPlay } from '../../actions';
+import { Picto } from '@/components/Picto';
 
 interface Game { id: string; name: string; image_url: string | null; min_playtime?: number | null; max_playtime?: number | null; }
 interface Member { id: string; display_name: string; }
@@ -154,7 +155,7 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                 <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)' }}>
-                  Jugador {i + 1} {player.is_winner && '🏆'}
+                  Jugador {i + 1} {player.is_winner && <Picto emoji="🏆" />}
                 </span>
                 {players.length > 1 && (
                   <button type="button" onClick={() => removePlayer(player.uid)} style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
@@ -205,7 +206,7 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
                   color: player.is_winner ? 'var(--brand)' : 'var(--text-3)',
                   border: player.is_winner ? '1px solid rgba(92,140,42,0.2)' : '1px solid transparent',
                 }}>
-                  🏆 Ganador
+                  <Picto emoji="🏆" /> Ganador
                 </button>
               </div>
             </div>
@@ -227,7 +228,7 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
           <div>
             <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
-              {isPublic ? '🌐 Partida pública' : '🔒 Partida privada'}
+              {isPublic ? '🌐 Partida pública' : <><Picto emoji="🔒" /> Partida privada</>}
             </p>
             <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-3)' }}>
               {isPublic ? 'Cualquiera con el enlace puede verla' : 'Solo los miembros del grupo pueden verla'}

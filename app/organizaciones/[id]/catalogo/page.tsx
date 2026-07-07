@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import { AddCatalogButton } from './AddCatalogButton';
 import { CatalogGame } from './CatalogGame';
+import { Picto } from '@/components/Picto';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -89,7 +90,7 @@ export default async function CatalogoPage({ params, searchParams }: Props) {
             Catálogo
           </h1>
           <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-3)' }}>
-            {org.type === 'tienda' ? '🏪' : '🎲'} {org.name} · {catalogEntries.length} juego{catalogEntries.length !== 1 ? 's' : ''}
+            <Picto emoji={org.type === 'tienda' ? '🏪' : '🎲'} /> {org.name} · {catalogEntries.length} juego{catalogEntries.length !== 1 ? 's' : ''}
           </p>
         </div>
 
@@ -121,7 +122,7 @@ export default async function CatalogoPage({ params, searchParams }: Props) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
                     {game.image_url
                       ? <Image src={game.image_url} alt={game.name} width={50} height={50} style={{ borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} />
-                      : <div style={{ width: 50, height: 50, borderRadius: 14, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>🎲</div>
+                      : <div style={{ width: 50, height: 50, borderRadius: 14, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}><Picto emoji="🎲" /></div>
                     }
                     <div style={{ minWidth: 0 }}>
                       <p style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>
@@ -216,7 +217,7 @@ function PublicCatalogRow({ game, entry }: {
     <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '16px 20px', borderRadius: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
       {game.image_url
         ? <Image src={game.image_url} alt={game.name} width={54} height={54} style={{ borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} />
-        : <div style={{ width: 54, height: 54, borderRadius: 14, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>🎲</div>
+        : <div style={{ width: 54, height: 54, borderRadius: 14, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}><Picto emoji="🎲" /></div>
       }
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>

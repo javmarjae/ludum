@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { updateGroup, uploadGroupImage } from '../actions';
 import { ImageEditor } from '@/components/ImageEditor';
+import { Picto } from '@/components/Picto';
 
 interface Props {
   groupId: string;
@@ -106,7 +107,7 @@ export function EditGroupForm({ groupId, initialName, initialDescription, initia
           {image ? (
             <Image src={image} alt={name} width={64} height={64} style={{ borderRadius: 18, objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }} />
           ) : (
-            <div style={{ width: 64, height: 64, borderRadius: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, background: 'var(--bg-inset)' }}>🎲</div>
+            <div style={{ width: 64, height: 64, borderRadius: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, background: 'var(--bg-inset)' }}><Picto emoji="🎲" /></div>
           )}
           {uploadingImage && (
             <div style={{ position: 'absolute', inset: 0, borderRadius: 18, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: 'white', fontWeight: 700 }}>...</div>

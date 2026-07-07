@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import { AddGameButton } from './AddGameButton';
 import { ColeccionFilter } from './ColeccionFilter';
+import { Picto } from '@/components/Picto';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -88,7 +89,7 @@ export default async function ColeccionPage({ params, searchParams }: Props) {
                       ? <div style={{ position: 'relative', width: 40, height: 54, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
                           <Image src={game.image_url} alt={game.name} fill sizes="40px" style={{ objectFit: 'cover' }} />
                         </div>
-                      : <div style={{ width: 40, height: 54, borderRadius: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}>🎲</div>
+                      : <div style={{ width: 40, height: 54, borderRadius: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}><Picto emoji="🎲" /></div>
                     }
                     <div style={{ minWidth: 0 }}>
                       <p style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>

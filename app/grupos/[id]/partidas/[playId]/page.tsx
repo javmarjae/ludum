@@ -7,6 +7,7 @@ import { ShareButton } from './ShareButton';
 import { PlayActions } from './PlayActions';
 import { GameRatingProvider } from '@/app/juegos/[id]/GameRatingContext';
 import { StarRating } from '@/app/juegos/[id]/StarRating';
+import { Picto } from '@/components/Picto';
 
 interface Props {
   params: Promise<{ id: string; playId: string }>;
@@ -64,7 +65,7 @@ export default async function PlayDetailPage({ params }: Props) {
         <div style={{ borderRadius: 32, padding: 24, marginBottom: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', display: 'flex', gap: 16, alignItems: 'center' }}>
           {game?.image_url
             ? <Image src={game.image_url} alt={game.name} width={72} height={72} style={{ borderRadius: 16, objectFit: 'cover', flexShrink: 0 }} />
-            : <div style={{ width: 72, height: 72, borderRadius: 16, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, background: 'var(--bg-inset)' }}>🎲</div>
+            : <div style={{ width: 72, height: 72, borderRadius: 16, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, background: 'var(--bg-inset)' }}><Picto emoji="🎲" /></div>
           }
           <div style={{ flex: 1, minWidth: 0 }}>
             {game?.bgg_id ? (
@@ -104,7 +105,7 @@ export default async function PlayDetailPage({ params }: Props) {
                     color: r.is_winner ? 'white' : 'var(--text-4)',
                     boxShadow: r.is_winner ? '0 2px 8px rgba(62,94,59,0.2)' : 'none',
                   }}>
-                    {r.is_winner ? '🏆' : i + 1}
+                    {r.is_winner ? <Picto emoji="🏆" /> : i + 1}
                   </div>
                   <span style={{ flex: 1, fontWeight: 700, fontSize: 15, color: r.is_winner ? 'var(--brand)' : 'var(--text)' }}>{name}</span>
                   {r.score != null && (

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { updateCatalogEntry, removeGameFromCatalog } from '../../actions';
+import { Picto } from '@/components/Picto';
 
 type Status = 'disponible' | 'en_venta' | 'en_prestamo';
 
@@ -73,7 +74,7 @@ export function CatalogGame({ orgId, game, entry }: Props) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '16px 20px' }}>
         {game.image_url
           ? <Image src={game.image_url} alt={game.name} width={54} height={54} style={{ borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} />
-          : <div style={{ width: 54, height: 54, borderRadius: 14, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>🎲</div>
+          : <div style={{ width: 54, height: 54, borderRadius: 14, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}><Picto emoji="🎲" /></div>
         }
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>

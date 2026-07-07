@@ -3,6 +3,7 @@ import { GameCard } from '@/components/GameCard';
 import Link from 'next/link';
 import { Nav } from '@/components/Nav';
 import type { Metadata } from 'next';
+import { Picto } from '@/components/Picto';
 
 export const metadata: Metadata = {
   title: 'Recomendaciones de juegos de mesa',
@@ -69,7 +70,7 @@ export default async function ResultadosPage({ searchParams }: Props) {
 
         {!error && games.length === 0 && (
           <div style={{ borderRadius: 32, padding: 48, textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-            <p style={{ fontSize: 48, marginBottom: 16 }}>🎲</p>
+            <p style={{ fontSize: 48, marginBottom: 16 }}><Picto emoji="🎲" /></p>
             <p style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>Sin resultados</p>
             <p style={{ fontWeight: 500, color: 'var(--text-3)', marginBottom: 24 }}>No encontramos juegos con esas preferencias.</p>
             <Link href="/recomendador" style={{

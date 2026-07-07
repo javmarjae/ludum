@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { Picto } from '@/components/Picto';
 
 // Error boundary global: evita la pantalla de error por defecto de Next y ofrece
 // recuperación ("Reintentar") sin recargar toda la app.
@@ -13,7 +14,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
   return (
     <div style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 24px' }}>
       <div style={{ textAlign: 'center', maxWidth: 420 }}>
-        <p style={{ fontSize: 64, marginBottom: 12 }}>🎲</p>
+        <p style={{ fontSize: 64, marginBottom: 12 }}><Picto emoji="🎲" /></p>
         <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 10 }}>
           Algo ha salido mal
         </h1>

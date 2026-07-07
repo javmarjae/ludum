@@ -7,6 +7,7 @@ import {
   type GameResult,
 } from '@/lib/recommender';
 import { DismissableTopRec } from './DismissableTopRec';
+import { Picto } from '@/components/Picto';
 
 function playerIcon(min: number | null): string {
   if (!min || min <= 1) return '/icons/solo.svg';
@@ -62,7 +63,7 @@ function TrendingSection({ games }: { games: Array<GameResult & { groupCount: nu
               <Image src={game.image_url} alt={game.name} width={140} height={90} sizes="140px"
                 style={{ objectFit: 'cover', display: 'block', width: '100%', height: 90 }} />
             ) : (
-              <div style={{ width: '100%', height: 90, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>🎲</div>
+              <div style={{ width: '100%', height: 90, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}><Picto emoji="🎲" /></div>
             )}
             <div style={{ padding: '10px 10px 12px' }}>
               <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 3 }}>{game.name}</p>
@@ -85,7 +86,7 @@ function AlternativeRow({ game }: { game: GameResult & { affinity: number } }) {
         {game.image_url ? (
           <Image src={game.image_url} alt={game.name} width={44} height={44} sizes="44px" style={{ borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
         ) : (
-          <div style={{ width: 44, height: 44, borderRadius: 8, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>🎲</div>
+          <div style={{ width: 44, height: 44, borderRadius: 8, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}><Picto emoji="🎲" /></div>
         )}
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{game.name}</p>
@@ -98,7 +99,7 @@ function AlternativeRow({ game }: { game: GameResult & { affinity: number } }) {
             )}
             {game.min_playtime !== null && (
               <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)' }}>
-                ⏱ {game.min_playtime}{game.max_playtime && game.max_playtime !== game.min_playtime ? `–${game.max_playtime}` : ''} min
+                <Picto emoji="⏱" /> {game.min_playtime}{game.max_playtime && game.max_playtime !== game.min_playtime ? `–${game.max_playtime}` : ''} min
               </span>
             )}
           </div>
@@ -118,7 +119,7 @@ function WildcardCard({ game }: { game: GameResult & { affinity: number; wildcar
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>4. Algo diferente para vosotros</h2>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 6, background: 'rgba(234,179,8,0.12)', border: '1px solid rgba(234,179,8,0.2)', fontSize: 10, fontWeight: 700, color: '#b45309' }}>
-            🌟 Salida de la rutina
+            <Picto emoji="🌟" /> Salida de la rutina
           </span>
         </div>
       </div>
@@ -127,7 +128,7 @@ function WildcardCard({ game }: { game: GameResult & { affinity: number; wildcar
           {game.image_url ? (
             <Image src={game.image_url} alt={game.name} width={64} height={80} sizes="64px" style={{ borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
           ) : (
-            <div style={{ width: 64, height: 80, borderRadius: 10, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>🎲</div>
+            <div style={{ width: 64, height: 80, borderRadius: 10, flexShrink: 0, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}><Picto emoji="🎲" /></div>
           )}
           <div style={{ flex: 1 }}>
             <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', marginBottom: 4, lineHeight: 1.2 }}>{game.name}</p>
@@ -135,7 +136,7 @@ function WildcardCard({ game }: { game: GameResult & { affinity: number; wildcar
               <p style={{ fontSize: 11, color: 'var(--text-4)', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>
                 <img src={playerIcon(game.min_players)} alt="" aria-hidden="true" style={{ width: 13, height: 13 }} />
                 {game.min_players === game.max_players ? game.min_players : `${game.min_players}-${game.max_players}`} jugadores
-                {game.min_playtime !== null && <span>· ⏱ {game.min_playtime}{game.max_playtime && game.max_playtime !== game.min_playtime ? `–${game.max_playtime}` : ''} min</span>}
+                {game.min_playtime !== null && <span>· <Picto emoji="⏱" /> {game.min_playtime}{game.max_playtime && game.max_playtime !== game.min_playtime ? `–${game.max_playtime}` : ''} min</span>}
               </p>
             )}
             <p style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.4, marginBottom: 10 }}>{game.wildcardReason}</p>
@@ -176,7 +177,7 @@ function TipsBox() {
 function NoRecs() {
   return (
     <div style={{ borderRadius: 24, padding: '48px 32px', textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', gridColumn: '1 / -1' }}>
-      <p style={{ fontSize: 48, marginBottom: 16 }}>🎲</p>
+      <p style={{ fontSize: 48, marginBottom: 16 }}><Picto emoji="🎲" /></p>
       <p style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>Sin recomendaciones</p>
       <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-3)', marginBottom: 24 }}>
         No encontramos juegos que encajen bien con este grupo. Prueba con otro grupo.

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { approveOrgRequest, rejectOrgRequest } from './actions';
+import { Picto } from '@/components/Picto';
 
 interface OrgRequest {
   id: string;
@@ -51,7 +52,7 @@ export function OrgRequests({ requests }: { requests: OrgRequest[] }) {
           <div key={req.id} style={{ borderRadius: 14, padding: '16px 18px', background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 12 }}>
               <div style={{ width: 40, height: 40, borderRadius: 12, flexShrink: 0, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
-                {req.type === 'tienda' ? '🏪' : '🎲'}
+                <Picto emoji={req.type === 'tienda' ? '🏪' : '🎲'} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{ fontWeight: 800, fontSize: 15, color: 'var(--text)', marginBottom: 2 }}>{req.name}</p>

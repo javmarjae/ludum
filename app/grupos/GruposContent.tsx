@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Picto } from '@/components/Picto';
 
 const CATEGORY_ICONS: Record<string, string> = {
   'Estrategia': '♟️',
@@ -128,7 +129,7 @@ export async function GruposContent({ userId }: { userId: string }) {
                     {group.image_url ? (
                       <Image src={group.image_url} alt={group.name} width={48} height={48} style={{ borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
                     ) : (
-                      <div style={{ width: 48, height: 48, borderRadius: 12, flexShrink: 0, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>🎲</div>
+                      <div style={{ width: 48, height: 48, borderRadius: 12, flexShrink: 0, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}><Picto emoji="🎲" /></div>
                     )}
                     <div style={{ minWidth: 0 }}>
                       <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.name}</p>
@@ -264,7 +265,7 @@ export async function GruposContent({ userId }: { userId: string }) {
                     <Image src={org.logo_url} alt={org.name} width={44} height={44} style={{ borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
                   ) : (
                     <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'var(--brand-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>
-                      {org.type === 'tienda' ? '🏪' : '🎲'}
+                      <Picto emoji={org.type === 'tienda' ? '🏪' : '🎲'} />
                     </div>
                   )}
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -327,7 +328,7 @@ function CommunityCard({
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 20,
           }}>
-            {icon}
+            <Picto emoji={icon} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{ fontWeight: 800, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

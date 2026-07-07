@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { createRound, addMatch, recordResult } from '../../actions';
+import { Picto } from '@/components/Picto';
 
 interface Participant {
   id: string;
@@ -133,7 +134,7 @@ function RecordResultForm({ match, tournamentId, onDone }: { match: Match; tourn
               onClick={() => setWinnerId(r.participant_id)}>
               <input type="radio" name="winner" checked={isWinner} onChange={() => setWinnerId(r.participant_id)} style={{ accentColor: 'var(--brand)' }} />
               <span style={{ flex: 1, fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>{name}</span>
-              {isWinner && <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)' }}>🏆 Ganador</span>}
+              {isWinner && <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)' }}><Picto emoji="🏆" /> Ganador</span>}
               <input
                 value={scores[r.participant_id] ?? ''}
                 onChange={e => { e.stopPropagation(); setScores(prev => ({ ...prev, [r.participant_id]: e.target.value })); }}
@@ -210,7 +211,7 @@ export function RoundManager({ tournamentId, rounds, participants }: { tournamen
                           </div>
                           {match.status === 'completada' ? (
                             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                              {winnerName && <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)' }}>🏆 {winnerName}</span>}
+                              {winnerName && <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)' }}><Picto emoji="🏆" /> {winnerName}</span>}
                               <button onClick={() => setRecordingMatch(isRecording ? null : match.id)}
                                 style={{ padding: '4px 10px', borderRadius: 8, border: '1px solid var(--border)', background: 'none', color: 'var(--text-4)', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
                                 Editar

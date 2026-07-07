@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import { Avatar } from '@/components/Avatar';
 import type { Metadata } from 'next';
+import { Picto } from '@/components/Picto';
 
 export const metadata: Metadata = { title: 'Notificaciones' };
 
@@ -120,7 +121,7 @@ export default async function NotificacionesPage() {
                       <Image src={gameImage} alt={gameName} width={44} height={44} style={{ borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} />
                     ) : (
                       <div style={{ width: 44, height: 44, borderRadius: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, background: 'var(--bg-inset)' }}>
-                        🎲
+                        <Picto emoji="🎲" />
                       </div>
                     )}
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -131,7 +132,7 @@ export default async function NotificacionesPage() {
                         {groupName} · {formatRelativeTime(n.created_at)}
                       </p>
                     </div>
-                    <span style={{ fontSize: 18, flexShrink: 0 }}>🎮</span>
+                    <span style={{ fontSize: 18, flexShrink: 0 }}><Picto emoji="🎮" /></span>
                   </a>
                 );
               }

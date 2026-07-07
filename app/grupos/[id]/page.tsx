@@ -13,6 +13,7 @@ import { InviteQR } from './InviteQR';
 import { GroupStatsRow } from './GroupStatsRow';
 import { GroupRecentPlays } from './GroupRecentPlays';
 import { GroupStatsRowSkeleton, GroupRecentPlaysSkeleton } from './GroupActivitySkeleton';
+import { Picto } from '@/components/Picto';
 
 function playerIcon(n: number): string {
   if (n <= 1) return '/icons/solo.svg';
@@ -169,7 +170,7 @@ export default async function GrupoDetailPage({ params }: Props) {
               <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Próxima partida</h2>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ width: 42, height: 42, borderRadius: 12, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>
-                  📅
+                  <Picto emoji="📅" />
                 </div>
                 <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-3)' }}>
                   Aún no hay ninguna partida programada.

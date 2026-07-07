@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import { ManageStaff } from './ManageStaff';
 import { EditOrgForm } from './EditOrgForm';
+import { Picto } from '@/components/Picto';
 
 interface Props { params: Promise<{ id: string }> }
 
@@ -61,7 +62,7 @@ export default async function OrgPage({ params }: Props) {
           {org.logo_url
             ? <Image src={org.logo_url} alt={org.name} width={80} height={80} style={{ borderRadius: 20, objectFit: 'cover', flexShrink: 0, boxShadow: 'var(--shadow-card)' }} />
             : <div style={{ width: 80, height: 80, borderRadius: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, flexShrink: 0 }}>
-                {org.type === 'tienda' ? '🏪' : '🎲'}
+                <Picto emoji={org.type === 'tienda' ? '🏪' : '🎲'} />
               </div>
           }
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -75,11 +76,11 @@ export default async function OrgPage({ params }: Props) {
               )}
             </div>
             <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', marginBottom: 6 }}>
-              {org.type === 'tienda' ? '🏪 Tienda' : '🎲 Asociación'}
+              {org.type === 'tienda' ? '🏪 Tienda' : <><Picto emoji="🎲" /> Asociación</>}
               {org.location && (
                 org.maps_url
-                  ? <> · <a href={org.maps_url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>📍 {org.location}</a></>
-                  : ` · 📍 ${org.location}`
+                  ? <> · <a href={org.maps_url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}><Picto emoji="📍" /> {org.location}</a></>
+                  : ` · <Picto emoji="📍" /> ${org.location}`
               )}
             </p>
             {org.description && (
@@ -126,7 +127,7 @@ export default async function OrgPage({ params }: Props) {
 
             {!tournaments || tournaments.length === 0 ? (
               <div style={{ borderRadius: 20, padding: '36px 24px', textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-                <p style={{ fontSize: 32, marginBottom: 10 }}>🏆</p>
+                <p style={{ fontSize: 32, marginBottom: 10 }}><Picto emoji="🏆" /></p>
                 <p style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Sin torneos todavía</p>
                 {isAdmin && (
                   <Link href="/torneos/nuevo" style={{ display: 'inline-block', marginTop: 12, padding: '10px 22px', borderRadius: 10, background: 'var(--brand)', color: 'white', textDecoration: 'none', fontWeight: 700, fontSize: 14 }}>
@@ -144,7 +145,7 @@ export default async function OrgPage({ params }: Props) {
                       <div className="hover-ghost" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', borderRadius: 16, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
                         {game?.image_url
                           ? <Image src={game.image_url} alt={game.name} width={48} height={48} style={{ borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
-                          : <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>🏆</div>
+                          : <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}><Picto emoji="🏆" /></div>
                         }
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <p style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.name}</p>

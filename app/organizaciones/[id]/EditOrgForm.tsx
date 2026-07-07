@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { updateOrganization, uploadOrgLogo } from '../actions';
 import { ImageEditor } from '@/components/ImageEditor';
+import { Picto } from '@/components/Picto';
 
 interface Props {
   orgId: string;
@@ -105,7 +106,7 @@ export function EditOrgForm({ orgId, initialDescription, initialLocation, initia
           {logo
             ? <Image src={logo} alt="Logo" width={64} height={64} style={{ borderRadius: 18, objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }} />
             : <div style={{ width: 64, height: 64, borderRadius: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, background: 'var(--bg-inset)' }}>
-                {orgType === 'tienda' ? '🏪' : '🎲'}
+                <Picto emoji={orgType === 'tienda' ? '🏪' : '🎲'} />
               </div>
           }
           {uploadingLogo && (

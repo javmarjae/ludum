@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
 import type { Metadata } from 'next';
+import { Picto } from '@/components/Picto';
 
 const PAGE_SIZE = 20;
 
@@ -71,7 +72,7 @@ export default async function GroupPlaysPage({ params, searchParams }: Props) {
 
         {allPlays.length === 0 ? (
           <div style={{ borderRadius: 32, padding: 48, textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-            <p style={{ fontSize: 32, marginBottom: 12 }}>🎲</p>
+            <p style={{ fontSize: 32, marginBottom: 12 }}><Picto emoji="🎲" /></p>
             <p style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>Sin partidas todavía</p>
             <Link href={`/grupos/${groupId}/partidas/nueva`} style={{
               display: 'inline-flex', padding: '12px 24px', borderRadius: 999, fontSize: 14, fontWeight: 700,
@@ -89,7 +90,7 @@ export default async function GroupPlaysPage({ params, searchParams }: Props) {
                 <Link key={play.id} href={`/grupos/${groupId}/partidas/${play.id}`} style={{ display: 'flex', alignItems: 'center', gap: 14, borderRadius: 22, padding: '16px 20px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', textDecoration: 'none' }}>
                   {play.games?.image_url
                     ? <Image src={play.games.image_url} alt={play.games.name} width={44} height={44} style={{ borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
-                    : <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}>🎲</div>
+                    : <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}><Picto emoji="🎲" /></div>
                   }
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -97,12 +98,12 @@ export default async function GroupPlaysPage({ params, searchParams }: Props) {
                         {play.games?.name ?? 'Juego desconocido'}
                       </p>
                       {!play.is_public && (
-                        <span style={{ fontSize: 10, flexShrink: 0, color: 'var(--text-4)' }}>🔒</span>
+                        <span style={{ fontSize: 10, flexShrink: 0, color: 'var(--text-4)' }}><Picto emoji="🔒" /></span>
                       )}
                     </div>
                     <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>
                       {new Date(play.played_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      {winnerName && <span> · 🏆 {winnerName}</span>}
+                      {winnerName && <span> · <Picto emoji="🏆" /> {winnerName}</span>}
                     </p>
                   </div>
                   <span style={{ color: 'var(--text-4)', fontSize: 16, flexShrink: 0 }}>›</span>
