@@ -6,6 +6,7 @@ import { Achievements } from '../Achievements';
 import { FollowButton } from './FollowButton';
 import { MessageButton } from './MessageButton';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
+import { Picto } from '@/components/Picto';
 import type { Metadata } from 'next';
 
 interface Props { params: Promise<{ id: string }> }
@@ -29,7 +30,7 @@ function GamePlaceholderIcon() {
 function StatBadge({ label, value }: { label: string; value: number }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 20px', borderRadius: 999, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', whiteSpace: 'nowrap' }}>
-      <span style={{ fontSize: 15, color: 'var(--brand)' }}>★</span>
+      <span style={{ fontSize: 15, color: 'var(--brand)' }}><Picto emoji="⭐" /></span>
       <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>
         {label}: <strong>{value}</strong>
       </span>
@@ -206,7 +207,7 @@ export default async function PublicProfilePage({ params }: Props) {
               <section style={{ marginTop: 36, paddingTop: 32, borderTop: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
                   <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>Juegos valorados</h2>
-                  <span style={{ fontSize: 14, color: 'var(--brand)', fontWeight: 700 }}>★</span>
+                  <span style={{ fontSize: 14, color: 'var(--brand)', fontWeight: 700 }}><Picto emoji="⭐" /></span>
                 </div>
                 <div className="scroll-row" style={{ display: 'flex', gap: 14, overflowX: 'auto', paddingBottom: 4 }}>
                   {ratedGames.map((game: any) => (
@@ -217,7 +218,7 @@ export default async function PublicProfilePage({ params }: Props) {
                           : <GamePlaceholderIcon />
                         }
                         <span style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.65)', color: 'white', fontSize: 11, fontWeight: 800, padding: '3px 7px', borderRadius: 999 }}>
-                          ★ {game.rating}/5
+                          <Picto emoji="⭐" /> {game.rating}/5
                         </span>
                       </div>
                       <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>

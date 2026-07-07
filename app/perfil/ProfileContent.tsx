@@ -5,6 +5,7 @@ import { Achievements } from './Achievements';
 import { EditProfileForm } from './EditProfileForm';
 import { ImportBGGCollection } from './ImportBGGCollection';
 import { VerificationRequestForm } from './VerificationRequestForm';
+import { Picto } from '@/components/Picto';
 
 function GamePlaceholderIcon() {
   return (
@@ -18,7 +19,7 @@ function GamePlaceholderIcon() {
 function StatBadge({ label, value }: { label: string; value: number }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 20px', borderRadius: 999, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', whiteSpace: 'nowrap' }}>
-      <span style={{ fontSize: 15, color: 'var(--brand)' }}>★</span>
+      <span style={{ fontSize: 15, color: 'var(--brand)' }}><Picto emoji="⭐" /></span>
       <span className="t-card-title">
         {label}: <strong>{value}</strong>
       </span>
@@ -207,7 +208,7 @@ export async function ProfileContent({ userId, isVerified, displayName, bio, ava
           <section style={{ marginTop: 36, paddingTop: 32, borderTop: '1px solid var(--border)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
               <h2 className="t-section-title">Juegos valorados</h2>
-              <span style={{ fontSize: 14, color: 'var(--brand)', fontWeight: 700 }}>★</span>
+              <span style={{ fontSize: 14, color: 'var(--brand)', fontWeight: 700 }}><Picto emoji="⭐" /></span>
             </div>
             <div className="scroll-row" style={{ display: 'flex', gap: 14, overflowX: 'auto', paddingBottom: 4 }}>
               {ratedGames.map((game: any, i: number) => (
@@ -218,7 +219,7 @@ export async function ProfileContent({ userId, isVerified, displayName, bio, ava
                       : <GamePlaceholderIcon />
                     }
                     <span style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.65)', color: 'white', fontSize: 11, fontWeight: 800, padding: '3px 7px', borderRadius: 999 }}>
-                      ★ {game.rating}/5
+                      <Picto emoji="⭐" /> {game.rating}/5
                     </span>
                   </div>
                   <p className="t-card-title" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>

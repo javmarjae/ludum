@@ -17,7 +17,7 @@ function RatingBadge({ rating }: { rating: number }) {
   const color = rating >= 8 ? '#16a34a' : rating >= 7 ? '#d97706' : '#71717A';
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 8, fontSize: 11, fontWeight: 700, background: `${color}18`, color }}>
-      ★ {rating.toFixed(1)}
+      <Picto emoji="⭐" /> {rating.toFixed(1)}
     </span>
   );
 }

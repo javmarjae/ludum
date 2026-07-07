@@ -55,7 +55,7 @@ export async function GameRelatedLists({ gameId, bggId, isExpansion, mechanics, 
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p className="t-card-title" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sg.name}</p>
                   {sg.bgg_rating && (
-                    <p className="t-meta" style={{ color: sg.bgg_rating >= 8 ? 'var(--brand)' : 'var(--text-4)' }}>★ {sg.bgg_rating.toFixed(1)}</p>
+                    <p className="t-meta" style={{ color: sg.bgg_rating >= 8 ? 'var(--brand)' : 'var(--text-4)' }}><Picto emoji="⭐" /> {sg.bgg_rating.toFixed(1)}</p>
                   )}
                 </div>
                 <span style={{ color: 'var(--text-4)', fontSize: 18 }}>›</span>

@@ -231,7 +231,7 @@ export default async function Home() {
                         )}
                         {g.bgg_rating && (
                           <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)', flexShrink: 0 }}>
-                            ★ {g.bgg_rating.toFixed(1)}
+                            <Picto emoji="⭐" /> {g.bgg_rating.toFixed(1)}
                           </span>
                         )}
                       </Link>

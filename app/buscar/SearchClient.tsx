@@ -141,7 +141,7 @@ function ResultRow({ game }: { game: Game }) {
           </p>
           <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 2, flexWrap: 'wrap' }}>
             {game.year_published && <span style={{ fontSize: 11, color: 'var(--text-4)', fontWeight: 500 }}>{game.year_published}</span>}
-            {game.bgg_rating && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)' }}>★ {game.bgg_rating.toFixed(1)}</span>}
+            {game.bgg_rating && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)' }}><Picto emoji="⭐" /> {game.bgg_rating.toFixed(1)}</span>}
             {players && <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', background: 'var(--bg-inset)', padding: '1px 5px', borderRadius: 4 }}>{players}</span>}
           </div>
         </div>
@@ -204,7 +204,7 @@ function GameCarouselCard({ game, rank, badge, index }: {
         </div>
         <p style={{ fontWeight: 700, fontSize: 12, marginTop: 8, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>
         {badge && <span style={{ fontSize: 10, fontWeight: 700, color: badge.color, background: badge.bg, padding: '2px 7px', borderRadius: 999, display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 4 }}>{badge.text}</span>}
-        {rating && <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', marginTop: 3 }}>★ {rating.toFixed(1)}</p>}
+        {rating && <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', marginTop: 3 }}><Picto emoji="⭐" /> {rating.toFixed(1)}</p>}
       </div>
     </Link>
   );
@@ -528,7 +528,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
               index={i}
               badge={
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  {g.bgg_rating && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)' }}>★ {g.bgg_rating.toFixed(1)}</span>}
+                  {g.bgg_rating && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)' }}><Picto emoji="⭐" /> {g.bgg_rating.toFixed(1)}</span>}
                   <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-4)' }}>#{i + 1}</span>
                 </div>
               }
