@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { addParticipant, removeParticipant, searchProfiles } from '../../actions';
+import { Picto } from '@/components/Picto';
 
 interface Participant {
   id: string;

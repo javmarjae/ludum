@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Picto } from './Picto';
 
 const STORAGE_KEY = 'ludum-beta-banner-seen';
 const AUTO_DISMISS_MS = 7000;
@@ -66,7 +67,7 @@ export function BetaBanner() {
         justifyContent: 'center',
         fontSize: 18,
       }}>
-        ⚙️
+        <Picto emoji="⚙" />
       </div>
 
       {/* Texto */}

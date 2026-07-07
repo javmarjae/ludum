@@ -172,7 +172,7 @@ export default async function TorneoPage({ params }: Props) {
         {/* Admin link */}
         {isOrganizer && (
           <Link href={`/torneos/${id}/admin`} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 18px', borderRadius: 16, background: 'var(--brand)', color: 'white', textDecoration: 'none', fontWeight: 700, fontSize: 14, marginBottom: 24 }}>
-            ⚙️ Panel de administración
+            <Picto emoji="⚙" /> Panel de administración
           </Link>
         )}
 
