@@ -56,3 +56,6 @@ yarn-error.log*
 
 # OS
 Thumbs.db
+
+# Códigos de recuperación / secretos personales
+recovery-codes.txt
