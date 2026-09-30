@@ -23,36 +23,39 @@ function getPublicSupabase() {
   );
 }
 
-/* getLandingGames: tabla "games" con acceso público (sin RLS).
-   La tabla "plays" requiere sesión autenticada → trending se
-   resuelve dentro del bloque if(user) con createClient(). */
-const getLandingGames = unstable_cache(
+const getFeaturedLandingGames = unstable_cache(
   async () => {
     const supabase = getPublicSupabase();
-    const [featuredResult, beginnerResult] = await Promise.all([
-      supabase
-        .from('games')
-        .select('bgg_id, name, image_url, bgg_rating, year_published, categories')
-        .not('image_url', 'is', null)
-        .not('bgg_rank', 'is', null)
-        .order('bgg_rank', { ascending: true })
-        .limit(15),
-      supabase
-        .from('games')
-        .select('bgg_id, name, image_url, min_players, max_players, min_playtime, max_playtime')
-        .not('bgg_rank', 'is', null)
-        .not('image_url', 'is', null)
-        .gte('complexity', 1)
-        .lte('complexity', 2.5)
-        .order('bgg_rank', { ascending: true })
-        .limit(16),
-    ]);
-    return {
-      featuredGames: featuredResult.data ?? [],
-      beginnerGames: beginnerResult.data ?? [],
-    };
+    const { data } = await supabase
+      .from('games')
+      .select('bgg_id, name, image_url, bgg_rating, year_published, categories')
+      .not('image_url', 'is', null)
+      .not('bgg_rank', 'is', null)
+      .order('bgg_rank', { ascending: true })
+      .limit(15);
+    return data ?? [];
   },
-  ['home-landing-games'],
+  ['home-featured-games'],
+  { revalidate: 3600 }
+);
+
+/* La home autenticada solo necesita beginnerGames para el dashboard,
+   así que separamos la query pesada de la landing pública. */
+const getBeginnerGames = unstable_cache(
+  async () => {
+    const supabase = getPublicSupabase();
+    const { data } = await supabase
+      .from('games')
+      .select('bgg_id, name, image_url, min_players, max_players, min_playtime, max_playtime')
+      .not('bgg_rank', 'is', null)
+      .not('image_url', 'is', null)
+      .gte('complexity', 1)
+      .lte('complexity', 2.5)
+      .order('bgg_rank', { ascending: true })
+      .limit(16);
+    return data ?? [];
+  },
+  ['home-beginner-games'],
   { revalidate: 3600 }
 );
 
@@ -62,9 +65,9 @@ export default async function Home() {
   const todayRaw = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
   const today = todayRaw.charAt(0).toUpperCase() + todayRaw.slice(1);
 
-  /* getLandingGames usa el cliente público (tabla games, sin RLS).
-     Se llama siempre (landing y dashboard necesitan beginnerGames). */
-  const { featuredGames, beginnerGames } = await getLandingGames();
+    const beginnerGamesPromise = getBeginnerGames();
+    const featuredGames = user ? [] : await getFeaturedLandingGames();
+    const beginnerGames = await beginnerGamesPromise;
 
   const covers = featuredGames;
 
@@ -158,6 +161,7 @@ export default async function Home() {
                 <Link
                   key={g.bgg_id}
                   href={`/juegos/${g.bgg_id}`}
+                  prefetch={false}
                   className="hover-cover"
                   aria-label={g.name}
                   style={{
@@ -212,6 +216,7 @@ export default async function Home() {
                     <li key={g.bgg_id}>
                       <Link
                         href={`/juegos/${g.bgg_id}`}
+                        prefetch={false}
                         style={{
                           display: 'flex', alignItems: 'center', gap: 12,
                           padding: '10px 8px', borderRadius: 8, textDecoration: 'none',

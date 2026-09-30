@@ -149,6 +149,7 @@ export async function ProfileContent({ userId, isVerified, displayName, bio, ava
                 <Link
                   key={game.id}
                   href={`/juegos/${game.bgg_id}`}
+                  prefetch={false}
                   className="stagger-in"
                   style={{ ['--stagger-i' as any]: i, textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, flexShrink: 0, width: 84 }}
                 >
@@ -184,6 +185,7 @@ export async function ProfileContent({ userId, isVerified, displayName, bio, ava
                 <Link
                   key={game.id}
                   href={`/juegos/${game.bgg_id}`}
+                  prefetch={false}
                   className="stagger-in"
                   style={{ ['--stagger-i' as any]: i, textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, flexShrink: 0, width: 84 }}
                 >
@@ -212,7 +214,7 @@ export async function ProfileContent({ userId, isVerified, displayName, bio, ava
             </div>
             <div className="scroll-row" style={{ display: 'flex', gap: 14, overflowX: 'auto', paddingBottom: 4 }}>
               {ratedGames.map((game: any, i: number) => (
-                <Link key={game.id} href={`/juegos/${game.bgg_id}`} className="stagger-in" style={{ ['--stagger-i' as any]: i, textDecoration: 'none', flexShrink: 0, width: 130 }}>
+                <Link key={game.id} href={`/juegos/${game.bgg_id}`} prefetch={false} className="stagger-in" style={{ ['--stagger-i' as any]: i, textDecoration: 'none', flexShrink: 0, width: 130 }}>
                   <div style={{ width: 130, height: 130, borderRadius: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10, color: 'var(--text-4)', position: 'relative' }}>
                     {game.image_url
                       ? <Image src={game.image_url} alt={game.name} width={130} height={130} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

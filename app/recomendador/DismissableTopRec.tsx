@@ -117,7 +117,7 @@ function TopGameCard({ rec, onDismiss, isPending }: {
 
         <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
           {/* Imagen — clickable */}
-          <Link href={`/juegos/${game.bgg_id}`} style={{ flexShrink: 0, display: 'block', textDecoration: 'none' }} className="hover-scale-sm">
+          <Link href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ flexShrink: 0, display: 'block', textDecoration: 'none' }} className="hover-scale-sm">
             {game.image_url ? (
               <Image src={game.image_url} alt={game.name} width={120} height={150} priority sizes="120px"
                 style={{ borderRadius: 12, objectFit: 'cover', display: 'block' }} />
@@ -128,7 +128,7 @@ function TopGameCard({ rec, onDismiss, isPending }: {
 
           {/* Columna de contenido — título, metadatos y botón */}
           <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', minHeight: 150 }}>
-            <Link href={`/juegos/${game.bgg_id}`} style={{ textDecoration: 'none', display: 'block' }} className="hover-scale-sm">
+            <Link href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ textDecoration: 'none', display: 'block' }} className="hover-scale-sm">
               <h2 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 6, lineHeight: 1.1 }}>
                 {game.name}
               </h2>

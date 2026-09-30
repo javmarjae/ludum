@@ -120,7 +120,7 @@ export function UserCollectionSection({ initialCollection }: Props) {
 function GameRow({ game, inCollection, loading, onToggle }: { game: Game; inCollection: boolean; loading: boolean; onToggle: () => void }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, borderRadius: 10, padding: '12px 16px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-      <Link href={`/juegos/${game.bgg_id}`} style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, textDecoration: 'none', flex: 1 }}>
+      <Link href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, textDecoration: 'none', flex: 1 }}>
         {game.image_url
           ? <Image src={game.image_url} alt={game.name} width={40} height={40} style={{ borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
           : <div style={{ width: 40, height: 40, borderRadius: 12, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, background: 'var(--bg-inset)' }}><Picto emoji="🎲" /></div>

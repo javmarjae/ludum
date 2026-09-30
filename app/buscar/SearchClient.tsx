@@ -113,7 +113,7 @@ function GameThumb({ src, alt, size = 44 }: { src: string | null; alt: string; s
 
 function SideCard({ game, badge, index }: { game: FeaturedGame; badge: React.ReactNode; index?: number }) {
   return (
-    <Link href={`/juegos/${game.bgg_id}`} className={index !== undefined ? 'stagger-in' : undefined} style={{ ...(index !== undefined ? { ['--stagger-i' as any]: index } : {}), display: 'block', textDecoration: 'none' }}>
+    <Link href={`/juegos/${game.bgg_id}`} prefetch={false} className={index !== undefined ? 'stagger-in' : undefined} style={{ ...(index !== undefined ? { ['--stagger-i' as any]: index } : {}), display: 'block', textDecoration: 'none' }}>
       <div className="hover-ghost" style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
         <GameThumb src={game.image_url} alt={game.name} />
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -132,7 +132,7 @@ function ResultRow({ game }: { game: Game }) {
     ? (game.min_players === game.max_players ? `${game.min_players}j` : `${game.min_players}–${game.max_players}j`)
     : null;
   return (
-    <Link href={`/juegos/${game.bgg_id}`} style={{ display: 'block', textDecoration: 'none' }}>
+    <Link href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ display: 'block', textDecoration: 'none' }}>
       <div className="hover-ghost" style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
         <GameThumb src={game.image_url} alt={game.name} size={48} />
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -191,7 +191,7 @@ function GameCarouselCard({ game, rank, badge, index }: {
 }) {
   const rating = 'bgg_rating' in game ? game.bgg_rating : null;
   return (
-    <Link href={`/juegos/${game.bgg_id}`} className={`buscar-carousel-card${index !== undefined ? ' stagger-in' : ''}`} style={{ ...(index !== undefined ? { ['--stagger-i' as any]: index } : {}), display: 'block', textDecoration: 'none' }}>
+    <Link href={`/juegos/${game.bgg_id}`} prefetch={false} className={`buscar-carousel-card${index !== undefined ? ' stagger-in' : ''}`} style={{ ...(index !== undefined ? { ['--stagger-i' as any]: index } : {}), display: 'block', textDecoration: 'none' }}>
       <div className="hover-scale-lg" style={{ cursor: 'pointer' }}>
         <div className="buscar-carousel-img">
           {game.image_url

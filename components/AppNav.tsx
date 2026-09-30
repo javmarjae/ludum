@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthUserLite } from '@/lib/supabase/server';
 import { Nav, NavLink, NavButton, ThemeToggle } from './Nav';
 
 function BlogIcon() {
@@ -50,8 +50,7 @@ function UserIcon() {
 
 /* Auth-aware top nav: slim back bar for logged-in users, full nav for guests */
 export async function AppNav({ back }: { back?: { href: string; label: string } }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getAuthUserLite();
 
   if (user) {
     if (!back) return null;

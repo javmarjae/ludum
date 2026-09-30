@@ -118,6 +118,7 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
             <Link
               key={game.bgg_id}
               href={`/juegos/${game.bgg_id}`}
+              prefetch={false}
               className="hover-scale-md"
               style={{
                 textDecoration: 'none', flexShrink: 0, width: 120, borderRadius: 12, overflow: 'hidden',

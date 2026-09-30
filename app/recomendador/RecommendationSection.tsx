@@ -58,7 +58,7 @@ function TrendingSection({ games }: { games: Array<GameResult & { groupCount: nu
       </div>
       <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 4 }}>
         {games.slice(0, 8).map((game) => (
-          <Link key={game.id} href={`/juegos/${game.bgg_id}`} style={{ flexShrink: 0, borderRadius: 14, overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', textDecoration: 'none', width: 140 }}>
+          <Link key={game.id} href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ flexShrink: 0, borderRadius: 14, overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', textDecoration: 'none', width: 140 }}>
             {game.image_url ? (
               <Image src={game.image_url} alt={game.name} width={140} height={90} sizes="140px"
                 style={{ objectFit: 'cover', display: 'block', width: '100%', height: 90 }} />
@@ -81,7 +81,7 @@ function TrendingSection({ games }: { games: Array<GameResult & { groupCount: nu
 
 function AlternativeRow({ game }: { game: GameResult & { affinity: number } }) {
   return (
-    <Link href={`/juegos/${game.bgg_id}`} style={{ textDecoration: 'none' }}>
+    <Link href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ textDecoration: 'none' }}>
       <div className="hover-scale-sm" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
         {game.image_url ? (
           <Image src={game.image_url} alt={game.name} width={44} height={44} sizes="44px" style={{ borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
@@ -123,7 +123,7 @@ function WildcardCard({ game }: { game: GameResult & { affinity: number; wildcar
           </span>
         </div>
       </div>
-      <Link href={`/juegos/${game.bgg_id}`} style={{ textDecoration: 'none' }}>
+      <Link href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ textDecoration: 'none' }}>
         <div className="hover-scale-sm" style={{ display: 'flex', gap: 12, padding: '0 16px 12px', alignItems: 'flex-start' }}>
           {game.image_url ? (
             <Image src={game.image_url} alt={game.name} width={64} height={80} sizes="64px" style={{ borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
@@ -145,7 +145,7 @@ function WildcardCard({ game }: { game: GameResult & { affinity: number; wildcar
         </div>
       </Link>
       <div style={{ borderTop: '1px solid var(--border)', padding: '10px 16px' }}>
-        <Link href={`/juegos/${game.bgg_id}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 13, fontWeight: 600, color: 'var(--brand)', textDecoration: 'none' }}>
+        <Link href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 13, fontWeight: 600, color: 'var(--brand)', textDecoration: 'none' }}>
           Saber más <span>›</span>
         </Link>
       </div>

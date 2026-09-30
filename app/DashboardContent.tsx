@@ -267,6 +267,7 @@ function CircleGameItem({ game, index }: { game: { bgg_id: string; name: string;
   return (
     <Link
       href={`/juegos/${game.bgg_id}`}
+      prefetch={false}
       className="hover-scale stagger-in"
       style={{ ['--stagger-i' as any]: index, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, textDecoration: 'none', flexShrink: 0, width: 104 }}
     >
@@ -341,7 +342,7 @@ function EventCard({ href, name, imageUrl, lastPlayDate, index }: { href: string
 
 function PlayCard({ item, index }: { item: { bgg_id: string; name: string; image_url?: string; count: number }; index: number }) {
   return (
-    <Link href={`/juegos/${item.bgg_id}`} className="hover-scale-md stagger-in" style={{
+    <Link href={`/juegos/${item.bgg_id}`} prefetch={false} className="hover-scale-md stagger-in" style={{
       ['--stagger-i' as any]: index,
       textDecoration: 'none', flexShrink: 0, width: 128, borderRadius: 14, overflow: 'hidden',
       background: 'var(--bg-card)', display: 'block',
