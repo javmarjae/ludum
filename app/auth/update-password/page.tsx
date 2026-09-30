@@ -5,6 +5,11 @@ import type { EmailOtpType } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { Nav } from '@/components/Nav';
 
+type RecoverySession = {
+  accessToken: string;
+  refreshToken: string;
+};
+
 const inputStyle = {
   background: 'var(--bg-inset)',
   boxShadow: 'var(--shadow-input)',
@@ -25,6 +30,7 @@ export default function UpdatePasswordPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [verifying, setVerifying] = useState(true);
+  const [recoverySession, setRecoverySession] = useState<RecoverySession | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -42,19 +48,38 @@ export default function UpdatePasswordPage() {
       const hashType = hashParams.get('type');
 
       let authError: string | null = null;
+      let establishedSession: RecoverySession | null = null;
 
       if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
         authError = error?.message ?? null;
+        if (data.session?.access_token && data.session?.refresh_token) {
+          establishedSession = {
+            accessToken: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+          };
+        }
       } else if (tokenHash && type) {
-        const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
+        const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
         authError = error?.message ?? null;
+        if (data.session?.access_token && data.session?.refresh_token) {
+          establishedSession = {
+            accessToken: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+          };
+        }
       } else if (accessToken && refreshToken && hashType === 'recovery') {
-        const { error } = await supabase.auth.setSession({
+        const { data, error } = await supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken,
         });
         authError = error?.message ?? null;
+        if (data.session?.access_token && data.session?.refresh_token) {
+          establishedSession = {
+            accessToken: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+          };
+        }
       }
 
       if (!authError) {
@@ -74,6 +99,12 @@ export default function UpdatePasswordPage() {
 
       if (!active) return;
 
+      setRecoverySession(
+        establishedSession ??
+        (session?.access_token && session?.refresh_token
+          ? { accessToken: session.access_token, refreshToken: session.refresh_token }
+          : null)
+      );
       setError(authError ? 'El enlace de recuperación no es válido o ha caducado. Solicita uno nuevo.' : '');
       setVerifying(false);
     }
@@ -99,9 +130,23 @@ export default function UpdatePasswordPage() {
     }
     setLoading(true);
     const supabase = createClient();
+
+    if (recoverySession) {
+      const { error: sessionError } = await supabase.auth.setSession({
+        access_token: recoverySession.accessToken,
+        refresh_token: recoverySession.refreshToken,
+      });
+      if (sessionError) {
+        setLoading(false);
+        setError('La sesión de recuperación ya no es válida. Solicita un nuevo enlace.');
+        return;
+      }
+    }
+
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
     if (error) {
+      console.error('[update-password] updateUser failed:', error.message);
       setError('No se pudo actualizar la contraseña. El enlace puede haber caducado.');
     } else {
       window.location.href = '/grupos';
