@@ -16,6 +16,7 @@ import { GamePlaysTab } from './GamePlaysTab';
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Picto } from '@/components/Picto';
+import { categoryEs } from '@/lib/bgg-categories';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -128,7 +129,7 @@ export default async function GamePage({ params, searchParams }: Props) {
   };
 
   const tabLink: React.CSSProperties = {
-    display: 'inline-flex', alignItems: 'center', gap: 6,
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
     padding: '8px 22px', borderRadius: 999, fontSize: 14, fontWeight: 700,
     textDecoration: 'none',
   };
@@ -205,7 +206,7 @@ export default async function GamePage({ params, searchParams }: Props) {
             </h1>
             {categories.length > 0 && (
               <p className="t-card-sub" style={{ color: 'rgba(255,255,255,0.72)', marginBottom: 10 }}>
-                {categories.slice(0, 2).join(' · ')}
+                {categories.slice(0, 2).map(categoryEs).join(' · ')}
               </p>
             )}
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -225,17 +226,17 @@ export default async function GamePage({ params, searchParams }: Props) {
       <div style={{
         display: 'flex', justifyContent: 'center',
         padding: '14px 24px', borderBottom: '1px solid var(--border)',
-        background: 'var(--bg)', position: 'sticky', top: 0, zIndex: 20,
+        background: 'var(--bg)', position: 'sticky', top: 52, zIndex: 20,
       }}>
         <div style={{ display: 'inline-flex', background: 'var(--bg-inset)', borderRadius: 999, padding: 3, gap: 2 }}>
-          <Link href={`/juegos/${bggId}`} style={{
+          <Link href={`/juegos/${bggId}`} className="game-tab" style={{
             ...tabLink,
             background: activeTab === 'detalles' ? 'var(--olive)' : 'transparent',
             color: activeTab === 'detalles' ? 'white' : 'var(--text-3)',
           }}>
             Detalles
           </Link>
-          <Link href={`/juegos/${bggId}?tab=partidas`} style={{
+          <Link href={`/juegos/${bggId}?tab=partidas`} className="game-tab" style={{
             ...tabLink,
             background: activeTab === 'partidas' ? 'var(--olive)' : 'transparent',
             color: activeTab === 'partidas' ? 'white' : 'var(--text-3)',
@@ -247,7 +248,7 @@ export default async function GamePage({ params, searchParams }: Props) {
 
       {/* ── DETALLES ─────────────────────────────────── */}
       {activeTab === 'detalles' && (
-        <main className="game-detail-main">
+        <div className="game-detail-main">
 
           {/* Expansion banner */}
           {(game as any).is_expansion && (
@@ -266,7 +267,8 @@ export default async function GamePage({ params, searchParams }: Props) {
           <div className="game-detail-cols">
 
             {/* LEFT: Portada + Lista de deseos */}
-            <div>
+            <div className="game-detail-col-left">
+              <div className="game-detail-cover">
               {game.image_url ? (
                 <Image
                   src={game.image_url}
@@ -287,6 +289,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40,
                 }}><Picto emoji="🎲" /></div>
               )}
+              </div>
               {user && (
                 <div style={{ marginTop: 12 }}>
                   <WishlistButton gameId={game.id} />
@@ -355,9 +358,9 @@ export default async function GamePage({ params, searchParams }: Props) {
               <h2 className="t-section-title" style={{ marginBottom: 20, letterSpacing: '-0.01em' }}>
                 Información
               </h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div className="game-facts" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {game.year_published && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div className="game-fact" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <span style={{ fontSize: 24, flexShrink: 0 }}><Picto emoji="📅" /></span>
                     <div>
                       <p className="t-label">Publicado</p>
@@ -366,7 +369,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                   </div>
                 )}
                 {playersText && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div className="game-fact" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <img src={playersIcon} alt="" aria-hidden="true" style={{ width: 28, height: 28, flexShrink: 0 }} />
                     <div>
                       <p className="t-label">Jugadores</p>
@@ -375,7 +378,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                   </div>
                 )}
                 {game.min_playtime && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div className="game-fact" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <span style={{ fontSize: 24, flexShrink: 0 }}><Picto emoji="⏱" /></span>
                     <div>
                       <p className="t-label">Duración</p>
@@ -388,7 +391,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                   </div>
                 )}
                 {complexityLabel && game.complexity && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div className="game-fact" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <span style={{ fontSize: 24, flexShrink: 0 }}>🧠</span>
                     <div>
                       <p className="t-label">Complejidad</p>
@@ -397,7 +400,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                   </div>
                 )}
                 {game.bgg_rating && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div className="game-fact" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <span style={{ fontSize: 24, flexShrink: 0 }}><Picto emoji="⭐" /></span>
                     <div>
                       <p className="t-label">Rating BGG</p>
@@ -406,7 +409,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                   </div>
                 )}
                 {game.bgg_rank && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div className="game-fact" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <span style={{ fontSize: 24, flexShrink: 0 }}><Picto emoji="🏆" /></span>
                     <div>
                       <p className="t-label">Ranking BGG</p>
@@ -415,7 +418,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                   </div>
                 )}
                 {categories.length > 0 && (
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                  <div className="game-fact game-fact-wide" style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
                     <span style={{ fontSize: 24, flexShrink: 0, marginTop: 2 }}><Picto emoji="🎭" /></span>
                     <div>
                       <p className="t-label" style={{ marginBottom: 8 }}>Categorías</p>
@@ -426,7 +429,7 @@ export default async function GamePage({ params, searchParams }: Props) {
                             fontSize: 14, fontWeight: 600,
                             background: 'var(--brand-tint)', color: 'var(--brand)',
                           }}>
-                            {c}
+                            {categoryEs(c)}
                           </span>
                         ))}
                       </div>
@@ -443,12 +446,12 @@ export default async function GamePage({ params, searchParams }: Props) {
               )}
             </div>
           </div>
-        </main>
+        </div>
       )}
 
       {/* ── PARTIDAS ─────────────────────────────────── */}
       {activeTab === 'partidas' && (
-        <main style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(20px,3vw,36px) clamp(16px,4vw,40px) 80px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(20px,3vw,36px) clamp(16px,4vw,40px) 80px' }}>
           {!user ? (
             <div style={{ textAlign: 'center', padding: '64px 0' }}>
               <p style={{ fontSize: 32, marginBottom: 12 }}><Picto emoji="🎲" /></p>
@@ -466,7 +469,7 @@ export default async function GamePage({ params, searchParams }: Props) {
               <GamePlaysTab gameId={game.id} gameName={game.name} userId={user.id} />
             </Suspense>
           )}
-        </main>
+        </div>
       )}
 
       {/* ── Bottom CTA (guests only) ──────────────── */}

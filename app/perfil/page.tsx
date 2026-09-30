@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import { ProfileContent } from './ProfileContent';
 import { ProfileSkeleton } from './ProfileSkeleton';
 import type { Metadata } from 'next';
@@ -41,21 +40,11 @@ export default async function PerfilPage() {
         }
         @media (max-width: 640px) {
           .p-wrap { padding: 0 16px 80px; }
+          .p-row  { padding-top: 16px; }
         }
       `}</style>
 
-      <main className="p-wrap">
-
-        {/* Cabecera */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '24px 0 20px', borderBottom: '1px solid var(--border)' }}>
-          <Link
-            href="/"
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: '50%', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', color: 'var(--text)', textDecoration: 'none', fontSize: 16, flexShrink: 0 }}
-          >
-            ←
-          </Link>
-          <h1 className="t-section-title" style={{ letterSpacing: '-0.01em' }}>Tu Perfil</h1>
-        </div>
+      <div className="p-wrap">
 
         {/* Fila principal: columna izquierda + columna logros */}
         <div className="p-row">
@@ -73,7 +62,7 @@ export default async function PerfilPage() {
           </Suspense>
         </div>
 
-      </main>
+      </div>
     </>
   );
 }

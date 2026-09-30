@@ -122,16 +122,16 @@ export default async function PublicProfilePage({ params }: Props) {
           .p-aside { width: 100%; border-left: none; border-top: 1px solid var(--border);
                      padding-left: 0; padding-top: 28px; margin-top: 36px; }
         }
-        @media (max-width: 640px) { .p-wrap { padding: 0 16px 80px; } }
+        @media (max-width: 640px) {
+          .p-wrap { padding: 0 16px 80px; }
+          .p-row  { padding-top: 16px; }
+          .pp-head { gap: 16px !important; }
+          .pp-avatar { width: 88px !important; height: 88px !important; font-size: 32px !important; }
+          .pp-name { font-size: 22px !important; }
+        }
       `}</style>
 
-      <main className="p-wrap">
-
-        {/* Cabecera */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '24px 0 20px', borderBottom: '1px solid var(--border)' }}>
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: '50%', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', color: 'var(--text)', textDecoration: 'none', fontSize: 16, flexShrink: 0 }}>←</Link>
-          <h1 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.01em' }}>Perfil</h1>
-        </div>
+      <div className="p-wrap">
 
         <div className="p-row">
 
@@ -139,19 +139,19 @@ export default async function PublicProfilePage({ params }: Props) {
           <div className="p-main">
 
             {/* Cabecera del perfil */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 28 }}>
+            <div className="pp-head" style={{ display: 'flex', alignItems: 'flex-start', gap: 28 }}>
               <div style={{ flexShrink: 0 }}>
                 {avatarUrl ? (
-                  <Image src={avatarUrl} alt={displayName} width={130} height={130} style={{ borderRadius: '50%', objectFit: 'cover', boxShadow: '0 4px 20px rgba(62,94,59,0.2)' }} />
+                  <Image className="pp-avatar" src={avatarUrl} alt={displayName} width={130} height={130} style={{ borderRadius: '50%', objectFit: 'cover', boxShadow: '0 4px 20px rgba(62,94,59,0.2)' }} />
                 ) : (
-                  <div style={{ width: 130, height: 130, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, fontWeight: 800, color: 'white', background: 'linear-gradient(135deg, #c4b5e8, #7c5cbf)', boxShadow: '0 4px 20px rgba(124,92,191,0.25)' }}>
+                  <div className="pp-avatar" style={{ width: 130, height: 130, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, fontWeight: 800, color: 'white', background: 'linear-gradient(135deg, #c4b5e8, #7c5cbf)', boxShadow: '0 4px 20px rgba(124,92,191,0.25)' }}>
                     {displayName[0]?.toUpperCase()}
                   </div>
                 )}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                  <h2 style={{ fontSize: 26, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em' }}>{displayName}</h2>
+                  <h1 className="pp-name" style={{ fontSize: 26, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em' }}>{displayName}</h1>
                   {isVerified && <VerifiedBadge size={20} title="Perfil verificado" />}
                 </div>
                 {createdAt && (
@@ -265,7 +265,7 @@ export default async function PublicProfilePage({ params }: Props) {
           </div>
 
         </div>
-      </main>
+      </div>
     </>
   );
 }

@@ -24,7 +24,7 @@ function AffinityBadge({ value }: { value: number }) {
   const circ = 2 * Math.PI * r;
   const color = value >= 90 ? '#16a34a' : value >= 78 ? '#2563eb' : '#d97706';
   return (
-    <div style={{ position: 'relative', width: 56, height: 56, flexShrink: 0 }}>
+    <div title="Afinidad" aria-label={`Afinidad ${value}%`} style={{ position: 'relative', width: 56, height: 56, flexShrink: 0 }}>
       <svg width="56" height="56" style={{ transform: 'rotate(-90deg)' }}>
         <circle cx="28" cy="28" r={r} fill="none" stroke="var(--bg-inset)" strokeWidth="5" />
         <circle
@@ -37,8 +37,7 @@ function AffinityBadge({ value }: { value: number }) {
         position: 'absolute', inset: 0,
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       }}>
-        <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--text)', lineHeight: 1 }}>{value}%</span>
-        <span style={{ fontSize: 7, fontWeight: 600, color: 'var(--text-3)' }}>Afinidad</span>
+        <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{value}%</span>
       </div>
     </div>
   );
@@ -49,14 +48,14 @@ function AffinityBadge({ value }: { value: number }) {
 
 function TrendingSection({ games }: { games: Array<GameResult & { groupCount: number }> }) {
   return (
-    <section>
+    <section className="recom-trending">
       <div style={{ marginBottom: 12 }}>
         <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
-          5. Lo que están jugando grupos como el vuestro
+          Lo que están jugando grupos como el vuestro
         </h2>
         <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-3)' }}>Grupos con gustos y tamaño similares</p>
       </div>
-      <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 4 }}>
+      <div className="scroll-row" style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 4 }}>
         {games.slice(0, 8).map((game) => (
           <Link key={game.id} href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ flexShrink: 0, borderRadius: 14, overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', textDecoration: 'none', width: 140 }}>
             {game.image_url ? (
@@ -67,11 +66,11 @@ function TrendingSection({ games }: { games: Array<GameResult & { groupCount: nu
             )}
             <div style={{ padding: '10px 10px 12px' }}>
               <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 3 }}>{game.name}</p>
-              <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)' }}>Jugado por {game.groupCount} grupos</p>
+              <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-3)' }}>Jugado por {game.groupCount} grupos</p>
             </div>
           </Link>
         ))}
-        <Link href="/buscar" style={{ flexShrink: 0, borderRadius: 14, width: 60, border: '1.5px dashed var(--border)', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', color: 'var(--text-4)', fontSize: 22 }}>›</Link>
+        <Link href="/buscar" aria-label="Buscar más juegos" style={{ flexShrink: 0, borderRadius: 14, width: 60, border: '1.5px dashed var(--border)', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', color: 'var(--text-4)', fontSize: 22 }}>›</Link>
       </div>
     </section>
   );
@@ -92,13 +91,13 @@ function AlternativeRow({ game }: { game: GameResult & { affinity: number } }) {
           <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{game.name}</p>
           <div style={{ display: 'flex', gap: 6 }}>
             {game.min_players !== null && game.max_players !== null && (
-              <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+              <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-3)', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
                 <img src={playerIcon(game.min_players)} alt="" aria-hidden="true" style={{ width: 13, height: 13 }} />
                 {game.min_players === game.max_players ? game.min_players : `${game.min_players}-${game.max_players}`} jug.
               </span>
             )}
             {game.min_playtime !== null && (
-              <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)' }}>
+              <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-3)' }}>
                 <Picto emoji="⏱" /> {game.min_playtime}{game.max_playtime && game.max_playtime !== game.min_playtime ? `–${game.max_playtime}` : ''} min
               </span>
             )}
@@ -117,8 +116,8 @@ function WildcardCard({ game }: { game: GameResult & { affinity: number; wildcar
     <section style={{ borderRadius: 20, overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
       <div style={{ padding: '16px 16px 0' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>4. Algo diferente para vosotros</h2>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 6, background: 'rgba(234,179,8,0.12)', border: '1px solid rgba(234,179,8,0.2)', fontSize: 10, fontWeight: 700, color: '#b45309' }}>
+          <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>Algo diferente para vosotros</h2>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 6, background: 'rgba(234,179,8,0.12)', border: '1px solid rgba(234,179,8,0.2)', fontSize: 11, fontWeight: 700, color: '#b45309' }}>
             <Picto emoji="🌟" /> Salida de la rutina
           </span>
         </div>
@@ -133,7 +132,7 @@ function WildcardCard({ game }: { game: GameResult & { affinity: number; wildcar
           <div style={{ flex: 1 }}>
             <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', marginBottom: 4, lineHeight: 1.2 }}>{game.name}</p>
             {game.min_players !== null && game.max_players !== null && (
-              <p style={{ fontSize: 11, color: 'var(--text-4)', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>
+              <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>
                 <img src={playerIcon(game.min_players)} alt="" aria-hidden="true" style={{ width: 13, height: 13 }} />
                 {game.min_players === game.max_players ? game.min_players : `${game.min_players}-${game.max_players}`} jugadores
                 {game.min_playtime !== null && <span>· <Picto emoji="⏱" /> {game.min_playtime}{game.max_playtime && game.max_playtime !== game.min_playtime ? `–${game.max_playtime}` : ''} min</span>}
@@ -144,8 +143,8 @@ function WildcardCard({ game }: { game: GameResult & { affinity: number; wildcar
           </div>
         </div>
       </Link>
-      <div style={{ borderTop: '1px solid var(--border)', padding: '10px 16px' }}>
-        <Link href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 13, fontWeight: 600, color: 'var(--brand)', textDecoration: 'none' }}>
+      <div style={{ borderTop: '1px solid var(--border)', padding: '0 16px' }}>
+        <Link href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 44, fontSize: 13, fontWeight: 600, color: 'var(--brand)', textDecoration: 'none' }}>
           Saber más <span>›</span>
         </Link>
       </div>
@@ -165,7 +164,7 @@ function TipsBox() {
       <p style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5, marginBottom: 12 }}>
         Registra tus partidas y valora los juegos con estrellas para que nuestras recomendaciones sean cada vez más precisas.
       </p>
-      <Link href="/partidas" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, color: 'var(--brand)', textDecoration: 'none' }}>
+      <Link href="/partidas" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 44, margin: '-8px 0', fontSize: 13, fontWeight: 600, color: 'var(--brand)', textDecoration: 'none' }}>
         Ver mis partidas <span>›</span>
       </Link>
     </div>
@@ -205,10 +204,10 @@ export async function RecommendationSection({ groupId, memberCount, filters }: P
   return (
     <div className="recom-skeleton-cols">
       {/* Left column */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, minWidth: 0 }}>
+      <div className="recom-left" style={{ display: 'flex', flexDirection: 'column', gap: 24, minWidth: 0 }}>
         <section>
           <h2 className="t-section-title" style={{ marginBottom: 14 }}>
-            2. Nuestra recomendación para vosotros
+            Nuestra recomendación para vosotros
           </h2>
           <DismissableTopRec
             initial={recs.top}
@@ -225,7 +224,7 @@ export async function RecommendationSection({ groupId, memberCount, filters }: P
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {recs.alternatives.length > 0 && (
           <section style={{ borderRadius: 20, padding: '18px 18px 12px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-            <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>3. Otras grandes opciones</h2>
+            <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Otras grandes opciones</h2>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               {recs.alternatives.slice(0, 3).map((game, i) => (
                 <div key={game.id}>

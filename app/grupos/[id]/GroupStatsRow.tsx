@@ -12,16 +12,16 @@ function StatCard({ value, label, link, sub }: {
       <p className="grupo-stat-value" style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em', marginBottom: 3, lineHeight: 1 }}>
         {value}
       </p>
-      <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginBottom: sub || link ? 8 : 0 }}>
+      <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-3)', marginBottom: sub || link ? 8 : 0 }}>
         {label}
       </p>
       {sub && (
-        <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)', marginBottom: link ? 6 : 0 }}>
+        <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-3)', marginBottom: link ? 6 : 0 }}>
           {sub}
         </p>
       )}
       {link && (
-        <Link href={link.href} style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none' }}>
+        <Link href={link.href} className="tap" style={{ justifyContent: 'flex-start', margin: '-12px 0', fontSize: 13, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none' }}>
           {link.text} →
         </Link>
       )}

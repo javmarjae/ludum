@@ -54,7 +54,7 @@ export function CreateCommentForm({ postId, communitySlug }: Props) {
           }}
         />
         {error && (
-          <p style={{ fontSize: 12, fontWeight: 600, color: '#c0392b', marginTop: 4 }}>{error}</p>
+          <p className="form-error" role="alert" style={{ marginTop: 4 }}>{error}</p>
         )}
       </div>
       <button

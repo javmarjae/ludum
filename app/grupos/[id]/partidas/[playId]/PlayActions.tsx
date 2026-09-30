@@ -61,8 +61,8 @@ export function PlayActions({ playId, groupId, initialNotes, initialIsPublic, on
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Notas</h2>
           {!editingNotes && (
-            <button onClick={() => setEditingNotes(true)} style={{
-              fontSize: 12, fontWeight: 700, padding: '5px 12px', borderRadius: 999,
+            <button onClick={() => setEditingNotes(true)} className="tap" style={{
+              fontSize: 13, fontWeight: 700, padding: '5px 14px', borderRadius: 999,
               background: 'var(--bg-card)', boxShadow: 'var(--shadow-btn)', border: 'none',
               color: 'var(--text-3)', cursor: 'pointer', fontFamily: 'inherit',
             }}>
@@ -74,23 +74,24 @@ export function PlayActions({ playId, groupId, initialNotes, initialIsPublic, on
         {editingNotes ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <textarea
+              aria-label="Notas de la partida"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="¿Algo memorable de esta partida?"
               rows={3}
               style={inputStyle}
             />
-            {notesError && <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--brand)' }}>{notesError}</p>}
+            {notesError && <p role="alert" className="form-error">{notesError}</p>}
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={handleSaveNotes} disabled={savingNotes} style={{
-                flex: 1, padding: '10px', borderRadius: 999, fontWeight: 700, fontSize: 14,
-                color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',
+                flex: 1, minHeight: 44, padding: '10px', borderRadius: 10, fontWeight: 700, fontSize: 14,
+                color: 'var(--on-brand)', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',
                 border: 'none', cursor: 'pointer', fontFamily: 'inherit', opacity: savingNotes ? 0.6 : 1,
               }}>
                 {savingNotes ? 'Guardando...' : 'Guardar'}
               </button>
               <button onClick={() => { setEditingNotes(false); setNotes(initialNotes); }} style={{
-                padding: '10px 16px', borderRadius: 999, fontWeight: 700, fontSize: 14,
+                minHeight: 44, padding: '10px 16px', borderRadius: 10, fontWeight: 700, fontSize: 14,
                 background: 'var(--bg-card)', boxShadow: 'var(--shadow-btn)', border: 'none',
                 color: 'var(--text-3)', cursor: 'pointer', fontFamily: 'inherit',
               }}>
@@ -104,7 +105,7 @@ export function PlayActions({ playId, groupId, initialNotes, initialIsPublic, on
           </div>
         ) : (
           <div style={{ borderRadius: 24, padding: '14px 20px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-            <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-4)' }}>Sin notas.</p>
+            <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-3)' }}>Sin notas.</p>
           </div>
         )}
       </section>
@@ -123,6 +124,10 @@ export function PlayActions({ playId, groupId, initialNotes, initialIsPublic, on
           <button
             onClick={handleToggleVisibility}
             disabled={savingVisibility}
+            role="switch"
+            aria-checked={isPublic}
+            aria-label="Partida pública"
+            className="switch-hit"
             style={{
               width: 44, height: 24, borderRadius: 999, border: 'none', cursor: savingVisibility ? 'default' : 'pointer',
               background: isPublic ? 'var(--brand)' : 'var(--bg-inset)',
@@ -144,8 +149,8 @@ export function PlayActions({ playId, groupId, initialNotes, initialIsPublic, on
       <div style={{ borderTop: '1px solid var(--border)', paddingTop: 20, marginTop: 4 }}>
         {!confirmDelete ? (
           <button onClick={() => setConfirmDelete(true)} style={{
-            width: '100%', padding: '12px', borderRadius: 999, fontWeight: 700, fontSize: 14,
-            background: 'none', border: '1.5px solid var(--border)', color: 'var(--text-4)',
+            width: '100%', minHeight: 44, padding: '12px', borderRadius: 10, fontWeight: 700, fontSize: 14,
+            background: 'none', border: '1.5px solid var(--border)', color: 'var(--danger)',
             cursor: 'pointer', fontFamily: 'inherit',
           }}>
             Eliminar partida
@@ -156,14 +161,14 @@ export function PlayActions({ playId, groupId, initialNotes, initialIsPublic, on
             <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-3)', marginBottom: 14 }}>Esta acción es irreversible.</p>
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={handleDelete} disabled={deleting} style={{
-                flex: 1, padding: '10px', borderRadius: 999, fontWeight: 700, fontSize: 14,
-                background: '#dc2626', border: 'none', color: 'white',
+                flex: 1, minHeight: 44, padding: '10px', borderRadius: 10, fontWeight: 700, fontSize: 14,
+                background: 'var(--danger)', border: 'none', color: 'var(--on-brand)',
                 cursor: 'pointer', fontFamily: 'inherit', opacity: deleting ? 0.6 : 1,
               }}>
                 {deleting ? 'Eliminando...' : 'Sí, eliminar'}
               </button>
               <button onClick={() => setConfirmDelete(false)} style={{
-                padding: '10px 16px', borderRadius: 999, fontWeight: 700, fontSize: 14,
+                minHeight: 44, padding: '10px 16px', borderRadius: 10, fontWeight: 700, fontSize: 14,
                 background: 'var(--bg-inset)', border: 'none', color: 'var(--text-3)',
                 cursor: 'pointer', fontFamily: 'inherit',
               }}>

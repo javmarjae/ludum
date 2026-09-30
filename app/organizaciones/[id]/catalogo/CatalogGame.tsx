@@ -96,14 +96,16 @@ export function CatalogGame({ orgId, game, entry }: Props) {
         <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
           <button
             onClick={() => setEditing(e => !e)}
-            style={{ padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', background: 'var(--bg-inset)', color: 'var(--text-2)', border: '1px solid var(--border)' }}
+            className="tap"
+            style={{ padding: '6px 14px', borderRadius: 999, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', background: 'var(--bg-inset)', color: 'var(--text-2)', border: '1px solid var(--border)' }}
           >
             {editing ? 'Cancelar' : 'Editar'}
           </button>
           <button
             onClick={remove}
             disabled={removing}
-            style={{ padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', background: 'rgba(220,38,38,0.08)', color: '#dc2626', border: '1px solid rgba(220,38,38,0.2)', opacity: removing ? 0.5 : 1 }}
+            className="tap"
+            style={{ padding: '6px 14px', borderRadius: 999, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', background: 'var(--danger-tint)', color: 'var(--danger)', border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)', opacity: removing ? 0.5 : 1 }}
           >
             Quitar
           </button>

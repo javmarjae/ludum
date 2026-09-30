@@ -88,7 +88,7 @@ export function NuevaComunidadForm({ categories }: { categories: Category[] }) {
       )}
 
       {error && (
-        <p style={{ fontSize: 13, fontWeight: 600, color: '#c0392b', padding: '10px 14px', borderRadius: 8, background: 'rgba(192,57,43,0.08)' }}>
+        <p className="form-error" role="alert">
           {error}
         </p>
       )}

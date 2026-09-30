@@ -24,7 +24,7 @@ export default async function NuevaOrganizacionPage() {
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: '/grupos', label: 'Grupos' }} />
 
-      <main style={{ maxWidth: 560, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 560, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)', marginBottom: 6 }}>
             Solicitar organización
@@ -62,7 +62,7 @@ export default async function NuevaOrganizacionPage() {
         ) : (
           <OrgRequestForm action={submitOrgRequest} />
         )}
-      </main>
+      </div>
     </div>
   );
 }

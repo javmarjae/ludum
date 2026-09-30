@@ -149,15 +149,15 @@ export default function UpdatePasswordPage() {
       console.error('[update-password] updateUser failed:', error.message);
       setError('No se pudo actualizar la contraseña. El enlace puede haber caducado.');
     } else {
-      window.location.href = '/grupos';
+      window.location.href = '/';
     }
   }
 
   return (
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
       <Nav />
-      <main style={{ maxWidth: 400, margin: '0 auto', padding: '64px 24px 80px' }}>
-        <div style={{ borderRadius: 12, padding: 32, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+      <div className="auth-wrap">
+        <div className="auth-card">
           <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 6 }}>
             Nueva contraseña
           </h1>
@@ -170,7 +170,7 @@ export default function UpdatePasswordPage() {
               <label htmlFor="update-password" style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Nueva contraseña</label>
               <input
                 id="update-password"
-                type="password" required value={password}
+                type="password" autoComplete="new-password" required value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" style={inputStyle}
               />
@@ -179,28 +179,28 @@ export default function UpdatePasswordPage() {
               <label htmlFor="update-password-confirm" style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Confirmar contraseña</label>
               <input
                 id="update-password-confirm"
-                type="password" required value={confirm}
+                type="password" autoComplete="new-password" required value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 placeholder="••••••••" style={inputStyle}
               />
             </div>
 
             {error && (
-              <p style={{ fontSize: 13, borderRadius: 8, padding: '10px 14px', fontWeight: 600, background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(62,94,59,0.2)' }}>
+              <p role="alert" className="form-error">
                 {error}
               </p>
             )}
 
             <button type="submit" disabled={loading || verifying} style={{
-              width: '100%', padding: '14px', borderRadius: 999, fontWeight: 800, fontSize: 16,
-              color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',
+              width: '100%', padding: '14px', borderRadius: 10, fontWeight: 800, fontSize: 16,
+              color: 'var(--on-brand)', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',
               border: 'none', cursor: 'pointer', fontFamily: 'inherit', opacity: loading || verifying ? 0.6 : 1,
             }}>
               {verifying ? 'Validando enlace...' : loading ? 'Guardando...' : 'Guardar contraseña'}
             </button>
           </form>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

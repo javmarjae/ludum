@@ -187,7 +187,7 @@ export default async function RecomendadorPage({ searchParams }: Props) {
           <div style={{ position: 'relative' }}>
             <FiltersPanel activeGroupId={activeGroupId} />
           </div>
-          <Link href={activeGroupId ? `/grupos/${activeGroupId}/partidas/nueva` : '/grupos'} style={{ padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'var(--brand)', color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6, boxShadow: 'var(--shadow-btn-brand)' }}>
+          <Link href={activeGroupId ? `/grupos/${activeGroupId}/partidas/nueva` : '/grupos'} className="tap" style={{ padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'var(--brand)', color: 'var(--on-brand)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6, boxShadow: 'var(--shadow-btn-brand)' }}>
             + Registrar partida
           </Link>
         </div>
@@ -198,7 +198,7 @@ export default async function RecomendadorPage({ searchParams }: Props) {
         {/* Section 1: Group selector — renders immediately */}
         <section>
           <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>
-            1. ¿Quién va a jugar?
+            ¿Quién va a jugar?
           </h2>
           <p style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 14 }}>
             Selecciona el grupo o crea una partida nueva

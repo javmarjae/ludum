@@ -60,7 +60,7 @@ export default async function GroupPlaysPage({ params, searchParams }: Props) {
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
       <AppNav back={{ href: `/grupos/${groupId}`, label: group.name }} />
 
-      <main style={{ maxWidth: 680, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 680, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 4 }}>
             Partidas
@@ -137,7 +137,7 @@ export default async function GroupPlaysPage({ params, searchParams }: Props) {
             )}
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

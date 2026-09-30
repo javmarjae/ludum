@@ -11,8 +11,8 @@ colors:
   bg-card: "#FFFFFF"
   bg-inset: "#EDE4D9"
   text-2: "#57534A"
-  text-3: "#7A7469"
-  text-4: "#A09B93"
+  text-3: "#6E685E"
+  text-4: "#857F74"
   brand-tint: "#E4F0E3"
   border: "rgba(216,203,188,0.7)"
   rating-high: "#16a34a"
@@ -104,7 +104,7 @@ Paleta restringida y cálida: un acento (verde bosque) que carga la marca, neutr
 - **White / Bg-card** (`#FFFFFF`): superficie de tarjetas, inputs, nav.
 - **Bg-inset** (`#EDE4D9`): fondo de chips, badges, filas hover — un nivel "hundido" respecto a la tarjeta.
 - **Olive ink** (`#3A372F`): texto principal.
-- **Text-2/3/4** (`#57534A` / `#7A7469` / `#A09B93`): jerarquía descendente de texto secundario, nunca gris puro.
+- **Text-2/3/4** (`#57534A` / `#6E685E` / `#857F74`): jerarquía descendente de texto secundario, nunca gris puro. Text-3 cumple AA (≥4.5:1) sobre blanco; text-4 (~4:1) solo para metadatos no esenciales.
 - **Sand border** (`rgba(216,203,188,0.7)`): el "borde implícito" que sustituye a la sombra difusa en casi todos los componentes.
 
 ### Named Rules

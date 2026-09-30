@@ -6,7 +6,7 @@ export default function Loading() {
   return (
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
       <Nav back={{ href: '/recomendador', label: 'Cambiar preferencias' }} />
-      <main style={{ maxWidth: 680, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 680, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
         <div style={{ marginBottom: 32 }}>
           <div style={{ height: 36, width: 260, borderRadius: 10, background: 'var(--bg-inset)', marginBottom: 10 }} className="skeleton" />
           <div style={{ height: 16, width: 180, borderRadius: 6, background: 'var(--bg-inset)' }} className="skeleton" />
@@ -22,7 +22,7 @@ export default function Loading() {
             </div>
           ))}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -55,7 +55,7 @@ export default async function OrgPage({ params }: Props) {
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: '/grupos', label: 'Grupos' }} />
 
-      <main style={{ maxWidth: 860, margin: '0 auto', padding: '40px 24px 80px' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '40px clamp(16px,4vw,24px) 80px' }}>
 
         {/* ── Header ─────────────────────────────────── */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20, marginBottom: 36, flexWrap: 'wrap' }}>
@@ -99,6 +99,7 @@ export default async function OrgPage({ params }: Props) {
           <div style={{ display: 'flex', gap: 10, marginBottom: 40, flexWrap: 'wrap' }}>
             <Link
               href={`/organizaciones/${id}/catalogo`}
+              className="tap"
               style={{ padding: '9px 20px', borderRadius: 10, fontWeight: 700, fontSize: 14, background: 'var(--bg-card)', color: 'var(--text-2)', textDecoration: 'none', boxShadow: 'var(--shadow-card)' }}
             >
               📦 Catálogo
@@ -106,7 +107,8 @@ export default async function OrgPage({ params }: Props) {
             {isStaff && (
               <Link
                 href="/torneos/nuevo"
-                style={{ padding: '9px 20px', borderRadius: 10, fontWeight: 700, fontSize: 14, background: 'var(--brand)', color: 'white', textDecoration: 'none', boxShadow: 'var(--shadow-btn-brand)' }}
+                className="tap"
+                style={{ padding: '9px 20px', borderRadius: 10, fontWeight: 700, fontSize: 14, background: 'var(--brand)', color: 'var(--on-brand)', textDecoration: 'none', boxShadow: 'var(--shadow-btn-brand)' }}
               >
                 + Nuevo torneo
               </Link>
@@ -179,7 +181,7 @@ export default async function OrgPage({ params }: Props) {
                   A
                 </div>
                 <span style={{ flex: 1, fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>Administrador</span>
-                <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--brand)', background: 'white', padding: '2px 8px', borderRadius: 20 }}>Admin</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)', background: 'var(--bg-card)', padding: '2px 8px', borderRadius: 20 }}>Admin</span>
               </div>
 
               <ManageStaff orgId={id} members={members} isAdmin={isAdmin} />
@@ -198,7 +200,7 @@ export default async function OrgPage({ params }: Props) {
           )}
 
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -76,7 +76,7 @@ function AddMatchForm({ roundId, tournamentId, participants }: { roundId: string
 
   return (
     <form onSubmit={handleSubmit} style={{ marginTop: 10, padding: '14px', borderRadius: 14, background: 'var(--bg-inset)', border: '1px solid var(--border)' }}>
-      <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Nuevo enfrentamiento</p>
+      <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-2)', marginBottom: 10 }}>Nuevo enfrentamiento</p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
         {participants.map(p => (
           <button key={p.id} type="button" onClick={() => toggle(p.id)}
@@ -124,7 +124,7 @@ function RecordResultForm({ match, tournamentId, onDone }: { match: Match; tourn
 
   return (
     <form onSubmit={handleSubmit} style={{ marginTop: 8, padding: '14px', borderRadius: 14, background: 'var(--bg-inset)', border: '1px solid var(--border)' }}>
-      <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Registrar resultado</p>
+      <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-2)', marginBottom: 10 }}>Registrar resultado</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
         {match.match_results.map(r => {
           const name = r.tournament_participants?.profiles?.display_name ?? r.tournament_participants?.guest_name ?? 'Jugador';

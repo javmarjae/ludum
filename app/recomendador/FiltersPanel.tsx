@@ -83,7 +83,9 @@ export function FiltersPanel({ activeGroupId }: Props) {
       {/* Toggle button */}
       <button
         onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
         style={{
+          minHeight: 44,
           padding: '8px 14px',
           borderRadius: 10,
           fontSize: 13,
@@ -111,15 +113,15 @@ export function FiltersPanel({ activeGroupId }: Props) {
         {activeCount > 0 && (
           <span style={{
             minWidth: 18, height: 18, borderRadius: 9,
-            background: 'var(--brand)', color: 'white',
-            fontSize: 10, fontWeight: 800,
+            background: 'var(--brand)', color: 'var(--on-brand)',
+            fontSize: 11, fontWeight: 800,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: '0 4px',
           }}>
             {activeCount}
           </span>
         )}
-        <span style={{ fontSize: 10, color: 'inherit', opacity: 0.7, marginLeft: 2 }}>
+        <span aria-hidden="true" style={{ fontSize: 11, color: 'inherit', opacity: 0.7, marginLeft: 2 }}>
           {open ? '▲' : '▼'}
         </span>
       </button>
@@ -138,12 +140,12 @@ export function FiltersPanel({ activeGroupId }: Props) {
           border: '1px solid var(--border)',
           width: 'min(600px, calc(100vw - 40px))',
         }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div className="filters-panel-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
             {SECTIONS.map((section) => {
               const active = searchParams.get(section.key);
               return (
                 <div key={section.key}>
-                  <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 8 }}>
                     {section.label}
                   </p>
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -153,6 +155,7 @@ export function FiltersPanel({ activeGroupId }: Props) {
                         <button
                           key={chip.value}
                           onClick={() => toggle(section.key, chip.value)}
+                          className="tap"
                           style={{
                             display: 'flex', alignItems: 'center', gap: 5,
                             padding: '6px 12px', borderRadius: 999,

@@ -177,7 +177,7 @@ export async function ProfileContent({ userId, isVerified, displayName, bio, ava
           {wishlist.length === 0 ? (
             <p className="t-card-sub">
               Tu lista de deseos está vacía.{' '}
-              <Link href="/buscar" style={{ color: 'var(--brand)', fontWeight: 700, textDecoration: 'none' }}>Descubre juegos →</Link>
+              <Link href="/buscar" className="tap" style={{ color: 'var(--brand)', fontWeight: 700, textDecoration: 'none' }}>Descubre juegos →</Link>
             </p>
           ) : (
             <div className="scroll-row" style={{ display: 'flex', gap: 20, overflowX: 'auto', paddingBottom: 4 }}>

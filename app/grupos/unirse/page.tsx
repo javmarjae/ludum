@@ -25,7 +25,7 @@ export default function UnirseGrupoPage() {
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
       <Nav back={{ href: '/grupos', label: 'Mis grupos' }} />
 
-      <main style={{ maxWidth: 440, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 440, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
         <div style={{ borderRadius: 32, padding: 32, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
           <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 8 }}>Unirse a un grupo</h1>
           <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-3)', marginBottom: 28 }}>
@@ -46,12 +46,12 @@ export default function UnirseGrupoPage() {
               />
             </div>
             {error && (
-              <p style={{ fontSize: 13, borderRadius: 16, padding: '10px 14px', fontWeight: 600, background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(62,94,59,0.2)' }}>
+              <p className="form-error" role="alert">
                 {error}
               </p>
             )}
             <button type="submit" disabled={loading} style={{
-              width: '100%', padding: '14px', borderRadius: 999, fontWeight: 800, fontSize: 16,
+              width: '100%', padding: '14px', borderRadius: 10, fontWeight: 800, fontSize: 16,
               color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',
               border: 'none', cursor: 'pointer', fontFamily: 'inherit', opacity: loading ? 0.6 : 1,
             }}>
@@ -59,7 +59,7 @@ export default function UnirseGrupoPage() {
             </button>
           </form>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

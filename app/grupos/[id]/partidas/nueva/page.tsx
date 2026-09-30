@@ -30,7 +30,7 @@ export default async function NuevaPartidaPage({ params }: Props) {
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: `/grupos/${groupId}`, label: group.name }} />
 
-      <main style={{ maxWidth: 580, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 580, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 6 }}>Registrar partida</h1>
           <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-3)' }}>¿A qué jugasteis? ¿Quién ganó?</p>
@@ -53,7 +53,7 @@ export default async function NuevaPartidaPage({ params }: Props) {
         ) : (
           <NuevaPartidaForm groupId={groupId} games={games as any[]} members={memberList as any[]} />
         )}
-      </main>
+      </div>
     </div>
   );
 }

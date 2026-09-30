@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { safeNext } from '@/lib/safe-next';
 
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -39,6 +40,12 @@ export async function proxy(request: NextRequest) {
     url.pathname = '/auth/login';
     url.searchParams.set('next', request.nextUrl.pathname);
     return NextResponse.redirect(url);
+  }
+
+  const { pathname } = request.nextUrl;
+  if (user && (pathname === '/auth/login' || pathname === '/auth/signup')) {
+    const target = new URL(safeNext(request.nextUrl.searchParams.get('next')), request.url);
+    return NextResponse.redirect(target);
   }
 
   return supabaseResponse;

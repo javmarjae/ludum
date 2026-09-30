@@ -72,7 +72,7 @@ export function EditOrgForm({ orgId, initialDescription, initialLocation, initia
       <button
         onClick={() => setOpen(true)}
         style={{
-          display: 'flex', alignItems: 'center', gap: 8, width: '100%',
+          display: 'flex', alignItems: 'center', gap: 8, width: '100%', minHeight: 44,
           padding: '9px 14px', borderRadius: 10, fontSize: 13, fontWeight: 700,
           cursor: 'pointer', fontFamily: 'inherit',
           color: 'var(--text-2)', background: 'var(--bg-inset)',

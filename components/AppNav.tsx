@@ -59,7 +59,7 @@ export async function AppNav({ back }: { back?: { href: string; label: string } 
         style={{
           display: 'flex',
           alignItems: 'center',
-          padding: '0 28px',
+          padding: '0 clamp(16px, 4vw, 28px)',
           height: 52,
           borderBottom: '1px solid var(--border)',
           background: 'var(--bg-card)',
@@ -72,6 +72,7 @@ export async function AppNav({ back }: { back?: { href: string; label: string } 
       >
         <Link
           href={back.href}
+          className="tap"
           style={{
             display: 'inline-flex',
             alignItems: 'center',

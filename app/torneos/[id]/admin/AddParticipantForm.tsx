@@ -103,7 +103,7 @@ export function AddParticipantForm({ tournamentId, participants }: { tournamentI
 
       {/* Add form */}
       <div style={{ borderRadius: 18, overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', padding: '18px' }}>
-        <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-3)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Añadir participante</p>
+        <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-2)', marginBottom: 12 }}>Añadir participante</p>
 
         {/* Mode toggle */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
@@ -152,7 +152,7 @@ export function AddParticipantForm({ tournamentId, participants }: { tournamentI
         )}
 
         {error && (
-          <p style={{ marginTop: 10, fontSize: 13, fontWeight: 600, color: '#dc2626' }}>{error}</p>
+          <p className="form-error" role="alert" style={{ marginTop: 10 }}>{error}</p>
         )}
       </div>
     </div>

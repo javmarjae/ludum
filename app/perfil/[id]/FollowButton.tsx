@@ -38,6 +38,7 @@ export function FollowButton({ profileId, initialIsFollowing, initialFollowersCo
         onClick={handleToggle}
         disabled={loading}
         style={{
+          minHeight: 44,
           padding: '9px 22px',
           borderRadius: 999,
           fontSize: 14,

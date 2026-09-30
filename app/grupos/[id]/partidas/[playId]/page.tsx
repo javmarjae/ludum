@@ -60,7 +60,7 @@ export default async function PlayDetailPage({ params }: Props) {
       <AppNav back={{ href: `/grupos/${groupId}`, label: group?.name ?? 'Grupo' }} />
       <GameRatingProvider gameId={game?.id ?? ''}>
 
-      <main style={{ maxWidth: 560, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 560, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
         {/* Cabecera juego */}
         <div style={{ borderRadius: 32, padding: 24, marginBottom: 20, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', display: 'flex', gap: 16, alignItems: 'center' }}>
           {game?.image_url
@@ -144,7 +144,7 @@ export default async function PlayDetailPage({ params }: Props) {
             <ShareButton playId={playId} />
           </div>
         )}
-      </main>
+      </div>
       </GameRatingProvider>
     </div>
   );

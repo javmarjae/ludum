@@ -47,6 +47,7 @@ export function BetaBanner() {
         borderRadius: 16,
         boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
         padding: '14px 16px 14px 18px',
+        overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
         gap: 12,
@@ -110,11 +111,11 @@ export function BetaBanner() {
         position: 'absolute',
         bottom: 0,
         left: 0,
+        right: 0,
         height: 3,
-        borderRadius: '0 0 16px 16px',
         background: 'var(--brand)',
+        transformOrigin: 'left',
         animation: `beta-progress ${AUTO_DISMISS_MS}ms linear forwards`,
-        width: '100%',
       }} />
 
       <style>{`
@@ -127,8 +128,8 @@ export function BetaBanner() {
           to   { opacity: 0; transform: translateX(-50%) translateY(12px); }
         }
         @keyframes beta-progress {
-          from { width: 100%; }
-          to   { width: 0%; }
+          from { transform: scaleX(1); }
+          to   { transform: scaleX(0); }
         }
       `}</style>
     </div>

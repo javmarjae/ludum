@@ -115,8 +115,8 @@ function RankChart({ data, months }: { data: number[]; months: { label: string; 
       {months.map((m, i) => {
         const x = P + (i / Math.max(months.length - 1, 1)) * (W - P * 2);
         return (
-          <text key={m.key} x={x.toFixed(1)} y={H + 16} textAnchor="middle" fontSize="10"
-            fill="var(--text-4)" fontFamily="Urbanist, system-ui" fontWeight="600" style={{ textTransform: 'capitalize' }}>
+          <text key={m.key} x={x.toFixed(1)} y={H + 16} textAnchor="middle" fontSize="11"
+            fill="var(--text-3)" fontFamily="Urbanist, system-ui" fontWeight="600" style={{ textTransform: 'capitalize' }}>
             {m.label}
           </text>
         );
@@ -356,7 +356,7 @@ export function TrackerClient({ plays, ratings, totalUsers, userRank, userId }: 
                   onChange={e => setGameSearch(e.target.value)}
                   placeholder="Buscar juego..."
                   style={{
-                    width: '100%', padding: '9px 12px 9px 36px', borderRadius: 10,
+                    width: '100%', minHeight: 44, padding: '10px 12px 10px 36px', borderRadius: 10,
                     fontSize: 14, fontWeight: 500, border: 'none',
                     background: 'var(--bg-inset)', boxShadow: 'var(--shadow-input)',
                     color: 'var(--text)', outline: 'none', fontFamily: 'inherit',
@@ -370,7 +370,7 @@ export function TrackerClient({ plays, ratings, totalUsers, userRank, userId }: 
                 value={gameSort}
                 onChange={e => setGameSort(e.target.value as GameSort)}
                 style={{
-                  padding: '9px 12px', borderRadius: 10, fontSize: 14, fontWeight: 600,
+                  minHeight: 44, padding: '10px 12px', borderRadius: 10, fontSize: 14, fontWeight: 600,
                   border: 'none', background: 'var(--bg-inset)', boxShadow: 'var(--shadow-input)',
                   color: 'var(--text)', cursor: 'pointer', fontFamily: 'inherit', outline: 'none',
                 }}
@@ -382,7 +382,7 @@ export function TrackerClient({ plays, ratings, totalUsers, userRank, userId }: 
             </div>
           </div>
 
-          <div style={{ maxHeight: 640, overflowY: 'auto' }}>
+          <div className="tracker-games-list" style={{ maxHeight: 640, overflowY: 'auto' }}>
             {gameList.length === 0 ? (
               <div style={{ padding: '48px 24px', textAlign: 'center' }}>
                 <p style={{ fontSize: 15, color: 'var(--text-3)', fontWeight: 500 }}>

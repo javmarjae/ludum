@@ -80,13 +80,15 @@ export function Achievements({ plays, collectionCount, userId, compact = false }
           {achievements.map((a) => (
             <div
               key={a.id}
+              className="achievement-item"
               style={{ position: 'relative' }}
               onMouseEnter={() => setHoveredId(a.id)}
               onMouseLeave={() => setHoveredId(null)}
+              onClick={() => setHoveredId(id => (id === a.id ? null : a.id))}
             >
               {/* Tooltip */}
               {hoveredId === a.id && (
-                <div style={{
+                <div className="achievement-tooltip" style={{
                   position: 'absolute',
                   bottom: 'calc(100% + 8px)',
                   left: '50%',
@@ -127,11 +129,19 @@ export function Achievements({ plays, collectionCount, userId, compact = false }
                 transform: hoveredId === a.id ? 'scale(1.06)' : 'scale(1)',
               }}>
                 <div style={{ fontSize: 22, marginBottom: 4, filter: a.unlocked ? 'none' : 'grayscale(1)' }}><Picto emoji={a.icon} /></div>
-                <p style={{ fontSize: 10, fontWeight: 700, color: a.unlocked ? 'var(--brand)' : 'var(--text)', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.title}</p>
+                <p className="achievement-title" style={{ fontSize: 12, fontWeight: 700, color: a.unlocked ? 'var(--brand)' : 'var(--text)', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.title}</p>
               </div>
             </div>
           ))}
         </div>
+        {hoveredId && (() => {
+          const a = achievements.find(x => x.id === hoveredId);
+          return a ? (
+            <p className="achievement-desc-mobile" aria-live="polite">
+              <strong>{a.title}</strong> · {a.desc}{a.unlocked ? '' : ' (bloqueado)'}
+            </p>
+          ) : null;
+        })()}
       </div>
     );
   }

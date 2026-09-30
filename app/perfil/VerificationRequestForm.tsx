@@ -162,7 +162,7 @@ export function VerificationRequestForm({ existingRequest }: Props) {
         </div>
 
         {error && (
-          <p style={{ fontSize: 13, fontWeight: 600, color: '#dc2626', padding: '8px 12px', borderRadius: 8, background: 'rgba(220,38,38,0.07)' }}>
+          <p className="form-error" role="alert">
             {error}
           </p>
         )}

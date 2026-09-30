@@ -61,9 +61,6 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
         {/* Header row */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32, gap: 16 }}>
           <div>
-            <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--brand)', marginBottom: 8 }}>
-              Para empezar
-            </p>
             <h2 style={{ fontSize: isLanding ? 'clamp(26px, 3vw, 36px)' : 20, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em', marginBottom: 10 }}>
               Iníciate en los juegos de mesa
             </h2>
@@ -102,7 +99,7 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
           {BEGINNER_TIPS.map((tip) => (
             <div key={tip.title} style={{
               borderRadius: 16, padding: '22px 24px', background: 'var(--bg-card)',
-              boxShadow: '0 2px 12px rgba(58,55,47,0.09), 0 0 0 1px rgba(216,203,188,0.7)',
+              boxShadow: 'var(--shadow-card)',
               display: 'flex', flexDirection: 'column', gap: 10,
             }}>
               <span style={{ fontSize: 28 }}><Picto emoji={tip.icon} /></span>
@@ -113,7 +110,7 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
         </div>
 
         {/* Game carousel */}
-        <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap: 16, overflowX: 'auto', paddingBottom: 12, WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
+        <div className="scroll-row" style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap: 16, overflowX: 'auto', paddingBottom: 12, WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
           {games.map((game) => (
             <Link
               key={game.bgg_id}
@@ -123,7 +120,7 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
               style={{
                 textDecoration: 'none', flexShrink: 0, width: 120, borderRadius: 12, overflow: 'hidden',
                 background: 'var(--bg-card)', display: 'block',
-                boxShadow: '0 4px 16px rgba(58,55,47,0.12), 0 0 0 1px rgba(216,203,188,0.7)',
+                boxShadow: 'var(--shadow-card)',
               }}
             >
               <div style={{ position: 'relative', height: 154, background: 'var(--bg-inset)', overflow: 'hidden' }}>
@@ -148,7 +145,7 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
         </div>
 
         {isLanding && (
-          <div style={{ marginTop: 36, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <div className="beginner-ctas" style={{ marginTop: 36, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <Link href="/recomendador" style={{ padding: '12px 24px', borderRadius: 8, fontWeight: 700, fontSize: 14, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none' }}>
               Recomiéndame un juego →
             </Link>

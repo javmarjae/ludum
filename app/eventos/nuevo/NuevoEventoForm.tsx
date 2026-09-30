@@ -15,7 +15,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-3)',
-  textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6,
+  marginBottom: 6,
 };
 
 const pillBtn: React.CSSProperties = {
@@ -179,7 +179,7 @@ export function NuevoEventoForm() {
 
       {/* Coordinates for GPS search */}
       <div style={{ marginBottom: 18, padding: '14px', borderRadius: 12, background: 'var(--bg-inset)', border: '1px solid var(--border)' }}>
-        <p style={{ margin: '0 0 10px', fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <p style={{ margin: '0 0 10px', fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>
           Coordenadas GPS (para búsqueda "cerca de mí")
         </p>
         <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end' }}>
@@ -207,7 +207,7 @@ export function NuevoEventoForm() {
       </div>
 
       {error && (
-        <p style={{ margin: '0 0 16px', padding: '10px 14px', borderRadius: 10, background: '#FEF2F2', color: '#DC2626', fontSize: 14 }}>
+        <p className="form-error" role="alert" style={{ margin: '0 0 16px' }}>
           {error}
         </p>
       )}

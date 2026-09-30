@@ -55,12 +55,12 @@ export default async function AdminTorneoPage({ params }: Props) {
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: `/torneos/${id}`, label: tournament.name }} />
 
-      <main style={{ maxWidth: 860, margin: '0 auto', padding: '32px 24px 80px' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '32px clamp(16px,4vw,24px) 80px' }}>
 
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 24, flexWrap: 'wrap' }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-3)', marginBottom: 4 }}>
               Panel de administración
             </p>
             <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tournament.name}</h1>
@@ -108,7 +108,7 @@ export default async function AdminTorneoPage({ params }: Props) {
             Los cambios de estado son definitivos. Puedes cancelar el torneo en cualquier momento.
           </p>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

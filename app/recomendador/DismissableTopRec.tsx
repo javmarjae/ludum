@@ -13,7 +13,7 @@ function AffinityCircle({ value }: { value: number }) {
   const r = 54;
   const circ = 2 * Math.PI * r;
   return (
-    <div style={{ position: 'relative', width: 140, height: 140, flexShrink: 0 }}>
+    <div className="toprec-affinity-circle" style={{ position: 'relative', width: 140, height: 140, flexShrink: 0 }}>
       <svg width="140" height="140" style={{ transform: 'rotate(-90deg)' }}>
         <circle cx="70" cy="70" r={r} fill="none" stroke="var(--bg-inset)" strokeWidth="10" />
         <circle
@@ -24,7 +24,7 @@ function AffinityCircle({ value }: { value: number }) {
       </svg>
       <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <span style={{ fontSize: 30, fontWeight: 800, color: 'var(--text)', lineHeight: 1 }}>{value}%</span>
-        <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textAlign: 'center', lineHeight: 1.4, marginTop: 5 }}>
+        <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)', textAlign: 'center', lineHeight: 1.3, marginTop: 5 }}>
           Afinidad<br />con vuestro<br />grupo
         </span>
       </div>
@@ -51,7 +51,7 @@ function StatRing({ value, label }: { value: number; label: string }) {
           {value}%
         </div>
       </div>
-      <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-3)', textAlign: 'center', lineHeight: 1.3 }}>{capitalLabel}</span>
+      <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-3)', textAlign: 'center', lineHeight: 1.3 }}>{capitalLabel}</span>
     </div>
   );
 }
@@ -70,6 +70,7 @@ function TopGameCard({ rec, onDismiss, isPending }: {
     <button
       onClick={onDismiss}
       disabled={isPending}
+      className="toprec-dismiss"
       style={{
         display: 'inline-flex', alignItems: 'center', gap: 6,
         padding: '7px 14px', borderRadius: 8,
@@ -104,7 +105,7 @@ function TopGameCard({ rec, onDismiss, isPending }: {
   return (
     <div style={{ borderRadius: 20, overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
       <div style={{ padding: '20px 20px 16px' }}>
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 5,
             padding: '4px 12px', borderRadius: 8,
@@ -113,11 +114,12 @@ function TopGameCard({ rec, onDismiss, isPending }: {
           }}>
             <Picto emoji="🌟" /> Muy recomendado
           </span>
+          <span className="toprec-affinity-pill">{affinity}% afinidad</span>
         </div>
 
-        <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
+        <div className="toprec-body" style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
           {/* Imagen — clickable */}
-          <Link href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ flexShrink: 0, display: 'block', textDecoration: 'none' }} className="hover-scale-sm">
+          <Link href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ flexShrink: 0, display: 'block', textDecoration: 'none' }} className="hover-scale-sm toprec-cover">
             {game.image_url ? (
               <Image src={game.image_url} alt={game.name} width={120} height={150} priority sizes="120px"
                 style={{ borderRadius: 12, objectFit: 'cover', display: 'block' }} />
@@ -127,9 +129,9 @@ function TopGameCard({ rec, onDismiss, isPending }: {
           </Link>
 
           {/* Columna de contenido — título, metadatos y botón */}
-          <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', minHeight: 150 }}>
+          <div className="toprec-content" style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', minHeight: 150 }}>
             <Link href={`/juegos/${game.bgg_id}`} prefetch={false} style={{ textDecoration: 'none', display: 'block' }} className="hover-scale-sm">
-              <h2 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 6, lineHeight: 1.1 }}>
+              <h2 className="toprec-title" style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 6, lineHeight: 1.1 }}>
                 {game.name}
               </h2>
               {categories.length > 0 && (
@@ -186,14 +188,14 @@ function TopGameCard({ rec, onDismiss, isPending }: {
 
       <div style={{ borderTop: '1px solid var(--border)', padding: '16px 20px', background: 'var(--bg-inset)' }}>
         <p className="t-label" style={{ marginBottom: 12 }}>¿Por qué os lo recomendamos?</p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+        <div className="toprec-reasons" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
           {reasons.map((reason, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 7 }}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ marginTop: 2, flexShrink: 0 }}>
                 <circle cx="7" cy="7" r="7" fill="rgba(22,163,74,0.15)" />
                 <path d="M3.5 7L5.7 9.2L10.5 4.5" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-2)', lineHeight: 1.4 }}>{reason}</span>
+              <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-2)', lineHeight: 1.4 }}>{reason}</span>
             </div>
           ))}
         </div>

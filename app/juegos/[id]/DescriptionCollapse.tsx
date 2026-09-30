@@ -15,8 +15,9 @@ export function DescriptionCollapse({ text }: { text: string }) {
       {isLong && (
         <button
           onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
           style={{
-            marginTop: 8, fontSize: 13, fontWeight: 700, color: 'var(--brand)',
+            marginTop: 4, minHeight: 44, fontSize: 14, fontWeight: 700, color: 'var(--brand)',
             background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', padding: 0,
           }}
         >

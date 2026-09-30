@@ -62,7 +62,7 @@ export default async function EventoDetailPage({ params }: Props) {
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: '/eventos', label: 'Eventos' }} />
 
-      <main style={{ maxWidth: 720, margin: '0 auto', padding: '40px clamp(16px,4vw,32px) 80px' }}>
+      <div style={{ maxWidth: 720, margin: '0 auto', padding: '40px clamp(16px,4vw,32px) 80px' }}>
         {/* Image header */}
         <div style={{
           width: '100%', height: 240, borderRadius: 16, overflow: 'hidden',
@@ -149,7 +149,7 @@ export default async function EventoDetailPage({ params }: Props) {
             </p>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }
@@ -160,7 +160,7 @@ function InfoCard({ icon, label, value }: { icon: string; label: string; value: 
       padding: '12px 14px', borderRadius: 12, background: 'var(--bg-card)',
       boxShadow: 'var(--shadow-card)', display: 'flex', flexDirection: 'column', gap: 3,
     }}>
-      <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-3)' }}>
         <Picto emoji={icon} /> {label}
       </span>
       <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)' }}>

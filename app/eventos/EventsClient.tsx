@@ -167,11 +167,13 @@ export function EventsClient({
     return (
       <button
         onClick={() => setFilter(type)}
+        aria-pressed={active}
+        className="tap"
         style={{
           padding: '7px 16px', borderRadius: 20, border: 'none', cursor: 'pointer',
           fontSize: 13, fontWeight: 700, transition: 'background 0.15s, color 0.15s',
           background: active ? 'var(--brand)' : 'var(--bg-inset)',
-          color: active ? 'white' : 'var(--text-3)',
+          color: active ? 'var(--on-brand)' : 'var(--text-2)',
           boxShadow: active ? '0 3px 10px rgba(62,94,59,0.30)' : 'var(--shadow-btn)',
         }}
       >
@@ -202,8 +204,9 @@ export function EventsClient({
         {isEventCreator && (
           <Link
             href="/eventos/nuevo"
+            className="tap"
             style={{
-              padding: '9px 18px', borderRadius: 10, background: 'var(--brand)', color: 'white',
+              padding: '9px 18px', borderRadius: 10, background: 'var(--brand)', color: 'var(--on-brand)',
               textDecoration: 'none', fontSize: 13, fontWeight: 700,
               boxShadow: '0 3px 10px rgba(62,94,59,0.30)',
             }}
@@ -223,6 +226,7 @@ export function EventsClient({
           {geoActive && (
             <button
               onClick={handleReset}
+              className="tap"
               style={{
                 padding: '7px 14px', borderRadius: 20, border: '1px solid var(--border)',
                 background: 'transparent', cursor: 'pointer', fontSize: 12,
@@ -235,6 +239,7 @@ export function EventsClient({
           <button
             onClick={handleGeoSearch}
             disabled={geoLoading}
+            className="tap"
             style={{
               padding: '7px 16px', borderRadius: 20, border: 'none', cursor: geoLoading ? 'wait' : 'pointer',
               fontSize: 13, fontWeight: 700,
@@ -258,13 +263,13 @@ export function EventsClient({
 
       {/* Event grid */}
       {filtered.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-4)' }}>
+        <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-3)' }}>
           <div style={{ fontSize: 48, marginBottom: 12 }}><Picto emoji="🗓" /></div>
           <p style={{ margin: 0, fontWeight: 600 }}>
             {geoActive ? 'No hay eventos en 100 km a tu alrededor.' : 'No hay eventos próximos.'}
           </p>
           {isEventCreator && (
-            <Link href="/eventos/nuevo" style={{ display: 'inline-block', marginTop: 16, color: 'var(--brand)', fontWeight: 700, textDecoration: 'none' }}>
+            <Link href="/eventos/nuevo" className="tap" style={{ display: 'inline-block', marginTop: 16, color: 'var(--brand)', fontWeight: 700, textDecoration: 'none' }}>
               Crear el primero →
             </Link>
           )}

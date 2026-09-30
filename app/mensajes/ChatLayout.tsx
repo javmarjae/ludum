@@ -211,8 +211,8 @@ export function ChatLayout({
               {conv.unread_count > 0 && (
                 <span style={{
                   minWidth: 20, height: 20, borderRadius: 10, flexShrink: 0,
-                  background: 'var(--brand)', color: 'white',
-                  fontSize: 10, fontWeight: 800,
+                  background: 'var(--brand)', color: 'var(--on-brand)',
+                  fontSize: 11, fontWeight: 800,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px',
                 }}>
                   {conv.unread_count > 9 ? '9+' : conv.unread_count}
@@ -234,17 +234,17 @@ export function ChatLayout({
             borderBottom: '1px solid var(--border)', background: 'var(--bg-card)',
           }}>
             <button onClick={() => setSelectedId(null)} aria-label="Volver a conversaciones" style={{
-              width: 34, height: 34, borderRadius: '50%', border: 'none',
+              width: 44, height: 44, marginLeft: -8, borderRadius: '50%', border: 'none',
               background: 'var(--bg-inset)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: 'var(--text-3)', fontSize: 18, flexShrink: 0,
             }}>←</button>
             <Avatar name={selected.other_user_name} src={selected.other_user_avatar} size={36} />
-            <p style={{ fontWeight: 800, fontSize: 15, color: 'var(--text)', flex: 1 }}>
+            <p style={{ fontWeight: 800, fontSize: 15, color: 'var(--text)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {selected.other_user_name ?? 'Usuario'}
             </p>
-            <a href={`/perfil/${selected.other_user_id}`}
-              style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none', padding: '6px 12px', borderRadius: 8, background: 'var(--brand-tint)' }}>
+            <a href={`/perfil/${selected.other_user_id}`} className="tap"
+              style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none', padding: '6px 12px', borderRadius: 8, background: 'var(--brand-tint)' }}>
               Ver perfil
             </a>
           </div>
@@ -275,7 +275,7 @@ export function ChatLayout({
                       maxWidth: '68%', padding: '10px 15px',
                       borderRadius: isMe ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
                       background: isMe ? 'var(--brand)' : 'var(--bg-card)',
-                      color: isMe ? 'white' : 'var(--text)',
+                      color: isMe ? 'var(--on-brand)' : 'var(--text)',
                       boxShadow: isMe ? '0 2px 12px rgba(62,94,59,0.25)' : 'var(--shadow-card)',
                       fontSize: 14, fontWeight: 500, lineHeight: 1.5,
                       wordBreak: 'break-word',
@@ -292,13 +292,14 @@ export function ChatLayout({
           </div>
 
           {/* Quick replies */}
-          <div style={{ padding: '8px 20px 4px', display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <div className="scroll-row" style={{ padding: '8px 16px 4px', display: 'flex', gap: 6, flexWrap: 'nowrap', overflowX: 'auto', flexShrink: 0 }}>
             {QUICK_REPLIES.map(r => (
-              <button key={r} onClick={() => handleSend(r)} style={{
-                padding: '5px 13px', borderRadius: 99,
+              <button key={r} onClick={() => handleSend(r)} className="tap" style={{
+                flexShrink: 0, whiteSpace: 'nowrap',
+                padding: '5px 14px', borderRadius: 99,
                 border: '1.5px solid var(--border)',
                 background: 'var(--bg-card)', color: 'var(--text-2)',
-                fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                fontSize: 13, fontWeight: 600, cursor: 'pointer',
                 boxShadow: 'var(--shadow-btn)',
                 transition: 'background 0.12s',
               }}>
@@ -314,6 +315,8 @@ export function ChatLayout({
             flexShrink: 0,
           }}>
             <input
+              aria-label="Mensaje"
+              enterKeyHint="send"
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
@@ -331,7 +334,7 @@ export function ChatLayout({
               style={{
                 width: 44, height: 44, borderRadius: '50%', border: 'none', flexShrink: 0,
                 background: input.trim() ? 'var(--brand)' : 'var(--bg-inset)',
-                color: input.trim() ? 'white' : 'var(--text-4)',
+                color: input.trim() ? 'var(--on-brand)' : 'var(--text-4)',
                 cursor: input.trim() ? 'pointer' : 'default',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'background 0.15s, color 0.15s',

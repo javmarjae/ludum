@@ -34,7 +34,7 @@ export default function BuscarPage() {
   return (
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
       <AppNav />
-      <main className="buscar-content">
+      <div className="buscar-content">
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 4 }}>
             Buscador
@@ -46,7 +46,7 @@ export default function BuscarPage() {
         <Suspense fallback={<BuscarSkeleton />}>
           <SearchData />
         </Suspense>
-      </main>
+      </div>
     </div>
   );
 }

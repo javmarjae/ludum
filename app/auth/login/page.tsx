@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { Nav } from '@/components/Nav';
+import { safeNext } from '@/lib/safe-next';
 
 const inputStyle = {
   background: 'var(--bg-inset)',
@@ -23,7 +24,7 @@ const inputStyle = {
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get('next') || '/grupos';
+  const next = safeNext(searchParams.get('next'));
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -48,7 +49,7 @@ function LoginForm() {
   }
 
   return (
-    <div style={{ borderRadius: 12, padding: 32, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+    <div className="auth-card">
       <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 6 }}>Iniciar sesión</h1>
       <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-3)', marginBottom: 28 }}>
         ¿No tienes cuenta?{' '}
@@ -58,25 +59,25 @@ function LoginForm() {
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div>
           <label htmlFor="login-email" style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Email</label>
-          <input id="login-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com" style={inputStyle} />
+          <input id="login-email" type="email" autoComplete="email" inputMode="email" autoCapitalize="none" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com" style={inputStyle} />
         </div>
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
             <label htmlFor="login-password" style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>Contraseña</label>
-            <Link href="/auth/reset-password" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', textDecoration: 'none' }}>¿Olvidaste tu contraseña?</Link>
+            <Link href="/auth/reset-password" className="tap" style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', textDecoration: 'none', margin: '-12px 0' }}>¿Olvidaste tu contraseña?</Link>
           </div>
-          <input id="login-password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={inputStyle} />
+          <input id="login-password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={inputStyle} />
         </div>
 
         {error && (
-          <p style={{ fontSize: 13, borderRadius: 8, padding: '10px 14px', fontWeight: 600, background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(62,94,59,0.2)' }}>
+          <p role="alert" className="form-error">
             {error}
           </p>
         )}
 
         <button type="submit" disabled={loading} style={{
-          width: '100%', padding: '14px', borderRadius: 999, fontWeight: 800, fontSize: 16,
-          color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',
+          width: '100%', padding: '14px', borderRadius: 10, fontWeight: 800, fontSize: 16,
+          color: 'var(--on-brand)', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',
           border: 'none', cursor: 'pointer', fontFamily: 'inherit', opacity: loading ? 0.6 : 1,
         }}>
           {loading ? 'Entrando...' : 'Entrar'}
@@ -90,11 +91,11 @@ export default function LoginPage() {
   return (
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
       <Nav />
-      <main style={{ maxWidth: 400, margin: '0 auto', padding: '64px 24px 80px' }}>
-        <Suspense fallback={<div style={{ borderRadius: 12, padding: 32, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', minHeight: 200 }} />}>
+      <div className="auth-wrap">
+        <Suspense fallback={<div className="auth-card" style={{ minHeight: 200 }} />}>
           <LoginForm />
         </Suspense>
-      </main>
+      </div>
     </div>
   );
 }

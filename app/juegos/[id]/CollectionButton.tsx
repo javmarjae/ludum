@@ -54,7 +54,7 @@ export function CollectionButton({ gameId }: { gameId: string }) {
         aria-label={isIn ? 'Quitar de mi colección' : 'Añadir a mi colección'}
         aria-pressed={isIn}
         style={{
-          width: 36, height: 36, borderRadius: '50%',
+          width: 44, height: 44, borderRadius: '50%',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 17, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
           border: 'none', flexShrink: 0,

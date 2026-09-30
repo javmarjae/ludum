@@ -101,7 +101,7 @@ export default async function TorneoPage({ params }: Props) {
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: '/torneos', label: 'Torneos' }} />
 
-      <main style={{ maxWidth: 860, margin: '0 auto', padding: '40px 24px 80px' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '40px clamp(16px,4vw,24px) 80px' }}>
 
         {/* Game cover banner */}
         {game?.image_url && (
@@ -187,7 +187,7 @@ export default async function TorneoPage({ params }: Props) {
               {/* Table header */}
               <div style={{ display: 'grid', gridTemplateColumns: '40px 1fr 50px 50px 50px 50px', gap: 0, padding: '10px 16px', background: 'var(--bg-inset)', borderBottom: '1px solid var(--border)' }}>
                 {['#', 'Jugador', 'PJ', 'V', 'D', 'Pts'].map(h => (
-                  <span key={h} style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: h === 'Jugador' ? 'left' : 'center' }}>{h}</span>
+                  <span key={h} style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textAlign: h === 'Jugador' ? 'left' : 'center' }}>{h}</span>
                 ))}
               </div>
               {standings.map((p, i) => {
@@ -302,7 +302,7 @@ export default async function TorneoPage({ params }: Props) {
             </p>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

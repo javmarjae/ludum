@@ -10,7 +10,7 @@ export default function Contacto() {
   return (
     <>
       <Nav right={<NavButton href="/auth/login" variant="brand">Entrar</NavButton>} mobileItems={[{ href: '/auth/login', label: 'Entrar', variant: 'brand' }]} />
-      <main style={{ maxWidth: 640, margin: '0 auto', padding: '64px 32px 80px' }}>
+      <div style={{ maxWidth: 640, margin: '0 auto', padding: '64px clamp(16px,4vw,32px) 80px' }}>
         <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--brand)', marginBottom: 16 }}>
           Hablemos
         </p>
@@ -64,7 +64,7 @@ export default function Contacto() {
         <p style={{ fontSize: 13, color: 'var(--text-4)', marginTop: 36, lineHeight: 1.65 }}>
           Tiempo de respuesta habitual: menos de 48 horas en días laborables.
         </p>
-      </main>
+      </div>
     </>
   );
 }

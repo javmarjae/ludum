@@ -54,7 +54,7 @@ export default async function ResultadosPage({ searchParams }: Props) {
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
       <Nav back={{ href: '/recomendador', label: 'Cambiar preferencias' }} />
 
-      <main style={{ maxWidth: 680, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 680, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
         <div style={{ marginBottom: 32 }}>
           <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 6 }}>
             {games.length > 0 ? `${games.length} recomendaciones` : 'Sin resultados'}
@@ -63,7 +63,7 @@ export default async function ResultadosPage({ searchParams }: Props) {
         </div>
 
         {error && (
-          <div style={{ borderRadius: 16, padding: '12px 16px', marginBottom: 24, background: 'var(--brand-tint)', border: '1px solid rgba(62,94,59,0.2)', color: 'var(--brand)', fontSize: 14, fontWeight: 600 }}>
+          <div className="form-error" role="alert" style={{ marginBottom: 24 }}>
             Error al cargar los juegos. Inténtalo de nuevo.
           </div>
         )}
@@ -92,7 +92,7 @@ export default async function ResultadosPage({ searchParams }: Props) {
           Datos de{' '}
           <a href="https://boardgamegeek.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--brand)', textDecoration: 'none', fontWeight: 700 }}>BoardGameGeek</a>
         </p>
-      </main>
+      </div>
     </div>
   );
 }

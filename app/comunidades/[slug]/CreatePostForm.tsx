@@ -83,7 +83,7 @@ export function CreatePostForm({ communityId, communitySlug }: Props) {
         }}
       />
       {error && (
-        <p style={{ fontSize: 13, fontWeight: 600, color: '#c0392b' }}>{error}</p>
+        <p className="form-error" role="alert">{error}</p>
       )}
       <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
         <button

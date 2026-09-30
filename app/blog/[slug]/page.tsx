@@ -59,7 +59,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <AppNav back={{ href: '/blog', label: 'Blog' }} />
-      <main style={{ maxWidth: 720, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 720, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
         {/* Header del artículo */}
         <header style={{ marginBottom: 40 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
@@ -164,6 +164,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div style={{ marginTop: 56, paddingTop: 32, borderTop: '1px solid var(--border)' }}>
           <Link
             href="/blog"
+            className="tap"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -177,7 +178,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             ← Volver al blog
           </Link>
         </div>
-      </main>
+      </div>
     </>
   );
 }

@@ -27,9 +27,10 @@ export function InviteQR({ inviteCode, groupName }: Props) {
     return (
       <button
         onClick={() => setOpen(true)}
+        className="tap"
         style={{
-          fontSize: 12, fontWeight: 700, padding: '6px 14px', borderRadius: 999,
-          background: 'var(--bg-inset)', border: 'none', color: 'var(--text-3)',
+          fontSize: 13, fontWeight: 700, padding: '6px 14px', borderRadius: 999,
+          background: 'var(--bg-inset)', border: 'none', color: 'var(--text-2)',
           cursor: 'pointer', fontFamily: 'inherit',
         }}
       >
@@ -42,7 +43,7 @@ export function InviteQR({ inviteCode, groupName }: Props) {
     <div style={{ borderRadius: 24, padding: 24, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', textAlign: 'center', marginTop: 12 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>Invitar al grupo</p>
-        <button onClick={() => setOpen(false)} style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-4)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>✕</button>
+        <button onClick={() => setOpen(false)} aria-label="Cerrar QR" className="tap" style={{ margin: '-12px -12px -12px 0', fontSize: 14, fontWeight: 700, color: 'var(--text-3)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>✕</button>
       </div>
 
       {/* QR */}

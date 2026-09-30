@@ -22,9 +22,10 @@ export function DeleteGroupButton({ groupId }: { groupId: string }) {
     return (
       <button
         onClick={() => setConfirming(true)}
+        className="tap"
         style={{
           padding: '8px 16px', borderRadius: 999, fontSize: 13, fontWeight: 700,
-          color: '#c0392b', background: 'rgba(192,57,43,0.08)', border: '1px solid rgba(192,57,43,0.2)',
+          color: 'var(--danger)', background: 'var(--danger-tint)', border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)',
           cursor: 'pointer', fontFamily: 'inherit',
         }}
       >

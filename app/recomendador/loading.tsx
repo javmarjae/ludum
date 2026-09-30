@@ -21,7 +21,7 @@ export default function Loading() {
         {/* Sección 1 — grupo selector */}
         <section>
           <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>
-            1. ¿Quién va a jugar?
+            ¿Quién va a jugar?
           </h2>
           <p style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 14 }}>
             Selecciona el grupo o crea una partida nueva
@@ -39,7 +39,7 @@ export default function Loading() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <div>
               <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>
-                2. Nuestra recomendación para vosotros
+                Nuestra recomendación para vosotros
               </h2>
               <div style={{ borderRadius: 20, overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
                 <div style={{ padding: '20px 20px 24px' }}>

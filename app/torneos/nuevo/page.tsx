@@ -21,7 +21,7 @@ export default async function NuevoTorneoPage() {
     return (
       <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
         <AppNav back={{ href: '/torneos', label: 'Torneos' }} />
-        <main style={{ maxWidth: 520, margin: '0 auto', padding: '80px 24px', textAlign: 'center' }}>
+        <div style={{ maxWidth: 520, margin: '0 auto', padding: '80px clamp(16px,4vw,24px)', textAlign: 'center' }}>
           <p style={{ fontSize: 48, marginBottom: 16 }}>🏪</p>
           <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)', marginBottom: 10 }}>
             Primero crea tu organización
@@ -32,7 +32,7 @@ export default async function NuevoTorneoPage() {
           <Link href="/organizaciones/nueva" style={{ display: 'inline-block', background: 'var(--brand)', color: 'white', padding: '13px 28px', borderRadius: 16, fontWeight: 700, fontSize: 16, textDecoration: 'none' }}>
             Crear organización
           </Link>
-        </main>
+        </div>
       </div>
     );
   }
@@ -40,7 +40,7 @@ export default async function NuevoTorneoPage() {
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: '/torneos', label: 'Torneos' }} />
-      <main style={{ maxWidth: 560, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 560, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)', marginBottom: 6 }}>Nuevo torneo</h1>
           <p style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-3)' }}>
@@ -51,7 +51,7 @@ export default async function NuevoTorneoPage() {
           </p>
         </div>
         <TorneoForm orgs={orgs} />
-      </main>
+      </div>
     </div>
   );
 }

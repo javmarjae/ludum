@@ -5,12 +5,15 @@ import { unstable_cache } from 'next/cache';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { Nav, NavLink, NavButton } from '@/components/Nav';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { getAuthUserLite } from '@/lib/supabase/server';
+import { getAuthUserLite, createClient } from '@/lib/supabase/server';
 import { BeginnerSection } from '@/components/BeginnerSection';
 import { DashboardContent } from './DashboardContent';
 import { HomeDashboardSkeleton } from './HomeDashboardSkeleton';
 import type { Metadata } from 'next';
 import { Picto } from '@/components/Picto';
+import { Avatar } from '@/components/Avatar';
+import { ReadMore } from '@/components/ReadMore';
+import { categoryEs } from '@/lib/bgg-categories';
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://ludumgames.es' },
@@ -30,12 +33,13 @@ const getFeaturedLandingGames = unstable_cache(
       .from('games')
       .select('bgg_id, name, image_url, bgg_rating, year_published, categories')
       .not('image_url', 'is', null)
-      .not('bgg_rank', 'is', null)
+      .gt('bgg_rank', 0)
+      .not('is_expansion', 'is', true)
       .order('bgg_rank', { ascending: true })
       .limit(15);
     return data ?? [];
   },
-  ['home-featured-games'],
+  ['home-featured-games-v2'],
   { revalidate: 3600 }
 );
 
@@ -47,7 +51,7 @@ const getBeginnerGames = unstable_cache(
     const { data } = await supabase
       .from('games')
       .select('bgg_id, name, image_url, min_players, max_players, min_playtime, max_playtime')
-      .not('bgg_rank', 'is', null)
+      .gt('bgg_rank', 0)
       .not('image_url', 'is', null)
       .gte('complexity', 1)
       .lte('complexity', 2.5)
@@ -55,19 +59,23 @@ const getBeginnerGames = unstable_cache(
       .limit(16);
     return data ?? [];
   },
-  ['home-beginner-games'],
+  ['home-beginner-games-v2'],
   { revalidate: 3600 }
 );
 
 export default async function Home() {
   const user = await getAuthUserLite();
-  const displayName = user?.user_metadata?.display_name ?? user?.email?.split('@')[0] ?? null;
+  const profilePromise = user
+    ? createClient().then(sb => sb.from('profiles').select('display_name, avatar_url').eq('id', user.id).single())
+    : null;
   const todayRaw = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
   const today = todayRaw.charAt(0).toUpperCase() + todayRaw.slice(1);
 
     const beginnerGamesPromise = getBeginnerGames();
     const featuredGames = user ? [] : await getFeaturedLandingGames();
     const beginnerGames = await beginnerGamesPromise;
+    const profile = profilePromise ? (await profilePromise).data : null;
+    const displayName = profile?.display_name ?? user?.user_metadata?.display_name ?? user?.email?.split('@')[0] ?? null;
 
   const covers = featuredGames;
 
@@ -137,9 +145,6 @@ export default async function Home() {
 
           <section className="home-hero" style={{ maxWidth: 1120, margin: '0 auto', padding: '72px 32px 80px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
             <div>
-              <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--brand)', marginBottom: 20 }}>
-                Tracker · Recomendador · Comunidad
-              </p>
               <h1 style={{ fontSize: 'clamp(36px, 4vw, 56px)', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.06, color: 'var(--text)', marginBottom: 20 }}>
                 Tu historial de<br />
                 <span style={{ color: 'var(--brand)' }}>juegos de mesa</span>
@@ -147,7 +152,7 @@ export default async function Home() {
               <p style={{ fontSize: 17, fontWeight: 500, color: 'var(--text-3)', lineHeight: 1.65, marginBottom: 36, maxWidth: 420 }}>
                 Registra partidas, descubre nuevos juegos y compara con tus amigos. Con datos de más de 138.000 títulos de BoardGameGeek.
               </p>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <div className="home-hero-ctas" style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                 <Link href="/auth/login" style={{ padding: '13px 28px', borderRadius: 8, fontWeight: 700, fontSize: 15, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none' }}>
                   Empezar gratis
                 </Link>
@@ -176,7 +181,7 @@ export default async function Home() {
                       src={g.image_url}
                       alt={g.name}
                       fill
-                      sizes="(max-width: 860px) 0px, 9vw"
+                      sizes="(max-width: 860px) 20vw, 9vw"
                       style={{ objectFit: 'cover' }}
                       priority={i < 5}
                     />
@@ -194,6 +199,7 @@ export default async function Home() {
               <h2 className="t-section-title" style={{ marginBottom: 14, letterSpacing: '-0.01em' }}>
                 ¿Qué es Ludum?
               </h2>
+              <ReadMore>
               <p className="t-body" style={{ lineHeight: 1.7, color: 'var(--text-3)' }}>
                 Ludum es un recomendador y tracker de juegos de mesa en español, pensado para jugadores que quieren
                 llevar el control de sus partidas y descubrir su próximo juego favorito. Usa datos de más
@@ -204,6 +210,7 @@ export default async function Home() {
                 quienes organizan noches de juego habitualmente y quieren tener a mano el historial, el ranking
                 de victorias y las mejores opciones para su próxima partida.
               </p>
+              </ReadMore>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 56 }} className="home-content-grid">
@@ -223,8 +230,11 @@ export default async function Home() {
                         }}
                         className="hover-row"
                       >
-                        <span style={{ width: 22, flexShrink: 0, fontSize: 13, fontWeight: 700, color: 'var(--text-4)' }}>
+                        <span style={{ width: 22, flexShrink: 0, fontSize: 13, fontWeight: 700, color: 'var(--text-3)', fontVariantNumeric: 'tabular-nums' }}>
                           {i + 1}
+                        </span>
+                        <span style={{ position: 'relative', width: 32, height: 44, flexShrink: 0, borderRadius: 4, overflow: 'hidden', background: 'var(--bg-inset)', boxShadow: 'var(--shadow-card)' }}>
+                          {g.image_url && <Image src={g.image_url} alt="" fill sizes="32px" style={{ objectFit: 'cover' }} />}
                         </span>
                         <span style={{ flex: 1, minWidth: 0, fontSize: 15, fontWeight: 600, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {g.name}
@@ -234,8 +244,8 @@ export default async function Home() {
                             {g.year_published}
                           </span>
                         )}
-                        {g.bgg_rating && (
-                          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)', flexShrink: 0 }}>
+                        {g.bgg_rating > 0 && (
+                          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)', flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
                             <Picto emoji="⭐" /> {g.bgg_rating.toFixed(1)}
                           </span>
                         )}
@@ -256,7 +266,7 @@ export default async function Home() {
                         display: 'inline-block', padding: '7px 16px', borderRadius: 999,
                         fontSize: 14, fontWeight: 600, background: 'var(--brand-tint)', color: 'var(--brand)',
                       }}>
-                        {c}
+                        {categoryEs(c)}
                       </span>
                     ))}
                   </div>
@@ -284,7 +294,7 @@ export default async function Home() {
           <BeginnerSection games={beginnerGames} isLanding />
 
           <section style={{ maxWidth: 1120, margin: '0 auto', padding: '64px clamp(16px,4vw,32px) 80px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', gap: 48, flexWrap: 'wrap' }}>
+            <div className="home-stats" style={{ display: 'flex', gap: 48, flexWrap: 'wrap' }}>
               {[
                 { value: '138k+', label: 'juegos en catálogo' },
                 { value: '100%', label: 'gratuito' },
@@ -296,7 +306,7 @@ export default async function Home() {
                 </div>
               ))}
             </div>
-            <Link href="/auth/login" style={{ padding: '13px 28px', borderRadius: 8, fontWeight: 700, fontSize: 15, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none', flexShrink: 0 }}>
+            <Link href="/auth/login" className="home-final-cta" style={{ padding: '13px 28px', borderRadius: 8, fontWeight: 700, fontSize: 15, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none', flexShrink: 0 }}>
               Crear cuenta gratis →
             </Link>
           </section>
@@ -309,25 +319,17 @@ export default async function Home() {
 
           {/* Top header */}
           <div className="home-dash-header">
-            <Link href="/perfil" style={{
-              width: 48, height: 48, borderRadius: '50%',
-              background: 'var(--bg-card)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: 'var(--text-3)', textDecoration: 'none',
-              boxShadow: '0 2px 10px rgba(58,55,47,0.10), 0 0 0 1px rgba(216,203,188,0.8)',
-              flexShrink: 0,
-            }}>
-              <ProfileSvg />
+            <Link href="/perfil" aria-label="Tu perfil" className="home-dash-avatar">
+              <Avatar name={displayName ?? '?'} src={profile?.avatar_url} size={44} />
             </Link>
-            <div style={{ textAlign: 'center', minWidth: 0 }}>
-              <h1 style={{ fontSize: 'clamp(22px, 2.5vw, 32px)', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--text)' }}>
+            <div style={{ minWidth: 0 }}>
+              <h1 style={{ fontSize: 'clamp(22px, 2.5vw, 32px)', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--text)', lineHeight: 1.15, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 Hola, {displayName}
               </h1>
-              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-4)', marginTop: 2 }}>
+              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', marginTop: 2 }}>
                 {today}
               </p>
             </div>
-            <div />
           </div>
 
           <div className="home-dash-content">
@@ -341,8 +343,3 @@ export default async function Home() {
   );
 }
 
-/* ── SVG Icons ──────────────────────────────────────── */
-
-function ProfileSvg() {
-  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
-}

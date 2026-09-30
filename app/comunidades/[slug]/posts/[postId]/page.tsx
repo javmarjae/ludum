@@ -56,7 +56,7 @@ export default async function PostDetailPage({ params }: Props) {
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: `/comunidades/${slug}`, label: community.name }} />
 
-      <main style={{ maxWidth: 680, margin: '0 auto', padding: '32px 24px 80px' }}>
+      <div style={{ maxWidth: 680, margin: '0 auto', padding: '32px clamp(16px,4vw,24px) 80px' }}>
         {/* Post */}
         <div style={{ borderRadius: 20, padding: '24px 24px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', marginBottom: 24 }}>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em', lineHeight: 1.3, marginBottom: 16 }}>
@@ -130,7 +130,7 @@ export default async function PostDetailPage({ params }: Props) {
             ))}
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

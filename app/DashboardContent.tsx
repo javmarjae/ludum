@@ -16,7 +16,7 @@ export async function DashboardContent({ userId, beginnerGames }: Props) {
   const [groupsRes, playsRes, userCollectionRes, allPlaysRes, trendingResult, playCountRes, winCountRes] = await Promise.all([
     supabase
       .from('group_members')
-      .select('group_id, groups(id, name)')
+      .select('group_id, groups(id, name, image_url)')
       .eq('profile_id', userId),
     supabase
       .from('plays')
@@ -85,7 +85,7 @@ export async function DashboardContent({ userId, beginnerGames }: Props) {
             icon={<StarSvg />}
           />
           <QuickAction
-            href="/grupos"
+            href={dashboardGroups.length === 1 ? `/grupos/${dashboardGroups[0].group_id}/partidas/nueva` : '/grupos'}
             title="Registrar partida"
             sub="Anota quién ganó"
             icon={<DiceSvg />}
@@ -138,21 +138,21 @@ export async function DashboardContent({ userId, beginnerGames }: Props) {
         <BeginnerSection games={beginnerGames} />
       )}
 
-      {/* Tus Eventos */}
+      {/* Tus grupos */}
       {dashboardGroups.length > 0 && (
         <section>
-          <RowHeader title="Tus Eventos" href="/grupos" />
+          <RowHeader title="Tus grupos" href="/grupos" />
           <div className="h-scroll">
             {dashboardGroups.slice(0, 6).map((m: any, i: number) => {
               if (!m.groups) return null;
               const lastPlay = dashboardPlays.find((p: any) => p.group_id === m.group_id);
               return (
-                <EventCard
+                <GroupCard
                   key={m.group_id}
                   index={i}
                   href={`/grupos/${m.groups.id}`}
                   name={m.groups.name}
-                  imageUrl={lastPlay?.games?.image_url}
+                  imageUrl={m.groups.image_url ?? lastPlay?.games?.image_url}
                   lastPlayDate={lastPlay?.played_at}
                 />
               );
@@ -165,10 +165,10 @@ export async function DashboardContent({ userId, beginnerGames }: Props) {
           juegos" ya muestra el trending y esta sección sería un duplicado */}
       {trendingGames.length > 0 && userCollectionGames.length > 0 && (
         <section>
-          <RowHeader title="¡Los más jugados esta semana!" href="/buscar" starred />
+          <RowHeader title="Los más jugados esta semana" href="/buscar" />
           <div className="h-scroll">
             {trendingGames.map((game: any, i: number) => (
-              <CircleGameItem key={game.bgg_id} game={game} index={i} />
+              <CoverGameItem key={game.bgg_id} game={game} index={i} />
             ))}
           </div>
         </section>
@@ -176,7 +176,7 @@ export async function DashboardContent({ userId, beginnerGames }: Props) {
 
       {/* Tus partidas */}
       <section>
-        <RowHeader title="Tus partidas" href="/partidas" starred />
+        <RowHeader title="Tus partidas" href="/partidas" />
         {playsPerGame.length > 0 ? (
           <div className="h-scroll">
             {playsPerGame.map((item: any, i: number) => (
@@ -210,23 +210,19 @@ export async function DashboardContent({ userId, beginnerGames }: Props) {
 
 function QuickAction({ href, title, sub, icon, primary }: { href: string; title: string; sub: string; icon: React.ReactNode; primary?: boolean }) {
   return (
-    <Link href={href} className="hover-lift" style={{
-      display: 'flex', alignItems: 'center', gap: 12, minWidth: 0,
-      padding: '14px 16px', borderRadius: 14, textDecoration: 'none',
+    <Link href={href} className="hover-lift dash-qa" style={{
       background: primary ? 'var(--brand)' : 'var(--bg-card)',
       boxShadow: primary ? 'var(--shadow-btn-brand)' : 'var(--shadow-card)',
     }}>
-      <div style={{
-        width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: primary ? 'rgba(255,255,255,0.18)' : 'var(--brand-tint)',
-        color: primary ? 'white' : 'var(--brand)',
+      <div className="dash-qa-icon" style={{
+        background: primary ? 'color-mix(in srgb, var(--on-brand) 16%, transparent)' : 'var(--brand-tint)',
+        color: primary ? 'var(--on-brand)' : 'var(--brand)',
       }}>
         {icon}
       </div>
       <div style={{ minWidth: 0 }}>
-        <p style={{ fontSize: 14, fontWeight: 800, color: primary ? 'white' : 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{title}</p>
-        <p style={{ fontSize: 12, fontWeight: 600, color: primary ? 'rgba(255,255,255,0.75)' : 'var(--text-4)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub}</p>
+        <p className="dash-qa-title" style={{ color: primary ? 'var(--on-brand)' : 'var(--text)' }}>{title}</p>
+        <p className="dash-qa-sub" style={{ color: primary ? 'var(--on-brand)' : 'var(--text-3)', opacity: primary ? 0.82 : 1 }}>{sub}</p>
       </div>
     </Link>
   );
@@ -237,26 +233,21 @@ function QuickAction({ href, title, sub, icon, primary }: { href: string; title:
 function StatTile({ value, label }: { value: number | string; label: string }) {
   return (
     <div className="dash-stat">
-      <p style={{ fontSize: 'clamp(22px, 2.4vw, 28px)', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', lineHeight: 1.1, fontFamily: 'var(--font-display), Georgia, serif' }}>{value}</p>
-      <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', marginTop: 4 }}>{label}</p>
+      <p className="dash-stat-value">{value}</p>
+      <p className="dash-stat-label">{label}</p>
     </div>
   );
 }
 
 /* ── Section header ─────────────────────────────────── */
 
-function RowHeader({ title, href, starred }: { title: string; href: string; starred?: boolean }) {
+function RowHeader({ title, href }: { title: string; href: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-      <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.015em', display: 'flex', alignItems: 'center', gap: 8 }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 16 }}>
+      <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.015em', minWidth: 0 }}>
         {title}
-        {starred && (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--brand)" stroke="none">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
-        )}
       </h2>
-      <Link href={href} aria-label={`Ver todo: ${title}`} className="hover-ghost" style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-4)', textDecoration: 'none', lineHeight: 1, padding: '8px 12px', margin: '-8px -12px', borderRadius: 10 }}>→</Link>
+      <Link href={href} aria-label={`Ver todo: ${title}`} className="hover-ghost dash-see-all">Ver todo</Link>
     </div>
   );
 }
@@ -295,9 +286,9 @@ function CircleGameItem({ game, index }: { game: { bgg_id: string; name: string;
   );
 }
 
-/* ── Event card ─────────────────────────────────────── */
+/* ── Group card ── */
 
-function EventCard({ href, name, imageUrl, lastPlayDate, index }: { href: string; name: string; imageUrl?: string; lastPlayDate?: string; index: number }) {
+function GroupCard({ href, name, imageUrl, lastPlayDate, index }: { href: string; name: string; imageUrl?: string; lastPlayDate?: string; index: number }) {
   const dateLabel = lastPlayDate
     ? new Date(lastPlayDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
     : null;
@@ -305,35 +296,45 @@ function EventCard({ href, name, imageUrl, lastPlayDate, index }: { href: string
   return (
     <Link href={href} className="hover-scale-md stagger-in" style={{
       ['--stagger-i' as any]: index,
-      textDecoration: 'none', flexShrink: 0, width: 300, borderRadius: 18, overflow: 'hidden',
-      background: 'var(--bg-card)', display: 'block',
-      boxShadow: '0 4px 20px rgba(58,55,47,0.13), 0 1px 4px rgba(58,55,47,0.08), 0 0 0 1px rgba(216,203,188,0.7)',
+      textDecoration: 'none', flexShrink: 0, width: 264, borderRadius: 16,
+      background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
+      display: 'flex', alignItems: 'center', gap: 14, padding: 12,
     }}>
-      <div style={{ height: 170, background: 'var(--bg-inset)', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', width: 60, height: 60, flexShrink: 0, borderRadius: 12, overflow: 'hidden', background: 'var(--bg-inset)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {imageUrl ? (
-          <>
-            <Image src={imageUrl} alt={name} fill sizes="300px" style={{ objectFit: 'cover' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%)', zIndex: 1 }} />
-          </>
+          <Image src={imageUrl} alt="" fill sizes="60px" style={{ objectFit: 'cover' }} />
         ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <PlaceholderSvg />
-          </div>
+          <PlaceholderSvg />
         )}
-        <div style={{
-          position: 'absolute', top: 12, right: 12, zIndex: 2,
-          width: 34, height: 34, borderRadius: '50%',
-          background: 'var(--brand)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 2px 8px rgba(62,94,59,0.4)',
-        }}>
-          <PlusSvg />
-        </div>
       </div>
-      <div style={{ padding: '14px 18px 16px' }}>
-        <p style={{ fontWeight: 800, fontSize: 14, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 4 }}>{name}</p>
-        <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-4)' }}>{dateLabel ?? 'Ver grupo →'}</p>
+      <div style={{ minWidth: 0 }}>
+        <p style={{ fontWeight: 800, fontSize: 15, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 3 }}>{name}</p>
+        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-3)' }}>
+          {dateLabel ? `Última partida · ${dateLabel}` : 'Sin partidas aún'}
+        </p>
       </div>
+    </Link>
+  );
+}
+
+function CoverGameItem({ game, index }: { game: { bgg_id: string; name: string; image_url?: string }; index: number }) {
+  return (
+    <Link
+      href={`/juegos/${game.bgg_id}`}
+      prefetch={false}
+      className="hover-scale stagger-in"
+      style={{ ['--stagger-i' as any]: index, display: 'flex', flexDirection: 'column', gap: 8, textDecoration: 'none', flexShrink: 0, width: 100 }}
+    >
+      <div style={{ position: 'relative', width: 100, aspectRatio: '2 / 3', borderRadius: 10, overflow: 'hidden', background: 'var(--bg-inset)', boxShadow: 'var(--shadow-card)' }}>
+        {game.image_url ? (
+          <Image src={game.image_url} alt={game.name} fill sizes="100px" style={{ objectFit: 'cover' }} />
+        ) : (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}><Picto emoji="🎲" /></div>
+        )}
+      </div>
+      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {game.name}
+      </span>
     </Link>
   );
 }
@@ -346,7 +347,7 @@ function PlayCard({ item, index }: { item: { bgg_id: string; name: string; image
       ['--stagger-i' as any]: index,
       textDecoration: 'none', flexShrink: 0, width: 128, borderRadius: 14, overflow: 'hidden',
       background: 'var(--bg-card)', display: 'block',
-      boxShadow: '0 4px 20px rgba(58,55,47,0.13), 0 1px 4px rgba(58,55,47,0.08), 0 0 0 1px rgba(216,203,188,0.7)',
+      boxShadow: 'var(--shadow-card)',
     }}>
       <div style={{ height: 165, background: 'var(--bg-inset)', overflow: 'hidden', position: 'relative' }}>
         {item.image_url ? (
@@ -360,7 +361,7 @@ function PlayCard({ item, index }: { item: { bgg_id: string; name: string; image
       </div>
       <div style={{ padding: '10px 12px 12px' }}>
         <p style={{ fontWeight: 800, fontSize: 12, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 3 }}>{item.name}</p>
-        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)' }}>{item.count} {item.count === 1 ? 'Partida' : 'Partidas'}</p>
+        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)' }}>{item.count} {item.count === 1 ? 'Partida' : 'Partidas'}</p>
       </div>
     </Link>
   );
@@ -369,11 +370,7 @@ function PlayCard({ item, index }: { item: { bgg_id: string; name: string; image
 /* ── SVG Icons ──────────────────────────────────────── */
 
 function PlaceholderSvg() {
-  return <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--sand)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 19 6 19 18 12 22 5 18 5 6 12 2"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="5" y1="6" x2="9.5" y2="9"/><line x1="14.5" y1="15" x2="19" y2="18"/><line x1="19" y1="6" x2="14.5" y2="9"/><line x1="9.5" y1="15" x2="5" y2="18"/></svg>;
-}
-
-function PlusSvg() {
-  return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+  return <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-4)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 19 6 19 18 12 22 5 18 5 6 12 2"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="5" y1="6" x2="9.5" y2="9"/><line x1="14.5" y1="15" x2="19" y2="18"/><line x1="19" y1="6" x2="14.5" y2="9"/><line x1="9.5" y1="15" x2="5" y2="18"/></svg>;
 }
 
 function StarSvg() {

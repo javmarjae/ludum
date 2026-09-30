@@ -49,7 +49,7 @@ export function StarRating({ gameId }: { gameId: string }) {
       padding: '18px 20px', borderRadius: 20,
       background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)',
     }}>
-      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-3)' }}>
         Tu valoración
       </span>
 

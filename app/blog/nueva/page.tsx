@@ -13,7 +13,7 @@ export default async function NuevoPostPage() {
   return (
     <>
       <AppNav back={{ href: '/blog', label: 'Blog' }} />
-      <main style={{ maxWidth: 760, margin: '0 auto', padding: '40px 24px 80px' }}>
+      <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px clamp(16px,4vw,24px) 80px' }}>
         <div style={{ marginBottom: 32 }}>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 30, fontWeight: 800, color: 'var(--text-1)', marginBottom: 6 }}>
             Nueva entrada
@@ -23,7 +23,7 @@ export default async function NuevoPostPage() {
           </p>
         </div>
         <NuevoPostForm />
-      </main>
+      </div>
     </>
   );
 }

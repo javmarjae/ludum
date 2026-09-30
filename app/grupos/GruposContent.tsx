@@ -87,12 +87,14 @@ export async function GruposContent({ userId }: { userId: string }) {
           <div style={{ display: 'flex', gap: 8 }}>
             <Link
               href="/grupos/unirse"
+              className="tap"
               style={{ padding: '9px 18px', borderRadius: 10, fontWeight: 700, fontSize: 13, color: 'var(--text-2)', background: 'var(--bg-card)', boxShadow: 'var(--shadow-btn)', textDecoration: 'none' }}
             >
               Unirse
             </Link>
             <Link
               href="/grupos/nuevo"
+              className="tap"
               style={{ padding: '9px 18px', borderRadius: 10, fontWeight: 700, fontSize: 13, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none' }}
             >
               + Crear
@@ -108,10 +110,10 @@ export async function GruposContent({ userId }: { userId: string }) {
               Crea un grupo con tus amigos o únete con un código de invitación.
             </p>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-              <Link href="/grupos/unirse" style={{ padding: '9px 20px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'var(--bg-inset)', boxShadow: 'var(--shadow-btn)', color: 'var(--text-2)', textDecoration: 'none' }}>
+              <Link href="/grupos/unirse" className="tap" style={{ padding: '9px 20px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'var(--bg-inset)', boxShadow: 'var(--shadow-btn)', color: 'var(--text-2)', textDecoration: 'none' }}>
                 Tengo un código
               </Link>
-              <Link href="/grupos/nuevo" style={{ padding: '9px 20px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', color: 'white', textDecoration: 'none' }}>
+              <Link href="/grupos/nuevo" className="tap" style={{ padding: '9px 20px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', color: 'white', textDecoration: 'none' }}>
                 Crear grupo
               </Link>
             </div>
@@ -137,7 +139,7 @@ export async function GruposContent({ userId }: { userId: string }) {
                         Código:{' '}
                         <span style={{ fontWeight: 700, fontFamily: 'monospace', color: 'var(--brand)' }}>{group.invite_code}</span>
                         {group.owner_id === userId && (
-                          <span style={{ marginLeft: 8, padding: '2px 6px', borderRadius: 6, fontSize: 10, fontWeight: 700, background: 'var(--brand-tint)', color: 'var(--brand)' }}>
+                          <span style={{ marginLeft: 8, padding: '2px 6px', borderRadius: 6, fontSize: 11, fontWeight: 700, background: 'var(--brand-tint)', color: 'var(--brand)' }}>
                             Admin
                           </span>
                         )}
@@ -165,6 +167,7 @@ export async function GruposContent({ userId }: { userId: string }) {
           </div>
           <Link
             href="/comunidades/nueva"
+            className="tap"
             style={{ padding: '9px 18px', borderRadius: 10, fontWeight: 700, fontSize: 13, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none', flexShrink: 0 }}
           >
             + Nueva
@@ -173,7 +176,7 @@ export async function GruposContent({ userId }: { userId: string }) {
 
         {official.length > 0 && (
           <div style={{ marginBottom: 36 }}>
-            <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-4)', marginBottom: 14 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 12 }}>
               Oficiales · Por categoría
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
@@ -193,7 +196,7 @@ export async function GruposContent({ userId }: { userId: string }) {
 
         {userCreated.length > 0 && (
           <div>
-            <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-4)', marginBottom: 14 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 12 }}>
               Creadas por usuarios
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
@@ -215,7 +218,7 @@ export async function GruposContent({ userId }: { userId: string }) {
           <div style={{ borderRadius: 20, padding: '36px 24px', textAlign: 'center', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
             <p style={{ fontSize: 36, marginBottom: 12 }}>💬</p>
             <p style={{ fontSize: 16, fontWeight: 800, color: 'var(--text)', marginBottom: 6 }}>Sin comunidades todavía</p>
-            <Link href="/comunidades/nueva" style={{ padding: '9px 20px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', color: 'white', textDecoration: 'none', display: 'inline-block' }}>
+            <Link href="/comunidades/nueva" className="tap" style={{ padding: '9px 20px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', color: 'white', textDecoration: 'none', display: 'inline-block' }}>
               Crear comunidad
             </Link>
           </div>
@@ -235,6 +238,7 @@ export async function GruposContent({ userId }: { userId: string }) {
           </div>
           <Link
             href="/organizaciones/nueva"
+            className="tap"
             style={{ padding: '9px 18px', borderRadius: 10, fontWeight: 700, fontSize: 13, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none', flexShrink: 0 }}
           >
             + Nueva
@@ -248,7 +252,7 @@ export async function GruposContent({ userId }: { userId: string }) {
             <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-3)', marginBottom: 18 }}>
               ¿Tienes una tienda o asociación lúdica? Regístrala para organizar torneos.
             </p>
-            <Link href="/organizaciones/nueva" style={{ padding: '9px 20px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', color: 'white', textDecoration: 'none', display: 'inline-block' }}>
+            <Link href="/organizaciones/nueva" className="tap" style={{ padding: '9px 20px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', color: 'white', textDecoration: 'none', display: 'inline-block' }}>
               Crear organización
             </Link>
           </div>
@@ -276,12 +280,12 @@ export async function GruposContent({ userId }: { userId: string }) {
                     </p>
                   </div>
                   {ownedOrgIds.has(org.id) && (
-                    <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--brand)', background: 'var(--brand-tint)', padding: '2px 8px', borderRadius: 20, flexShrink: 0 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)', background: 'var(--brand-tint)', padding: '2px 8px', borderRadius: 20, flexShrink: 0 }}>
                       Admin
                     </span>
                   )}
                   {!ownedOrgIds.has(org.id) && staffOrgIds.has(org.id) && (
-                    <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', background: 'var(--bg-inset)', padding: '2px 8px', borderRadius: 20, flexShrink: 0 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', background: 'var(--bg-inset)', padding: '2px 8px', borderRadius: 20, flexShrink: 0 }}>
                       Staff
                     </span>
                   )}
@@ -339,7 +343,7 @@ function CommunityCard({
             )}
           </div>
           {community.is_official && (
-            <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--brand)', background: 'var(--brand-tint)', padding: '2px 7px', borderRadius: 20, flexShrink: 0 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)', background: 'var(--brand-tint)', padding: '2px 7px', borderRadius: 20, flexShrink: 0 }}>
               Oficial
             </span>
           )}
@@ -355,11 +359,11 @@ function CommunityCard({
         )}
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: 4 }}>
-          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)' }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-3)' }}>
             {memberCount} {memberCount === 1 ? 'miembro' : 'miembros'}
           </span>
           {isMember && (
-            <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--brand)', background: 'var(--brand-tint)', padding: '2px 8px', borderRadius: 20 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)', background: 'var(--brand-tint)', padding: '2px 8px', borderRadius: 20 }}>
               Unido
             </span>
           )}

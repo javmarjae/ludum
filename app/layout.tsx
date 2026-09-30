@@ -90,8 +90,16 @@ async function SidebarWithProfile({ userId }: { userId: string }) {
 
 // Async server component: renders mobile nav once profile loads (reuses same query via cache)
 async function MobileNavWithProfile({ userId }: { userId: string }) {
-  const profile = await getProfile(userId);
-  return <MobileBottomNav isAdmin={profile?.is_admin ?? false} userId={userId} />;
+  const supabase = await createClient();
+  const [profile, { data: memberships }] = await Promise.all([
+    getProfile(userId),
+    supabase.from('group_members').select('group_id').eq('profile_id', userId).limit(2),
+  ]);
+  // Con un solo grupo, "Registrar" salta directo al formulario; si no, hay que elegir grupo
+  const registerHref = memberships?.length === 1
+    ? `/grupos/${memberships[0].group_id}/partidas/nueva`
+    : '/grupos';
+  return <MobileBottomNav isAdmin={profile?.is_admin ?? false} registerHref={registerHref} />;
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

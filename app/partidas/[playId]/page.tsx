@@ -54,7 +54,7 @@ export default async function PublicPlayPage({ params }: Props) {
         </div>
       </header>
 
-      <main style={{ maxWidth: 560, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 560, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
         {/* Chip de grupo */}
         <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
@@ -135,7 +135,7 @@ export default async function PublicPlayPage({ params }: Props) {
             Únete a Ludum gratis
           </Link>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

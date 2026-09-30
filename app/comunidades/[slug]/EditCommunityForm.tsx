@@ -70,6 +70,7 @@ export function EditCommunityForm({ communityId, communitySlug, initialDescripti
     return (
       <button
         onClick={() => setOpen(true)}
+        className="tap"
         style={{
           display: 'flex', alignItems: 'center', gap: 8,
           padding: '8px 14px', borderRadius: 10, fontSize: 13, fontWeight: 700,

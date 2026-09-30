@@ -95,7 +95,7 @@ export function ImportBGGCollection() {
 
   if (!open) {
     return (
-      <button onClick={() => setOpen(true)} style={{
+      <button className="tap" onClick={() => setOpen(true)} style={{
         fontSize: 13, fontWeight: 700, padding: '8px 16px', borderRadius: 999,
         background: 'var(--bg-card)', boxShadow: 'var(--shadow-btn)', border: 'none',
         color: 'var(--text-2)', cursor: 'pointer', fontFamily: 'inherit',

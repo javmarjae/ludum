@@ -14,7 +14,7 @@ const inputStyle = {
 };
 const labelStyle = {
   display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-3)',
-  textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginBottom: 6,
+  marginBottom: 6,
 };
 
 export function TorneoForm({ orgs }: { orgs: Org[] }) {
@@ -168,7 +168,7 @@ export function TorneoForm({ orgs }: { orgs: Org[] }) {
       </div>
 
       {error && (
-        <div style={{ padding: '12px 16px', borderRadius: 12, background: '#fee2e2', color: '#dc2626', fontSize: 14, fontWeight: 600 }}>
+        <div className="form-error" role="alert">
           {error}
         </div>
       )}

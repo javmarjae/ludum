@@ -19,7 +19,7 @@ export default async function NuevaComunidadPage() {
         </Link>
       </div>
 
-      <main style={{ maxWidth: 540, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 540, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
         <h1 style={{ fontSize: 26, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em', marginBottom: 6 }}>
           Nueva comunidad
         </h1>
@@ -28,7 +28,7 @@ export default async function NuevaComunidadPage() {
         </p>
 
         <NuevaComunidadForm categories={categories ?? []} />
-      </main>
+      </div>
     </div>
   );
 }

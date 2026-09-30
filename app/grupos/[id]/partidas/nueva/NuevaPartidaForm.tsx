@@ -96,8 +96,8 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Game */}
       <div>
-        <label style={labelStyle}>Juego</label>
-        <select value={gameId} onChange={(e) => setGameId(e.target.value)} required style={{ ...inputStyle, appearance: 'auto' } as React.CSSProperties}>
+        <label htmlFor="play-game" style={labelStyle}>Juego</label>
+        <select id="play-game" value={gameId} onChange={(e) => setGameId(e.target.value)} required style={{ ...inputStyle, appearance: 'auto' } as React.CSSProperties}>
           {games.map((g) => (
             <option key={g.id} value={g.id}>{g.name}</option>
           ))}
@@ -106,15 +106,16 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
 
       {/* Date */}
       <div>
-        <label style={labelStyle}>Fecha</label>
-        <input type="date" value={playedAt} onChange={(e) => setPlayedAt(e.target.value)} required style={inputStyle as React.CSSProperties} />
+        <label htmlFor="play-date" style={labelStyle}>Fecha</label>
+        <input id="play-date" type="date" value={playedAt} onChange={(e) => setPlayedAt(e.target.value)} required style={inputStyle as React.CSSProperties} />
       </div>
 
       {/* Duration */}
       <div>
-        <label style={labelStyle}>Duración (minutos) <span style={{ fontWeight: 500, color: 'var(--text-4)' }}>— opcional</span></label>
+        <label htmlFor="play-duration" style={labelStyle}>Duración (minutos) <span style={{ fontWeight: 500, color: 'var(--text-3)' }}>— opcional</span></label>
         <input
-          type="number" min="1" max="999" value={duration}
+          id="play-duration"
+          type="number" inputMode="numeric" min="1" max="999" value={duration}
           onChange={(e) => setDuration(e.target.value)}
           placeholder={(() => {
             const g = games.find(g => g.id === gameId);
@@ -130,9 +131,9 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
       {/* Players */}
       <div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <label style={{ ...labelStyle, marginBottom: 0 }}>Jugadores</label>
-          <button type="button" onClick={addPlayer} style={{
-            fontSize: 12, padding: '5px 12px', borderRadius: 999, fontWeight: 700,
+          <p style={{ ...labelStyle, marginBottom: 0 }}>Jugadores</p>
+          <button type="button" onClick={addPlayer} className="tap" style={{
+            fontSize: 13, padding: '5px 14px', borderRadius: 999, fontWeight: 700,
             background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(92,140,42,0.2)',
             cursor: 'pointer', fontFamily: 'inherit',
           }}>
@@ -154,11 +155,11 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
               border: player.is_winner ? '1.5px solid rgba(62,94,59,0.2)' : '1.5px solid transparent',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)' }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-3)' }}>
                   Jugador {i + 1} {player.is_winner && <Picto emoji="🏆" />}
                 </span>
                 {players.length > 1 && (
-                  <button type="button" onClick={() => removePlayer(player.uid)} style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
+                  <button type="button" onClick={() => removePlayer(player.uid)} className="tap" aria-label={`Quitar jugador ${i + 1}`} style={{ margin: '-12px -8px -12px 0', padding: '0 8px', fontSize: 13, fontWeight: 600, color: 'var(--text-3)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
                     Quitar
                   </button>
                 )}
@@ -167,8 +168,8 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
               {/* Type toggle */}
               <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
                 {(['member', 'guest'] as const).map((type) => (
-                  <button key={type} type="button" onClick={() => updatePlayer(player.uid, 'type', type)} style={{
-                    padding: '5px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                  <button key={type} type="button" onClick={() => updatePlayer(player.uid, 'type', type)} aria-pressed={player.type === type} className="tap" style={{
+                    padding: '5px 14px', borderRadius: 999, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                     background: player.type === type ? 'var(--brand-tint)' : 'var(--bg-inset)',
                     color: player.type === type ? 'var(--brand)' : 'var(--text-3)',
                     border: player.type === type ? '1px solid rgba(92,140,42,0.2)' : '1px solid transparent',
@@ -180,7 +181,7 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
 
               {/* Name */}
               {player.type === 'member' ? (
-                <select value={player.profile_id ?? ''} onChange={(e) => updatePlayer(player.uid, 'profile_id', e.target.value)}
+                <select aria-label={`Jugador ${i + 1}`} value={player.profile_id ?? ''} onChange={(e) => updatePlayer(player.uid, 'profile_id', e.target.value)}
                   style={{ ...inputStyle, marginBottom: 10, appearance: 'auto' } as React.CSSProperties}>
                   <option value="">— Seleccionar —</option>
                   {members.map((m) => (
@@ -190,18 +191,18 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
                   ))}
                 </select>
               ) : (
-                <input type="text" placeholder="Nombre del invitado" value={player.guest_name}
+                <input type="text" aria-label={`Nombre del invitado ${i + 1}`} placeholder="Nombre del invitado" value={player.guest_name}
                   onChange={(e) => updatePlayer(player.uid, 'guest_name', e.target.value)}
                   style={{ ...inputStyle, marginBottom: 10 } as React.CSSProperties} />
               )}
 
               {/* Score + winner */}
               <div style={{ display: 'flex', gap: 8 }}>
-                <input type="number" placeholder="Puntuación" value={player.score}
+                <input type="number" inputMode="decimal" aria-label={`Puntuación del jugador ${i + 1}`} placeholder="Puntuación" value={player.score}
                   onChange={(e) => updatePlayer(player.uid, 'score', e.target.value)}
                   style={{ ...inputStyle, flex: 1 } as React.CSSProperties} />
-                <button type="button" onClick={() => toggleWinner(player.uid)} style={{
-                  padding: '10px 14px', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0,
+                <button type="button" onClick={() => toggleWinner(player.uid)} aria-pressed={player.is_winner} style={{
+                  minHeight: 44, padding: '10px 14px', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0,
                   background: player.is_winner ? 'var(--brand-tint)' : 'var(--bg-inset)',
                   color: player.is_winner ? 'var(--brand)' : 'var(--text-3)',
                   border: player.is_winner ? '1px solid rgba(92,140,42,0.2)' : '1px solid transparent',
@@ -217,8 +218,8 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
 
       {/* Notes */}
       <div>
-        <label style={labelStyle}>Notas (opcional)</label>
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
+        <label htmlFor="play-notes" style={labelStyle}>Notas (opcional)</label>
+        <textarea id="play-notes" value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="¿Algo memorable de esta partida?" rows={2}
           style={{ ...inputStyle, resize: 'none' } as React.CSSProperties} />
       </div>
@@ -234,7 +235,7 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
               {isPublic ? 'Cualquiera con el enlace puede verla' : 'Solo los miembros del grupo pueden verla'}
             </p>
           </div>
-          <button type="button" onClick={() => setIsPublic(!isPublic)} style={{
+          <button type="button" role="switch" aria-checked={isPublic} aria-label="Partida pública" className="switch-hit" onClick={() => setIsPublic(!isPublic)} style={{
             width: 44, height: 24, borderRadius: 999, border: 'none', cursor: 'pointer',
             background: isPublic ? 'var(--brand)' : 'var(--bg-inset)',
             position: 'relative', transition: 'background 0.2s', flexShrink: 0,
@@ -250,14 +251,14 @@ export function NuevaPartidaForm({ groupId, games, members }: { groupId: string;
       </div>
 
       {error && (
-        <p style={{ fontSize: 13, borderRadius: 16, padding: '10px 14px', fontWeight: 600, background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(62,94,59,0.2)' }}>
+        <p role="alert" className="form-error">
           {error}
         </p>
       )}
 
       <button type="submit" disabled={loading} style={{
-        width: '100%', padding: '14px', borderRadius: 999, fontWeight: 800, fontSize: 16,
-        color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',
+        width: '100%', padding: '14px', borderRadius: 10, fontWeight: 800, fontSize: 16,
+        color: 'var(--on-brand)', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',
         border: 'none', cursor: 'pointer', fontFamily: 'inherit', opacity: loading ? 0.6 : 1,
       }}>
         {loading ? 'Guardando...' : 'Registrar partida'}

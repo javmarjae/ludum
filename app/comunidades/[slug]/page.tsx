@@ -110,7 +110,7 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: '/comunidades', label: 'Comunidades' }} />
 
-      <main style={{ maxWidth: 720, margin: '0 auto', padding: '32px 24px 80px' }}>
+      <div style={{ maxWidth: 720, margin: '0 auto', padding: '32px clamp(16px,4vw,24px) 80px' }}>
         {/* Community header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 28 }}>
           {community.image_url
@@ -167,15 +167,17 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid var(--border)', paddingBottom: 0 }}>
+        <div className="scroll-row" style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid var(--border)', paddingBottom: 0, overflowX: 'auto' }}>
           {tabs.map(t => (
             <Link
               key={t.id}
               href={`/comunidades/${slug}?tab=${t.id}`}
+              aria-current={tab === t.id ? 'page' : undefined}
               style={{
+                display: 'inline-flex', alignItems: 'center', minHeight: 44,
                 padding: '8px 14px', borderRadius: '8px 8px 0 0', textDecoration: 'none',
-                fontSize: 13, fontWeight: 700,
-                color: tab === t.id ? 'var(--brand)' : 'var(--text-4)',
+                fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap',
+                color: tab === t.id ? 'var(--brand)' : 'var(--text-3)',
                 background: tab === t.id ? 'var(--brand-tint)' : 'transparent',
                 borderBottom: tab === t.id ? '2px solid var(--brand)' : '2px solid transparent',
                 marginBottom: -1,
@@ -281,7 +283,7 @@ export default async function ComunidadDetailPage({ params, searchParams }: Prop
             )}
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

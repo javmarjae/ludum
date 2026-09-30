@@ -46,13 +46,13 @@ export default async function HistorialPage({ searchParams }: Props) {
 
   return (
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
-      <div style={{ display: 'flex', alignItems: 'center', padding: '0 28px', height: 52, borderBottom: '1px solid var(--border)', background: 'var(--bg-card)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 30 }}>
-        <Link href="/partidas" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, color: 'var(--text-3)', textDecoration: 'none', padding: '6px 12px', borderRadius: 8, background: 'var(--bg-inset)', boxShadow: 'var(--shadow-btn)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', padding: '0 clamp(16px,4vw,28px)', height: 52, borderBottom: '1px solid var(--border)', background: 'var(--bg-card)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 30 }}>
+        <Link href="/partidas" className="tap" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, color: 'var(--text-3)', textDecoration: 'none', padding: '6px 12px', borderRadius: 8, background: 'var(--bg-inset)', boxShadow: 'var(--shadow-btn)' }}>
           ← Tracker
         </Link>
       </div>
 
-      <main style={{ maxWidth: 860, margin: '0 auto', padding: '48px clamp(16px,4vw,32px) 80px' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px clamp(16px,4vw,32px) 80px' }}>
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 4 }}>Historial de partidas</h1>
           <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-3)' }}>
@@ -139,7 +139,7 @@ export default async function HistorialPage({ searchParams }: Props) {
             )}
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

@@ -15,7 +15,7 @@ export default async function GruposPage({ searchParams }: { searchParams: Promi
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      <main style={{ maxWidth: 860, margin: '0 auto', padding: '48px clamp(16px,4vw,32px) 80px' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px clamp(16px,4vw,32px) 80px' }}>
 
         {/* Banner solicitud org enviada */}
         {org_request === 'sent' && (
@@ -32,7 +32,7 @@ export default async function GruposPage({ searchParams }: { searchParams: Promi
           <GruposContent userId={user.id} />
         </Suspense>
 
-      </main>
+      </div>
     </div>
   );
 }

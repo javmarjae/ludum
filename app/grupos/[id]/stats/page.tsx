@@ -116,7 +116,7 @@ export default async function StatsPage({ params }: Props) {
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav back={{ href: `/grupos/${groupId}`, label: group.name }} />
 
-      <main style={{ maxWidth: 860, margin: '0 auto', padding: '48px clamp(16px,4vw,32px) 80px' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px clamp(16px,4vw,32px) 80px' }}>
         <div style={{ marginBottom: 32 }}>
           <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 4 }}>Estadísticas</h1>
           <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-3)' }}>{group.name}</p>
@@ -270,7 +270,7 @@ export default async function StatsPage({ params }: Props) {
 
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

@@ -25,7 +25,7 @@ export default async function BlogPage() {
   return (
     <>
       <AppNav />
-      <main style={{ maxWidth: 880, margin: '0 auto', padding: '40px 24px 80px' }}>
+      <div style={{ maxWidth: 880, margin: '0 auto', padding: '40px clamp(16px,4vw,24px) 80px' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
           <div>
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 800, color: 'var(--text-1)', marginBottom: 8 }}>
@@ -136,7 +136,7 @@ export default async function BlogPage() {
             ))}
           </div>
         )}
-      </main>
+      </div>
     </>
   );
 }

@@ -45,7 +45,7 @@ export default function FAQ() {
   return (
     <>
       <Nav right={<NavButton href="/auth/login" variant="brand">Entrar</NavButton>} mobileItems={[{ href: '/auth/login', label: 'Entrar', variant: 'brand' }]} />
-      <main style={{ maxWidth: 720, margin: '0 auto', padding: '64px 32px 80px' }}>
+      <div style={{ maxWidth: 720, margin: '0 auto', padding: '64px clamp(16px,4vw,32px) 80px' }}>
         <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--brand)', marginBottom: 16 }}>
           Ayuda
         </p>
@@ -79,7 +79,7 @@ export default function FAQ() {
             y te respondemos en menos de 48h.
           </p>
         </div>
-      </main>
+      </div>
     </>
   );
 }

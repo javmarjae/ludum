@@ -10,7 +10,7 @@ function matchesRoute(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + '/');
 }
 
-export function MobileBottomNav({ isAdmin = false, userId }: { isAdmin?: boolean; userId: string }) {
+export function MobileBottomNav({ isAdmin = false, registerHref = '/grupos' }: { isAdmin?: boolean; registerHref?: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -19,178 +19,125 @@ export function MobileBottomNav({ isAdmin = false, userId }: { isAdmin?: boolean
     router.prefetch('/recomendador');
     fetch('/api/recomendador/warm', { keepalive: true }).catch(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const popupRef = useRef<HTMLDivElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => { setMoreOpen(false); }, [pathname]);
 
   useEffect(() => {
     if (!moreOpen) return;
-    function handleClick(e: MouseEvent) {
-      const target = e.target as Node;
-      if (popupRef.current?.contains(target)) return;
-      if (btnRef.current?.contains(target)) return;
-      setMoreOpen(false);
-    }
+    sheetRef.current?.querySelector<HTMLElement>('a, button')?.focus();
     function handleKey(e: KeyboardEvent) {
       if (e.key === 'Escape') {
         setMoreOpen(false);
         btnRef.current?.focus();
       }
     }
-    document.addEventListener('mousedown', handleClick);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', handleKey);
     return () => {
-      document.removeEventListener('mousedown', handleClick);
+      document.body.style.overflow = prevOverflow;
       document.removeEventListener('keydown', handleKey);
     };
   }, [moreOpen]);
 
-  /* Orden por prioridad de producto: primero decidir qué jugar
-     (recomendador, buscador), después registrar (grupos, tracker).
-     La barra hace scroll horizontal: los primeros ~5 son los visibles. */
-  const baseItems = [
-    { href: '/recomendador',  label: 'Recomend', icon: <RecommendSvg /> },
-    { href: '/buscar',        label: 'Buscar',   icon: <SearchSvg /> },
-    { href: '/grupos',        label: 'Grupos',   icon: <GroupsSvg /> },
-    { href: '/partidas',      label: 'Tracker',  icon: <TrackerSvg /> },
-    { href: '/perfil',        label: 'Perfil',   icon: <ProfileSvg /> },
-    { href: '/torneos',       label: 'Torneos',  icon: <TorneosSvg /> },
-    { href: '/eventos',       label: 'Eventos',  icon: <EventsSvg /> },
-    { href: '/notificaciones', label: 'Noti',    icon: <BellSvg /> },
-    { href: '/mensajes',      label: 'Chat',     icon: <ChatSvg /> },
-    { href: '/blog',          label: 'Blog',     icon: <BlogSvg /> },
+  const moreItems = [
+    { href: '/recomendador',   label: 'Recomendador',   icon: <RecommendSvg /> },
+    { href: '/partidas',       label: 'Mis partidas',   icon: <TrackerSvg /> },
+    { href: '/perfil',         label: 'Perfil',         icon: <ProfileSvg /> },
+    { href: '/torneos',        label: 'Torneos',        icon: <TorneosSvg /> },
+    { href: '/eventos',        label: 'Eventos',        icon: <EventsSvg /> },
+    { href: '/notificaciones', label: 'Avisos',         icon: <BellSvg /> },
+    { href: '/mensajes',       label: 'Mensajes',       icon: <ChatSvg /> },
+    { href: '/blog',           label: 'Blog',           icon: <BlogSvg /> },
+    ...(isAdmin ? [{ href: '/admin', label: 'Admin', icon: <AdminSvg /> }] : []),
   ];
 
-  const items = isAdmin
-    ? [...baseItems, { href: '/admin', label: 'Admin', icon: <AdminSvg /> }]
-    : baseItems;
+  const registerActive = pathname.endsWith('/partidas/nueva');
+  const moreActive = !registerActive && moreItems.some(i => matchesRoute(pathname, i.href));
 
   return (
     <>
+      {moreOpen && <div className="mbn-backdrop" aria-hidden="true" onClick={() => setMoreOpen(false)} />}
       {moreOpen && (
-        <div
-          ref={popupRef}
-          style={{
-            position: 'fixed',
-            bottom: 'calc(62px + env(safe-area-inset-bottom, 0px) + 8px)',
-            right: 12,
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border)',
-            borderRadius: 16,
-            padding: '10px',
-            boxShadow: '0 -4px 32px rgba(58,55,47,0.18)',
-            zIndex: 55,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 4,
-            minWidth: 200,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 10px' }}>
-            <ThemeToggle />
-            <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-2)' }}>Cambiar tema</span>
+        <div ref={sheetRef} id="mbn-more-sheet" role="dialog" aria-modal="true" aria-label="Más secciones" className="mbn-sheet">
+          <div className="mbn-sheet-grip" aria-hidden="true" />
+          <div className="mbn-sheet-grid">
+            {moreItems.map(({ href, label, icon }) => {
+              const active = matchesRoute(pathname, href);
+              return (
+                <Link key={href} href={href} prefetch={false} className="mbn-sheet-item" data-active={active} aria-current={active ? 'page' : undefined}>
+                  {icon}
+                  <span>{label}</span>
+                </Link>
+              );
+            })}
           </div>
-          <div style={{ height: 1, background: 'var(--border)', margin: '2px 0' }} />
-          <form action={logout} style={{ width: '100%' }}>
-            <button
-              type="submit"
-              style={{
-                width: '100%',
-                padding: '10px 12px',
-                borderRadius: 10,
-                border: 'none',
-                cursor: 'pointer',
-                background: 'transparent',
-                color: 'var(--text-2)',
-                fontSize: 14,
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                fontFamily: 'inherit',
-                textAlign: 'left',
-              }}
-            >
-              <LogoutSvg />
-              Cerrar sesión
-            </button>
-          </form>
+          <div className="mbn-sheet-footer">
+            <div className="mbn-sheet-theme">
+              <ThemeToggle />
+              <span>Tema</span>
+            </div>
+            <form action={logout}>
+              <button type="submit" className="mbn-sheet-logout">
+                <LogoutSvg />
+                Cerrar sesión
+              </button>
+            </form>
+          </div>
         </div>
       )}
 
       <nav className="mobile-bottom-nav" aria-label="Navegación principal">
-        {items.map(({ href, label, icon }) => {
-          const active = matchesRoute(pathname, href);
-          return (
-            <Link
-              key={href}
-              href={href}
-              prefetch={false}
-              aria-current={active ? 'page' : undefined}
-              style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center',
-                gap: 4, padding: '6px 10px', textDecoration: 'none',
-                minWidth: 60, flexShrink: 0,
-              }}
-            >
-              <div style={{
-                width: 42, height: 42, borderRadius: 12,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: active ? 'var(--brand)' : 'transparent',
-                color: active ? 'white' : 'var(--text-3)',
-                transition: 'background 0.15s, color 0.15s',
-                boxShadow: active ? '0 3px 10px rgba(62,94,59,0.35)' : 'none',
-              }}>
-                {icon}
-              </div>
-              <span style={{
-                fontSize: 9, fontWeight: 700, lineHeight: 1.2, textAlign: 'center',
-                letterSpacing: '0.03em',
-                color: active ? 'var(--brand)' : 'var(--text-4)',
-              }}>
-                {label}
-              </span>
-            </Link>
-          );
-        })}
-
-        {/* Botón Más: tema + cerrar sesión */}
+        <NavItem href="/" label="Inicio" icon={<HomeSvg />} active={pathname === '/'} />
+        <NavItem href="/buscar" label="Buscar" icon={<SearchSvg />} active={matchesRoute(pathname, '/buscar')} />
+        <Link
+          href={registerHref}
+          prefetch={false}
+          className="mbn-item mbn-register"
+          data-active={registerActive}
+          aria-current={registerActive ? 'page' : undefined}
+        >
+          <span className="mbn-register-btn"><PlusSvg /></span>
+          <span className="mbn-label">Registrar</span>
+        </Link>
+        <NavItem href="/grupos" label="Grupos" icon={<GroupsSvg />} active={!registerActive && matchesRoute(pathname, '/grupos')} />
         <button
           ref={btnRef}
+          type="button"
+          className="mbn-item"
+          data-active={moreOpen || moreActive}
           onClick={() => setMoreOpen(v => !v)}
           aria-expanded={moreOpen}
-          aria-haspopup="true"
-          aria-label="Más opciones"
-          style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center',
-            gap: 4, padding: '6px 10px',
-            minWidth: 58, flexShrink: 0,
-            border: 'none', background: 'transparent',
-            cursor: 'pointer', fontFamily: 'inherit',
-          }}
+          aria-controls="mbn-more-sheet"
+          aria-haspopup="dialog"
         >
-          <div style={{
-            width: 38, height: 38, borderRadius: 11,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: moreOpen ? 'var(--brand)' : 'transparent',
-            color: moreOpen ? 'white' : 'var(--text-3)',
-            transition: 'background 0.15s, color 0.15s',
-            boxShadow: moreOpen ? '0 3px 10px rgba(62,94,59,0.35)' : 'none',
-          }}>
-            <MoreSvg />
-          </div>
-          <span style={{
-            fontSize: 9, fontWeight: 700, lineHeight: 1.2, textAlign: 'center',
-            letterSpacing: '0.03em',
-            color: moreOpen ? 'var(--brand)' : 'var(--text-4)',
-          }}>
-            Más
-          </span>
+          <span className="mbn-icon"><GridSvg /></span>
+          <span className="mbn-label">Más</span>
         </button>
       </nav>
     </>
   );
+}
+
+function NavItem({ href, label, icon, active }: { href: string; label: string; icon: React.ReactNode; active: boolean }) {
+  return (
+    <Link href={href} prefetch={false} className="mbn-item" data-active={active} aria-current={active ? 'page' : undefined}>
+      <span className="mbn-icon">{icon}</span>
+      <span className="mbn-label">{label}</span>
+    </Link>
+  );
+}
+
+function HomeSvg() {
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>;
+}
+function PlusSvg() {
+  return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+}
+function GridSvg() {
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>;
 }
 
 function ProfileSvg() {
@@ -225,9 +172,6 @@ function ChatSvg() {
 }
 function AdminSvg() {
   return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
-}
-function MoreSvg() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>;
 }
 function LogoutSvg() {
   return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>;

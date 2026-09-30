@@ -49,7 +49,7 @@ export default async function TorneosPage() {
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <AppNav />
-      <main style={{ maxWidth: 900, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
 
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32, gap: 16, flexWrap: 'wrap' }}>
@@ -162,7 +162,7 @@ export default async function TorneosPage() {
             </Link>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

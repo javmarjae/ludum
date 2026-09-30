@@ -44,8 +44,8 @@ export default function ResetPasswordPage() {
   return (
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
       <Nav />
-      <main style={{ maxWidth: 400, margin: '0 auto', padding: '64px 24px 80px' }}>
-        <div style={{ borderRadius: 12, padding: 32, background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+      <div className="auth-wrap">
+        <div className="auth-card">
           <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)', marginBottom: 6 }}>
             Restablecer contraseña
           </h1>
@@ -56,7 +56,7 @@ export default function ResetPasswordPage() {
                 Te hemos enviado un enlace a <strong>{email}</strong>. Revisa tu bandeja de entrada y sigue las instrucciones.
               </p>
               <Link href="/auth/login" style={{
-                display: 'block', textAlign: 'center', padding: '14px', borderRadius: 999,
+                display: 'block', textAlign: 'center', padding: '14px', borderRadius: 10,
                 fontWeight: 700, fontSize: 15, color: 'var(--text-2)', background: 'var(--bg-inset)',
                 boxShadow: 'var(--shadow-btn)', textDecoration: 'none',
               }}>
@@ -73,34 +73,34 @@ export default function ResetPasswordPage() {
                   <label htmlFor="reset-email" style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 6 }}>Email</label>
                   <input
                     id="reset-email"
-                    type="email" required value={email}
+                    type="email" autoComplete="email" inputMode="email" autoCapitalize="none" required value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="tu@email.com" style={inputStyle}
                   />
                 </div>
 
                 {error && (
-                  <p style={{ fontSize: 13, borderRadius: 8, padding: '10px 14px', fontWeight: 600, background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid rgba(62,94,59,0.2)' }}>
+                  <p role="alert" className="form-error">
                     {error}
                   </p>
                 )}
 
                 <button type="submit" disabled={loading} style={{
-                  width: '100%', padding: '14px', borderRadius: 999, fontWeight: 800, fontSize: 16,
-                  color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',
+                  width: '100%', padding: '14px', borderRadius: 10, fontWeight: 800, fontSize: 16,
+                  color: 'var(--on-brand)', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',
                   border: 'none', cursor: 'pointer', fontFamily: 'inherit', opacity: loading ? 0.6 : 1,
                 }}>
                   {loading ? 'Enviando...' : 'Enviar enlace'}
                 </button>
 
-                <Link href="/auth/login" style={{ textAlign: 'center', fontSize: 13, fontWeight: 600, color: 'var(--text-4)', textDecoration: 'none' }}>
+                <Link href="/auth/login" className="tap" style={{ textAlign: 'center', fontSize: 14, fontWeight: 600, color: 'var(--text-3)', textDecoration: 'none' }}>
                   Volver al inicio de sesión
                 </Link>
               </form>
             </>
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

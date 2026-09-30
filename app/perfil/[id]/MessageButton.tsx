@@ -12,7 +12,7 @@ export function MessageButton({ profileId }: { profileId: string }) {
         disabled={pending}
         style={{
           display: 'inline-flex', alignItems: 'center', gap: 6,
-          padding: '9px 18px', borderRadius: 999, border: 'none', cursor: pending ? 'default' : 'pointer',
+          minHeight: 44, padding: '9px 18px', borderRadius: 999, border: 'none', cursor: pending ? 'default' : 'pointer',
           fontSize: 13, fontWeight: 700,
           background: 'var(--bg-inset)', color: 'var(--text-2)',
           boxShadow: 'var(--shadow-btn)',

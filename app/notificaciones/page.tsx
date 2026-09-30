@@ -49,7 +49,7 @@ export default async function NotificacionesPage() {
     <div style={{ background: 'transparent', minHeight: '100vh' }}>
       <AppNav back={{ href: '/', label: 'Inicio' }} />
 
-      <main style={{ maxWidth: 560, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ maxWidth: 560, margin: '0 auto', padding: '48px clamp(16px,4vw,24px) 80px' }}>
         <h1 style={{ fontSize: 26, fontWeight: 800, color: 'var(--text)', marginBottom: 24, letterSpacing: '-0.02em' }}>
           Notificaciones
         </h1>
@@ -141,7 +141,7 @@ export default async function NotificacionesPage() {
             })}
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

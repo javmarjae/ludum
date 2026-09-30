@@ -30,13 +30,13 @@ export default async function EventosPage() {
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      <main style={{ maxWidth: 860, margin: '0 auto', padding: '48px clamp(16px,4vw,32px) 80px' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px clamp(16px,4vw,32px) 80px' }}>
         <EventsClient
           initialEvents={(events ?? []) as any[]}
           userCity={profile?.city ?? null}
           isEventCreator={profile?.is_event_creator ?? false}
         />
-      </main>
+      </div>
     </div>
   );
 }

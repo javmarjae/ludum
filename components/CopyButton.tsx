@@ -26,10 +26,12 @@ export function CopyButton({ text, label }: { text: string; label?: string }) {
   return (
     <button
       onClick={copy}
+      className="tap"
+      aria-live="polite"
       style={{
-        fontSize: label ? 13 : 11,
+        fontSize: 13,
         fontWeight: 700,
-        padding: label ? '8px 14px' : '3px 10px',
+        padding: label ? '8px 14px' : '3px 12px',
         borderRadius: 999,
         background: copied ? 'var(--brand-tint)' : 'var(--bg-inset)',
         color: copied ? 'var(--brand)' : 'var(--text-3)',

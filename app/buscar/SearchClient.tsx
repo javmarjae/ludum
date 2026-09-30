@@ -142,7 +142,7 @@ function ResultRow({ game }: { game: Game }) {
           <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 2, flexWrap: 'wrap' }}>
             {game.year_published && <span style={{ fontSize: 11, color: 'var(--text-4)', fontWeight: 500 }}>{game.year_published}</span>}
             {game.bgg_rating && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)' }}><Picto emoji="⭐" /> {game.bgg_rating.toFixed(1)}</span>}
-            {players && <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', background: 'var(--bg-inset)', padding: '1px 5px', borderRadius: 4 }}>{players}</span>}
+            {players && <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)', background: 'var(--bg-inset)', padding: '1px 5px', borderRadius: 4 }}>{players}</span>}
           </div>
         </div>
       </div>
@@ -175,7 +175,7 @@ function CarouselHeader({ icon, title, subtitle, href }: { icon: string; title: 
         </div>
       </div>
       {href && (
-        <Link href={href} style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none', padding: '5px 12px', borderRadius: 999, background: 'var(--brand-tint)', flexShrink: 0 }}>
+        <Link href={href} className="tap" style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none', padding: '5px 12px', borderRadius: 999, background: 'var(--brand-tint)', flexShrink: 0 }}>
           Ver todas ›
         </Link>
       )}
@@ -203,7 +203,7 @@ function GameCarouselCard({ game, rank, badge, index }: {
           )}
         </div>
         <p style={{ fontWeight: 700, fontSize: 12, marginTop: 8, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</p>
-        {badge && <span style={{ fontSize: 10, fontWeight: 700, color: badge.color, background: badge.bg, padding: '2px 7px', borderRadius: 999, display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 4 }}>{badge.text}</span>}
+        {badge && <span style={{ fontSize: 11, fontWeight: 700, color: badge.color, background: badge.bg, padding: '2px 7px', borderRadius: 999, display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 4 }}>{badge.text}</span>}
         {rating && <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', marginTop: 3 }}><Picto emoji="⭐" /> {rating.toFixed(1)}</p>}
       </div>
     </Link>
@@ -330,10 +330,12 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
           />
           <button
             className="buscar-search-submit"
-            style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', width: 36, height: 36, borderRadius: '50%', background: 'var(--brand)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-btn-brand)' }}
-            onClick={() => {}}
+            type="button"
+            aria-label="Buscar"
+            style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', width: 40, height: 40, borderRadius: '50%', background: 'var(--brand)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-btn-brand)' }}
+            onClick={() => (document.activeElement as HTMLElement | null)?.blur()}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--on-brand)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </button>
@@ -345,10 +347,10 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
           <div className="buscar-quick-grid">
             {QUICK_GROUPS.map(group => (
               <div key={group.title}>
-                <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
+                <p className="buscar-quick-title">
                   {group.title}
                 </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                <div className="buscar-quick-items">
                   {group.items.map(item => {
                     const active =
                       ('players' in item.filter && filterPlayers === item.filter.players) ||
@@ -362,13 +364,8 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
                         className="buscar-chip-btn"
                         data-active={active ? 'true' : undefined}
                         style={{
-                          display: 'flex', alignItems: 'center', padding: '8px 10px',
-                          borderRadius: 9, border: 'none', cursor: 'pointer',
-                          textAlign: 'left', fontFamily: 'inherit', width: '100%',
-                          fontSize: 12, fontWeight: 600,
                           background: active ? 'var(--brand)' : 'var(--bg-inset)',
-                          color: active ? 'white' : 'var(--text-2)',
-                          transition: 'background 0.12s, color 0.12s, transform 0.1s',
+                          color: active ? 'var(--on-brand)' : 'var(--text-2)',
                         }}
                       >
                         {item.label}
@@ -388,7 +385,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
               <span style={{ fontSize: 18 }}>📈</span>
               <div>
                 <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', lineHeight: 1.2 }}>¿Qué está buscando la gente?</p>
-                <p style={{ fontSize: 10, fontWeight: 500, color: 'var(--text-4)', marginTop: 1 }}>Tendencias de búsqueda</p>
+                <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-3)', marginTop: 1 }}>Tendencias de búsqueda</p>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
@@ -529,7 +526,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
               badge={
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   {g.bgg_rating && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)' }}><Picto emoji="⭐" /> {g.bgg_rating.toFixed(1)}</span>}
-                  <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-4)' }}>#{i + 1}</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)' }}>#{i + 1}</span>
                 </div>
               }
             />
