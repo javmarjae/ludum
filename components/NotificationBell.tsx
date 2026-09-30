@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
-export function NotificationBell() {
+export function NotificationBell({ userId }: { userId: string }) {
   const [unread, setUnread] = useState(0);
   const pathname = usePathname();
   const isActive = pathname === '/notificaciones';
@@ -15,33 +15,30 @@ export function NotificationBell() {
 
     async function init() {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
         const { count } = await supabase
           .from('notifications')
           .select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id)
+          .eq('user_id', userId)
           .eq('read', false);
 
         setUnread(count ?? 0);
 
         channel = supabase
-          .channel(`notif-bell-${user.id}`)
+          .channel(`notif-bell-${userId}`)
           .on('postgres_changes', {
             event: 'INSERT', schema: 'public', table: 'notifications',
-            filter: `user_id=eq.${user.id}`,
+            filter: `user_id=eq.${userId}`,
           }, () => {
             setUnread(prev => prev + 1);
           })
           .on('postgres_changes', {
             event: 'UPDATE', schema: 'public', table: 'notifications',
-            filter: `user_id=eq.${user.id}`,
+            filter: `user_id=eq.${userId}`,
           }, async () => {
             const { count: c } = await supabase
               .from('notifications')
               .select('id', { count: 'exact', head: true })
-              .eq('user_id', user.id)
+              .eq('user_id', userId)
               .eq('read', false);
             setUnread(c ?? 0);
           })
@@ -56,7 +53,7 @@ export function NotificationBell() {
     return () => {
       if (channel) supabase.removeChannel(channel);
     };
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (isActive) setUnread(0);
@@ -65,6 +62,7 @@ export function NotificationBell() {
   return (
     <Link
       href="/notificaciones"
+      prefetch={false}
       style={{
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         gap: 5, padding: '7px 6px', borderRadius: 12, textDecoration: 'none', width: 66,

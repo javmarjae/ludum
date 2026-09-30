@@ -10,7 +10,7 @@ function matchesRoute(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + '/');
 }
 
-export function MobileBottomNav({ isAdmin = false }: { isAdmin?: boolean }) {
+export function MobileBottomNav({ isAdmin = false, userId }: { isAdmin?: boolean; userId: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -126,6 +126,7 @@ export function MobileBottomNav({ isAdmin = false }: { isAdmin?: boolean }) {
             <Link
               key={href}
               href={href}
+              prefetch={false}
               aria-current={active ? 'page' : undefined}
               style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center',

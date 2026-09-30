@@ -66,7 +66,7 @@ const getProfile = cache(async (userId: string) => {
   const supabase = await createClient();
   const { data } = await supabase
     .from('profiles')
-    .select('onboarding_completed, is_admin')
+    .select('onboarding_completed, is_admin, display_name, avatar_url')
     .eq('id', userId)
     .single();
   return data;
@@ -77,7 +77,12 @@ async function SidebarWithProfile({ userId }: { userId: string }) {
   const profile = await getProfile(userId);
   return (
     <>
-      <SidebarNav isAdmin={profile?.is_admin ?? false} />
+      <SidebarNav
+        isAdmin={profile?.is_admin ?? false}
+        userId={userId}
+        profileName={profile?.display_name ?? null}
+        avatarUrl={profile?.avatar_url ?? null}
+      />
       {!profile?.onboarding_completed && <TutorialModal />}
     </>
   );
@@ -86,7 +91,7 @@ async function SidebarWithProfile({ userId }: { userId: string }) {
 // Async server component: renders mobile nav once profile loads (reuses same query via cache)
 async function MobileNavWithProfile({ userId }: { userId: string }) {
   const profile = await getProfile(userId);
-  return <MobileBottomNav isAdmin={profile?.is_admin ?? false} />;
+  return <MobileBottomNav isAdmin={profile?.is_admin ?? false} userId={userId} />;
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

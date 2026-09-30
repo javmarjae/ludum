@@ -1,33 +1,19 @@
-'use client';
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { createClient } from '@/lib/supabase/client';
 
-export function SidebarUserAvatar() {
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [initial, setInitial] = useState('?');
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return;
-      supabase
-        .from('profiles')
-        .select('display_name, avatar_url')
-        .eq('id', user.id)
-        .single()
-        .then(({ data }) => {
-          if (!data) return;
-          setInitial((data.display_name ?? user.email ?? '?')[0].toUpperCase());
-          setAvatarUrl((data as any).avatar_url ?? null);
-        });
-    });
-  }, []);
+export function SidebarUserAvatar({
+  profileName,
+  avatarUrl,
+}: {
+  profileName?: string | null;
+  avatarUrl?: string | null;
+}) {
+  const initial = (profileName ?? '?')[0].toUpperCase();
 
   return (
     <Link
       href="/perfil"
+      prefetch={false}
       title="Tu perfil"
       style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, padding: '7px 6px', borderRadius: 12, textDecoration: 'none', width: 66 }}
     >

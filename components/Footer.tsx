@@ -41,7 +41,7 @@ export function Footer() {
     <footer className="site-footer">
       <div className="site-footer-inner">
         <div className="site-footer-brand">
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', marginBottom: 12 }}>
+          <Link href="/" prefetch={false} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', marginBottom: 12 }}>
             <img src="/logo.svg" alt="Ludum" style={{ height: 30, width: 'auto', filter: 'brightness(0) invert(1) opacity(0.9)' }} />
             <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, letterSpacing: '-0.01em', color: 'rgba(255,255,255,0.92)' }}>Ludum</span>
           </Link>
@@ -64,6 +64,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
+                      prefetch={false}
                       style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.60)', textDecoration: 'none', transition: 'color 0.15s' }}
                       className="footer-link"
                     >

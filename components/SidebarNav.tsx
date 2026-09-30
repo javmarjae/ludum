@@ -13,7 +13,17 @@ function matchesRoute(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + '/');
 }
 
-export function SidebarNav({ isAdmin = false }: { isAdmin?: boolean }) {
+export function SidebarNav({
+  isAdmin = false,
+  userId,
+  profileName,
+  avatarUrl,
+}: {
+  isAdmin?: boolean;
+  userId: string;
+  profileName?: string | null;
+  avatarUrl?: string | null;
+}) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -74,21 +84,22 @@ export function SidebarNav({ isAdmin = false }: { isAdmin?: boolean }) {
       {/* Logo → home */}
       <Link
         href="/"
+        prefetch={false}
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 46, height: 46, marginBottom: 4, textDecoration: 'none', borderRadius: 12 }}
       >
         <img src="/logo.svg" alt="Ludum" style={{ width: 46, height: 46, objectFit: 'contain' }} />
       </Link>
 
       {/* Avatar usuario */}
-      <SidebarUserAvatar />
+      <SidebarUserAvatar profileName={profileName} avatarUrl={avatarUrl} />
 
       {/* Nav items */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, width: '100%' }}>
         {items.map(({ href, label, icon }) => (
           <SidebarItem key={href} href={href} label={label} icon={icon} isActive={matchesRoute(pathname, href)} />
         ))}
-        <NotificationBell />
-        <ChatIcon />
+        <NotificationBell userId={userId} />
+        <ChatIcon userId={userId} />
       </div>
 
       {/* Bottom controls */}
@@ -119,6 +130,7 @@ function SidebarItem({ href, label, icon, isActive }: { href: string; label: str
   return (
     <Link
       href={href}
+      prefetch={false}
       aria-current={isActive ? 'page' : undefined}
       style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, padding: '7px 6px', borderRadius: 12, textDecoration: 'none', width: 66 }}
     >

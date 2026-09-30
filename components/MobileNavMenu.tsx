@@ -61,6 +61,7 @@ export function MobileNavMenu({ items }: { items: MenuItem[] }) {
             <Link
               key={href}
               href={href}
+              prefetch={false}
               onClick={() => setOpen(false)}
               className={variant !== 'brand' ? 'mobile-nav-link' : undefined}
               style={{

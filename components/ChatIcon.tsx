@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
-export function ChatIcon() {
+export function ChatIcon({ userId }: { userId: string }) {
   const [unread, setUnread] = useState(0);
   const pathname = usePathname();
   const isActive = pathname.startsWith('/mensajes');
@@ -14,9 +14,6 @@ export function ChatIcon() {
 
     async function init() {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
         const { data } = await supabase.rpc('get_total_unread_messages');
         setUnread(Number(data ?? 0));
       } catch {
@@ -25,7 +22,7 @@ export function ChatIcon() {
     }
 
     init();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (isActive) setUnread(0);
@@ -34,6 +31,7 @@ export function ChatIcon() {
   return (
     <Link
       href="/mensajes"
+      prefetch={false}
       style={{
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         gap: 5, padding: '7px 6px', borderRadius: 12, textDecoration: 'none', width: 66,
