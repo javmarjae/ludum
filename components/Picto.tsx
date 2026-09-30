@@ -45,6 +45,9 @@ export function Picto({ emoji, name, size, style, className }: PictoProps) {
       src={`/icons/picto/${resolved}.svg`}
       alt=""
       aria-hidden="true"
+      loading="lazy"
+      decoding="async"
+      fetchPriority="low"
       width={typeof dim === 'number' ? dim : undefined}
       height={typeof dim === 'number' ? dim : undefined}
       className={className}

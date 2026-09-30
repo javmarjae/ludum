@@ -15,7 +15,6 @@ const nextConfig = {
     ];
   },
   typescript: { ignoreBuildErrors: true },
-  eslint: { ignoreDuringBuilds: true },
   images: {
     formats: ['image/avif', 'image/webp'],
     // Las portadas de BGG son inmutables y las subidas a Supabase Storage cambian
