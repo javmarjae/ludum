@@ -76,12 +76,12 @@ export function Achievements({ plays, collectionCount, userId, compact = false }
           <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>Logros</p>
           <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-4)' }}>{unlocked.length}/{achievements.length}</span>
         </div>
-        <div className="achievements-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+        <div className="achievements-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 6, minWidth: 0 }}>
           {achievements.map((a) => (
             <div
               key={a.id}
               className="achievement-item"
-              style={{ position: 'relative' }}
+              style={{ position: 'relative', minWidth: 0 }}
               onMouseEnter={() => setHoveredId(a.id)}
               onMouseLeave={() => setHoveredId(null)}
               onClick={() => setHoveredId(id => (id === a.id ? null : a.id))}

@@ -27,15 +27,15 @@ export default async function PerfilPage() {
   return (
     <>
       <style>{`
-        .p-wrap  { padding: 0 48px 80px; }
-        .p-row   { display: flex; align-items: flex-start; gap: 0; padding-top: 32px; }
-        .p-main  { flex: 1; min-width: 0; padding-right: 48px; }
-        .p-aside { width: 280px; flex-shrink: 0; border-left: 1px solid var(--border); padding-left: 36px; }
+        .p-wrap  { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; padding: 0 48px 80px; }
+        .p-row   { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 280px); align-items: start; gap: 0; padding-top: 32px; width: 100%; min-width: 0; }
+        .p-main  { min-width: 0; padding-right: 48px; }
+        .p-aside { width: auto; min-width: 0; max-width: 100%; border-left: 1px solid var(--border); padding-left: 36px; }
         @media (max-width: 1000px) {
           .p-wrap  { padding: 0 28px 80px; }
-          .p-row   { flex-direction: column; padding-top: 24px; }
-          .p-main  { padding-right: 0; width: 100%; }
-          .p-aside { width: 100%; border-left: none; border-top: 1px solid var(--border);
+          .p-row   { grid-template-columns: minmax(0, 1fr); padding-top: 24px; }
+          .p-main  { padding-right: 0; }
+          .p-aside { width: auto; border-left: none; border-top: 1px solid var(--border);
                      padding-left: 0; padding-top: 28px; margin-top: 36px; }
         }
         @media (max-width: 640px) {
