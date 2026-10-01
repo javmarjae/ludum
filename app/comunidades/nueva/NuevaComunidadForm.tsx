@@ -20,7 +20,7 @@ export function NuevaComunidadForm({ categories }: { categories: Category[] }) {
     const result = await createCommunity(formData);
 
     if ('error' in result) {
-      setError(result.error);
+      setError(result.error ?? 'No se pudo crear la comunidad.');
       setPending(false);
     } else {
       router.push(`/comunidades/${result.slug}`);

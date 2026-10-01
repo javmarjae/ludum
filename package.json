@@ -7,7 +7,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
+    "test": "node --test tests/sync-bgg-request.test.mjs tests/retention-metrics.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "measure-retention": "node scripts/measure-retention.mjs",
     "import-csv": "ts-node scripts/import-csv.ts"
   },
   "keywords": [
@@ -44,6 +47,9 @@
     "typescript-eslint": "^8.61.1"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^16.2.9",
+    "eslint": "^10.5.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "playwright": "^1.61.0",
     "xml2js": "^0.6.2"
   }

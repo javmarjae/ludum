@@ -12,6 +12,18 @@ Aficionados a los juegos de mesa en España/Latinoamérica (interfaz en español
 
 Combina un recomendador de juegos de mesa (según grupo, nº jugadores, duración, dificultad) con un tracker de partidas por grupo (quién ganó, puestos, estadísticas, colección). Catálogo sincronizado desde BoardGameGeek (138k+ juegos). Éxito = el grupo vuelve a Ludum cada vez que va a jugar, no solo una vez.
 
+## Medición de activación y retención
+
+La unidad de retención es el **grupo que vuelve a registrar partidas**. No se añaden eventos ni identificadores personales: el informe usa las marcas de tiempo y relaciones ya existentes en `groups` y `plays`.
+
+- **Activación D7:** grupos cuya primera partida se registra (`plays.created_at`) dentro de los 7 días posteriores a `groups.created_at`, dividido por grupos con una ventana completa de 7 días.
+- **Repetición D7/D30:** grupos con otra fila de `plays` registrada dentro de los 7 o 30 días posteriores a la primera, dividido por grupos cuya primera partida ya tuvo una ventana completa de observación.
+- Se usa `plays.created_at`, no `played_at`, para que las partidas históricas cargadas tarde no parezcan retornos recientes.
+- Las tasas se ocultan cuando hay menos de 5 grupos elegibles; se muestran los conteos agregados.
+- Ejecutar `npm run measure-retention` para consultar el proyecto Supabase configurado en `.env.local`. El script es de solo lectura, solo consulta IDs y fechas, agrega en memoria y no escribe resultados.
+
+**Límites:** el esquema borra en cascada las partidas al borrar un grupo, por lo que los grupos eliminados no aparecen en cohortes históricas y la retención puede quedar sobreestimada. La métrica mide volver a **registrar** en Ludum, no si el grupo jugó fuera de la plataforma.
+
 ## Brand Personality
 
 Cálido-editorial **y** minimalista-experto a la vez: cuidado como una revista de juegos de mesa bien diseñada (calidez, tipografía con carácter, espacio para respirar), pero denso y serio en la información cuando hace falta — sin relleno decorativo, sin tono infantil. Como un sommelier de juegos de mesa: cercano, pero con criterio. Voz en español natural, sin tecnicismos innecesarios.

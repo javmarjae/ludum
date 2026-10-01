@@ -156,7 +156,7 @@ function CommentCard({ comment, isOwn, postId, communitySlug }: {
           {new Date(comment.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
         </span>
         {isOwn && (
-          <form action={deleteCommentAction} style={{ marginLeft: 'auto' }}>
+          <form action={async () => { await deleteCommentAction(); }} style={{ marginLeft: 'auto' }}>
             <button
               type="submit"
               style={{

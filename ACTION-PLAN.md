@@ -1,7 +1,42 @@
 # SEO Action Plan — ludumgames.es
 **Fecha:** 2026-07-01 | Ordenado por impacto × esfuerzo
 
+> **Estado:** el plan vigente está abajo. El contenido restante es el snapshot del 2026-07-01 y se conserva solo como historial.
+
 ---
+
+## Estado revalidado — 2026-10-01
+
+### Revalidado como resuelto
+
+- Canonical del dominio y de la home correctos en producción.
+- Open Graph completo con imagen dinámica; `WebSite` y `Organization` detectados en home.
+- `llms.txt`, `robots.txt` y sitemap responden; el sitemap publica 1005 URLs en 3 archivos.
+- X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy y HSTS presentes.
+- La ruta del cron BGG acepta GET para Vercel Cron, conserva POST y exige el secreto por cabecera; no se ejecutó en producción.
+- Los críticos antiguos por canonical, OG, schema y ausencia de `llms.txt` no están vigentes.
+
+### Siguientes acciones
+
+| Prioridad | Acción | Criterio de cierre |
+|---|---|---|
+| Media | Obtener PageSpeed móvil/desktop actual para home, búsqueda y ficha de juego | Registrar Lighthouse y separar CrUX de laboratorio; no reutilizar cifras de julio. |
+| Media | Diseñar y probar CSP | Confirmar login, Supabase, imágenes y scripts antes de desplegar. |
+| Condicional | Reducir la cadena de `/comunidades` | Confirmar primero si la ruta debe ser pública o privada. |
+| Baja | Decidir política para los cinco crawlers secundarios | Declararlos explícitamente solo si existe una preferencia de producto. |
+| Baja | Añadir enlaces útiles a `llms.txt` | Mejora estructural opcional; no se garantiza efecto en rankings. |
+| Mantenimiento | Añadir `lastmod` real al sitemap si está disponible | No sintetizar fechas. |
+| Seguimiento | Revisar cobertura y CWV en Search Console | Requiere acceso autorizado; no verificado en esta actualización. |
+
+### Límites de esta revalidación
+
+- No hubo resultado PageSpeed/CrUX actual.
+- No se consultaron Search Console, rankings, tráfico ni backlinks.
+- El crawl fue una muestra de 21 páginas y un nivel, no un rastreo completo del sitemap.
+
+---
+
+## Snapshot histórico — 2026-07-01
 
 ## ✅ Completado
 

@@ -35,6 +35,10 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGc...
 5. Haz click en **Run** (o `Ctrl+Enter`)
 6. Espera a que se cree todo (tablas, índices, RLS policies)
 
+### Migraciones adicionales
+
+Después del esquema inicial, ejecuta una vez los SQL de `migrations/` que aún no estén aplicados. Para desplegar el nuevo ranking del tracker, aplica `migrations/20261001_tracker_win_ranking.sql` **antes** del código que llama a la RPC.
+
 ## 4. Descargar CSV de BoardGameGeek
 
 1. Ve a https://boardgamegeek.com

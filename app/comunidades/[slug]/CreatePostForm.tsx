@@ -25,7 +25,7 @@ export function CreatePostForm({ communityId, communitySlug }: Props) {
     const result = await createPost(communityId, communitySlug, formData);
 
     if ('error' in result) {
-      setError(result.error);
+      setError(result.error ?? 'No se pudo crear la publicación.');
       setPending(false);
     } else {
       formRef.current?.reset();

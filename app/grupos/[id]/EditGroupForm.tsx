@@ -50,7 +50,7 @@ export function EditGroupForm({ groupId, initialName, initialDescription, initia
     const fd = new FormData();
     fd.append('image', file);
     const res = await uploadGroupImage(groupId, fd);
-    if (res && 'url' in res) {
+    if (res && typeof res.url === 'string') {
       setImage(res.url);
       router.refresh(); // re-renderiza el header del grupo (server component) con la foto nueva
     } else {

@@ -13,7 +13,7 @@ export async function TrackerContent({ userId }: { userId: string }) {
 
   const playIds = (userPlayResults ?? []).map((r: any) => r.play_id as string);
 
-  const [playsRes, ratingsRes, totalUsersRes, winsRes] = await Promise.all([
+  const [playsRes, ratingsRes, rankingRes] = await Promise.all([
     playIds.length > 0
       ? supabase
           .from('plays')
@@ -29,27 +29,23 @@ export async function TrackerContent({ userId }: { userId: string }) {
       .not('rating', 'is', null)
       .order('rating', { ascending: false })
       .limit(20),
-    supabase.from('profiles').select('id', { count: 'exact', head: true }),
-    supabase
-      .from('play_results')
-      .select('profile_id')
-      .eq('is_winner', true)
-      .not('profile_id', 'is', null),
+    playIds.length > 0
+      ? supabase.rpc('get_tracker_win_ranking').single()
+      : Promise.resolve({ data: null, error: null }),
   ]);
 
   const rawPlays = (playsRes.data ?? []) as any[];
   const rawRatings = (ratingsRes.data ?? []) as any[];
-  const totalUsers = (totalUsersRes as any).count ?? 0;
-  const allWins = (winsRes.data ?? []) as any[];
-
-  // Compute user rank by total wins
-  const winsByUser: Record<string, number> = {};
-  allWins.forEach((r: any) => {
-    winsByUser[r.profile_id] = (winsByUser[r.profile_id] ?? 0) + 1;
-  });
-  const myWins = winsByUser[userId] ?? 0;
-  const usersWithMoreWins = Object.keys(winsByUser).filter(id => winsByUser[id] > myWins).length;
-  const userRank = usersWithMoreWins + 1;
+  if (rankingRes.error) {
+    console.error('[TrackerContent] Ranking RPC failed:', rankingRes.error.message);
+  }
+  const rankingRow = rankingRes.data as { user_rank: number | string; total_players: number | string } | null;
+  const ranking = rankingRow
+    ? {
+        userRank: Number(rankingRow.user_rank),
+        totalPlayers: Number(rankingRow.total_players),
+      }
+    : null;
 
   // Shape plays for client
   const plays: TrackerPlay[] = rawPlays.map((p: any) => {
@@ -115,8 +111,7 @@ export async function TrackerContent({ userId }: { userId: string }) {
     <TrackerClient
       plays={plays}
       ratings={ratings}
-      totalUsers={totalUsers}
-      userRank={userRank}
+      ranking={ranking}
       userId={userId}
     />
   );

@@ -19,7 +19,23 @@ export interface BlogPost {
   view_count: number;
 }
 
-export async function getBlogPosts(): Promise<BlogPost[]> {
+type BlogPostSummary = Pick<
+  BlogPost,
+  | 'id'
+  | 'slug'
+  | 'title'
+  | 'excerpt'
+  | 'cover_image'
+  | 'author_name'
+  | 'published_at'
+  | 'is_sponsored'
+  | 'sponsor_name'
+  | 'sponsor_logo'
+  | 'tags'
+  | 'view_count'
+>;
+
+export async function getBlogPosts(): Promise<BlogPostSummary[]> {
   const db = supabase;
   const { data, error } = await db
     .from('blog_posts')

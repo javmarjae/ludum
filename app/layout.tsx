@@ -118,7 +118,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <a href="#contenido" className="skip-link">Saltar al contenido</a>
         <div className="app-shell">
           {user && (
-            <Suspense fallback={<SidebarNav isAdmin={false} />}>
+            <Suspense fallback={<SidebarNav isAdmin={false} userId={user.id} />}>
               <SidebarWithProfile userId={user.id} />
             </Suspense>
           )}

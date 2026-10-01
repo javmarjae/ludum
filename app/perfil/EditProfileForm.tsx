@@ -70,7 +70,7 @@ export function EditProfileForm({ initialName, initialBio, initialAvatar, initia
     const fd = new FormData();
     fd.append('avatar', file);
     const res = await uploadAvatar(fd);
-    if (res && 'url' in res) {
+    if (res && typeof res.url === 'string') {
       setAvatar(res.url);
       router.refresh();
     }

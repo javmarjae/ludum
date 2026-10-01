@@ -1,29 +1,20 @@
-# Ludum - Recomendador y Tracker de Juegos de Mesa
+# Ludum — Recomendador y tracker de juegos de mesa
 
-Web en español que combina un recomendador de juegos de mesa según preferencias + tracker de partidas por grupo.
+Aplicación web en español para descubrir juegos de mesa, organizar grupos y registrar partidas. El recomendador combina preferencias y datos del catálogo de BoardGameGeek (BGG); el tracker conserva partidas, resultados y estadísticas por grupo.
 
-## Stack Técnico
+## Stack y estado actual
 
-- **Frontend**: Next.js 14+ (App Router, TypeScript, Tailwind CSS)
-- **Backend/DB**: Supabase (Postgres, Auth)
-- **Hosting**: Vercel
-- **Datos**: CSV importado desde BoardGameGeek
-- **Monetización**: Google AdSense
-
-## Fases de Desarrollo
-
-1. **Fase 0**: Preparación (registrar app en BGG) ✅ *Saltado - usando CSV*
-2. **Fase 1**: Infraestructura (setup + script de importación) 🚀 *En progreso*
-3. **Fase 2**: Recomendador (cuestionario + matching)
-4. **Fase 3**: Cuentas y grupos
-5. **Fase 4**: Tracker de partidas
-6. **Fase 5**: Lanzamiento (SEO + AdSense)
+- **Aplicación:** Next.js 16 (App Router), React 19, TypeScript 6 y Tailwind CSS 4.
+- **Backend:** Supabase (Postgres, Auth, Storage y Row Level Security).
+- **Despliegue:** Vercel.
+- **Catálogo:** importación CSV y sincronización programada con BGG.
+- **Flujos disponibles:** autenticación, grupos, recomendador, partidas e historial, comunidades, eventos, organizaciones, torneos, colección y blog.
 
 ## Configuración Inicial
 
 ### Requisitos
 
-- Node.js 18+
+- Node.js 20.9+
 - npm o pnpm
 - Cuenta en Supabase
 - Proyecto en Vercel (opcional)
@@ -34,15 +25,9 @@ Web en español que combina un recomendador de juegos de mesa según preferencia
 cd ~/Desktop/ludum
 ```
 
-### 2. Variables de Entorno
+### 2. Variables de entorno
 
-Copia el archivo de ejemplo y rellena tus credenciales:
-
-```bash
-cp .env.local.example .env.local
-```
-
-Obtén tus credenciales de Supabase:
+Configura `.env.local` siguiendo [SETUP.md](SETUP.md). Las variables principales de Supabase son:
 
 - `NEXT_PUBLIC_SUPABASE_URL`: Tu URL de proyecto
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Tu clave anónima
@@ -92,24 +77,24 @@ npm run dev
 
 La app estará disponible en `http://localhost:3000`.
 
-## Estructura del Proyecto
+## Estructura del proyecto
 
 ```
 ludum/
 ├── app/
-│   ├── layout.tsx          # Layout principal
-│   ├── page.tsx            # Página de inicio
-│   └── globals.css         # Estilos globales
+│   ├── api/                 # Sincronización BGG y caché del recomendador
+│   ├── auth/                # Login, registro y recuperación
+│   ├── grupos/              # Grupos y partidas
+│   ├── juegos/              # Fichas públicas de juegos
+│   ├── recomendador/
+│   └── ...                  # Comunidades, eventos, blog y torneos
+├── components/
 ├── lib/
-│   └── supabase.ts         # Cliente Supabase
-├── scripts/
-│   └── import-csv.ts       # Script para importar CSV
-├── public/                 # Archivos estáticos
-├── supabase_schema.sql     # Schema de BD
-├── next.config.js          # Config de Next.js
-├── tailwind.config.js      # Config de Tailwind
-├── tsconfig.json           # Config de TypeScript
-└── .env.local              # Variables de entorno (no commitear)
+│   ├── recommender.ts
+│   └── supabase/
+├── scripts/                 # Importación y medición agregada de retención
+├── migrations/
+└── supabase_schema.sql
 ```
 
 ## Formato del CSV de BGG
@@ -131,17 +116,14 @@ Si tu CSV tiene columnas diferentes, edita `scripts/import-csv.ts` para ajustar 
 | `npm run build` | Compila para producción |
 | `npm start` | Inicia el servidor de producción |
 | `npm run lint` | Ejecuta ESLint |
+| `npm run typecheck` | Comprueba los tipos con TypeScript |
+| `npm test` | Ejecuta tests unitarios locales sin llamadas a servicios externos |
+| `npm run measure-retention` | Calcula cohortes agregadas de grupos (solo lectura) |
 | `npm run import-csv` | Importa datos desde CSV |
 
-## Próximos Pasos
+Antes de integrar cambios, ejecuta `npm run lint`, `npm run typecheck`, `npm test` y `npm run build`.
 
-1. ✅ Setup del proyecto
-2. ✅ Crear schema de BD
-3. ✅ Script de importación CSV
-4. ⬜ Implementar recomendador (Fase 2)
-5. ⬜ Implementar autenticación (Fase 3)
-6. ⬜ Implementar tracker (Fase 4)
-7. ⬜ SEO + AdSense (Fase 5)
+GitHub Actions ejecuta lint, typecheck y tests en cada PR. El build corre en push y ejecución manual, y requiere configurar en los GitHub Actions secrets `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` y `SUPABASE_SERVICE_ROLE_KEY`.
 
 ## Notas Importantes
 
@@ -149,13 +131,11 @@ Si tu CSV tiene columnas diferentes, edita `scripts/import-csv.ts` para ajustar 
 
 Aunque usemos CSV para la importación inicial, debemos mostrar el logo "Powered by BoardGameGeek" enlazando a `https://boardgamegeek.com` en las páginas públicas.
 
-### Rate Limiting (futuro)
+### Sincronización con BGG
 
-Si en el futuro sincronizamos directamente con la API de BGG:
-- No hacer más de ~2 req/seg
-- Cachear agresivamente
-- Hacer sincronizaciones batch (cron mensual)
-- Nunca llamar a BGG desde el cliente
+El endpoint `/api/sync-bgg` exige `CRON_SECRET` en una cabecera (`Authorization: Bearer` o `x-cron-secret`), admite los modos `ranked`, `new` y `all`, y limita `batch` a enteros entre 1 y 200. No envíes el secreto en la URL ni llames a BGG desde el cliente.
+
+`vercel.json` es el scheduler automático. El workflow `BGG Sync` de GitHub queda solo para ejecución manual; ambos métodos requieren `CRON_SECRET` en cabecera. La ejecución programada en producción no se ha probado desde este entorno; confirma que `CRON_SECRET` está configurado en Vercel.
 
 ### RLS (Row Level Security)
 
@@ -164,6 +144,7 @@ Las policies de RLS están configuradas en `supabase_schema.sql`:
 - Miembros de grupo pueden ver detalles del grupo
 - Las tablas de juegos están públicas (lectura)
 - Los datos de partidas están restringidos a miembros del grupo
+- El ranking del tracker usa `SECURITY INVOKER` y solo agrega resultados visibles por las policies de grupo
 
 ## Contacto / Soporte
 

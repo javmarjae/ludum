@@ -1,8 +1,8 @@
 /**
- * POST /api/sync-bgg
+ * GET/POST /api/sync-bgg
  *
  * Endpoint de sincronización con BGG — llamado por el cron job diario de Vercel.
- * Protegido por CRON_SECRET para que solo pueda invocarlo el propio sistema.
+ * Protegido por CRON_SECRET en Authorization: Bearer o x-cron-secret.
  *
  * Modos (query param ?mode=):
  *   ranked   — actualiza los juegos rankeados con last_synced_at más antiguo (por defecto)
@@ -10,11 +10,12 @@
  *   all      — todos los juegos, más antiguos primero
  *
  * Query params:
- *   batch    — cuántos juegos procesar por invocación (default: 100)
+ *   batch    — cuántos juegos procesar por invocación (default: 100, max: 200)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { isAuthorizedSyncBggRequest, parseSyncBggParams } from '@/lib/sync-bgg-request.mjs';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -103,15 +104,14 @@ function parseGameItem(item: Record<string, unknown>): Record<string, unknown> {
 }
 
 // ── Handler ───────────────────────────────────────────────────────────────────
-export async function POST(req: NextRequest) {
-  // Verificar secreto del cron
-  const secret = req.headers.get('x-cron-secret') ?? req.nextUrl.searchParams.get('secret');
-  if (secret !== process.env.CRON_SECRET) {
+async function handleSyncBgg(req: NextRequest) {
+  if (!isAuthorizedSyncBggRequest(req.headers, process.env.CRON_SECRET)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const mode  = req.nextUrl.searchParams.get('mode') ?? 'ranked';
-  const batch = parseInt(req.nextUrl.searchParams.get('batch') ?? '100');
+  const params = parseSyncBggParams(req.nextUrl.searchParams);
+  if (!params.ok) return NextResponse.json({ error: params.error }, { status: 400 });
+  const { mode, batch } = params;
 
   try {
     // Cargar juegos a sincronizar
@@ -170,4 +170,12 @@ export async function POST(req: NextRequest) {
     const message = err instanceof Error ? err.message : 'Error desconocido';
     return NextResponse.json({ error: message }, { status: 500 });
   }
+}
+
+export async function GET(req: NextRequest) {
+  return handleSyncBgg(req);
+}
+
+export async function POST(req: NextRequest) {
+  return handleSyncBgg(req);
 }

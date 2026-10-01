@@ -18,11 +18,26 @@ const typeOptions = [
   { value: 'tienda',     icon: '🏪', label: 'Tienda',     desc: 'Tienda especializada, ludoteca...' },
 ];
 
-export default function OrgRequestForm({ action }: { action: (f: FormData) => Promise<void> }) {
+export default function OrgRequestForm({ action }: { action: (f: FormData) => Promise<{ error: string }> }) {
   const [selectedType, setSelectedType] = useState('asociacion');
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+    setError(null);
+
+    try {
+      const result = await action(new FormData(event.currentTarget));
+      setError(result.error);
+    } finally {
+      setPending(false);
+    }
+  }
 
   return (
-    <form action={action} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
       <div>
         <label style={labelStyle}>Tipo de organización *</label>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -72,8 +87,10 @@ export default function OrgRequestForm({ action }: { action: (f: FormData) => Pr
         ℹ️ El equipo de Ludum revisará tu solicitud en un plazo de 1–3 días hábiles. Recibirás una notificación cuando sea procesada.
       </div>
 
-      <button type="submit" style={{ borderRadius: 16, padding: '14px', fontSize: 16, fontWeight: 700, width: '100%', border: 'none', cursor: 'pointer', background: 'var(--brand)', color: 'white', boxShadow: 'var(--shadow-btn-brand)', marginTop: 8 }}>
-        Enviar solicitud
+      {error && <p role="alert" style={{ margin: 0, color: '#b42318', fontSize: 13 }}>{error}</p>}
+
+      <button type="submit" disabled={pending} style={{ borderRadius: 16, padding: '14px', fontSize: 16, fontWeight: 700, width: '100%', border: 'none', cursor: pending ? 'wait' : 'pointer', background: 'var(--brand)', color: 'white', boxShadow: 'var(--shadow-btn-brand)', marginTop: 8 }}>
+        {pending ? 'Enviando…' : 'Enviar solicitud'}
       </button>
     </form>
   );

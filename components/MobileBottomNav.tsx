@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { ThemeToggle } from './ThemeToggle';
 import { logout } from '@/app/auth/actions';
@@ -12,13 +12,8 @@ function matchesRoute(pathname: string, href: string) {
 
 export function MobileBottomNav({ isAdmin = false, registerHref = '/grupos' }: { isAdmin?: boolean; registerHref?: string }) {
   const pathname = usePathname();
-  const router = useRouter();
   const [moreOpen, setMoreOpen] = useState(false);
 
-  useEffect(() => {
-    router.prefetch('/recomendador');
-    fetch('/api/recomendador/warm', { keepalive: true }).catch(() => {});
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const sheetRef = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
 

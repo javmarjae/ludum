@@ -24,7 +24,7 @@ export function CreateCommentForm({ postId, communitySlug }: Props) {
     const result = await createComment(postId, communitySlug, formData);
 
     if (result && 'error' in result) {
-      setError(result.error);
+      setError(result.error ?? 'No se pudo publicar el comentario.');
       setPending(false);
     } else {
       formRef.current?.reset();

@@ -1,32 +1,29 @@
 name: BGG Sync
 
 on:
-  schedule:
-    - cron: '0 3 * * *'   # ranked a las 3am UTC
-    - cron: '0 4 * * *'   # nuevos a las 4am UTC
-  workflow_dispatch:       # permite lanzarlo manualmente desde GitHub
+  workflow_dispatch: # Ejecución manual; Vercel Cron es el scheduler principal.
 
 jobs:
   sync-ranked:
-    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 3 * * *'
     runs-on: ubuntu-latest
     steps:
       - name: Sync ranked games
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          curl -X POST "https://ludumgames.es/api/sync-bgg?mode=ranked&batch=100&secret=${CRON_SECRET}" \
-            -H "Content-Type: application/json" \
+          curl --fail-with-body --silent --show-error -X POST \
+            "https://ludumgames.es/api/sync-bgg?mode=ranked&batch=100" \
+            -H "x-cron-secret: ${CRON_SECRET}" \
             -w "\nHTTP Status: %{http_code}\n"
 
   sync-new:
-    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 4 * * *'
     runs-on: ubuntu-latest
     steps:
       - name: Sync new games
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          curl -X POST "https://ludumgames.es/api/sync-bgg?mode=new&batch=200&secret=${CRON_SECRET}" \
-            -H "Content-Type: application/json" \
+          curl --fail-with-body --silent --show-error -X POST \
+            "https://ludumgames.es/api/sync-bgg?mode=new&batch=200" \
+            -H "x-cron-secret: ${CRON_SECRET}" \
             -w "\nHTTP Status: %{http_code}\n"

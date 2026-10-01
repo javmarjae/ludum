@@ -22,8 +22,7 @@ export type TrackerRating = {
 interface Props {
   plays: TrackerPlay[];
   ratings: TrackerRating[];
-  totalUsers: number;
-  userRank: number;
+  ranking: { userRank: number; totalPlayers: number } | null;
   userId: string;
 }
 
@@ -145,7 +144,7 @@ function delta(curr: number, prev: number, suffix = '') {
   return `${d > 0 ? '+' : ''}${d}${suffix} este mes`;
 }
 
-export function TrackerClient({ plays, ratings, totalUsers, userRank, userId }: Props) {
+export function TrackerClient({ plays, ratings, ranking, userId }: Props) {
   const [dateRange, setDateRange] = useState<DateRange>('12m');
   const [rangeOpen, setRangeOpen] = useState(false);
   const [gameSearch, setGameSearch] = useState('');
@@ -247,7 +246,9 @@ export function TrackerClient({ plays, ratings, totalUsers, userRank, userId }: 
     [ratings],
   );
 
-  const percentile = totalUsers > 1 ? Math.max(1, Math.round((1 - (userRank - 1) / totalUsers) * 100)) : 100;
+  const percentile = ranking && ranking.totalPlayers > 1
+    ? Math.max(1, Math.round((1 - (ranking.userRank - 1) / ranking.totalPlayers) * 100))
+    : 100;
   const rangeLabel = RANGE_OPTIONS.find(o => o.value === dateRange)?.label ?? 'Últimos 12 meses';
 
   const statCards = [
@@ -495,30 +496,27 @@ export function TrackerClient({ plays, ratings, totalUsers, userRank, userId }: 
         {/* ── Right column ── */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
 
-          {/* Ranking general */}
+          {/* Ranking among players visible through shared groups */}
           <div style={{ borderRadius: 16, padding: '20px 20px 18px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-            <h2 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text)', marginBottom: 16 }}>Tu ranking general</h2>
-            <div style={{ textAlign: 'center', marginBottom: 16 }}>
-              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--bg-inset)', margin: '0 auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <h2 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text)', marginBottom: 16 }}>Ranking en tus grupos</h2>
+            {ranking ? (
+              <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--bg-inset)', margin: '0 auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <p style={{ fontSize: 44, fontWeight: 800, color: '#7C3AED', letterSpacing: '-0.02em', lineHeight: 1 }}>#{ranking.userRank}</p>
+                <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', margin: '6px 0 4px' }}>
+                  de {ranking.totalPlayers.toLocaleString('es-ES')} jugadores
+                </p>
+                <p style={{ fontSize: 13, fontWeight: 700, color: '#7C3AED' }}>Percentil {percentile}</p>
               </div>
-              <p style={{ fontSize: 44, fontWeight: 800, color: '#7C3AED', letterSpacing: '-0.02em', lineHeight: 1 }}>#{userRank}</p>
-              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', margin: '6px 0 4px' }}>
-                de {totalUsers.toLocaleString('es-ES')} jugadores
+            ) : (
+              <p role="status" style={{ margin: '0 0 16px', color: 'var(--text-3)', fontSize: 13 }}>
+                Ranking temporalmente no disponible.
               </p>
-              <p style={{ fontSize: 13, fontWeight: 700, color: '#7C3AED' }}>Percentil {percentile}</p>
-            </div>
+            )}
 
             <RankChart data={monthlyPlays} months={months6} />
-
-            <Link
-              href="#"
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 14, padding: '11px 14px', borderRadius: 10, textDecoration: 'none', background: 'var(--bg-inset)', boxShadow: 'var(--shadow-btn)' }}
-              className="hover-ghost"
-            >
-              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>Ver rankings</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-4)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </Link>
           </div>
 
           {/* Mejor valorados */}

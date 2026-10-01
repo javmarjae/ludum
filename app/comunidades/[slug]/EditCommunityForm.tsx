@@ -47,7 +47,7 @@ export function EditCommunityForm({ communityId, communitySlug, initialDescripti
     const fd = new FormData();
     fd.append('image', file);
     const res = await uploadCommunityImage(communityId, communitySlug, fd);
-    if (res && 'url' in res) {
+    if (res && typeof res.url === 'string') {
       setImage(res.url);
       router.refresh();
     }

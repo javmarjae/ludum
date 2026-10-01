@@ -45,11 +45,11 @@ export default async function OrgPage({ params }: Props) {
   const isAdmin = user?.id === org.owner_id || isLudumAdmin;
   const isStaff = isAdmin || (membersRaw ?? []).some((m: any) => m.profile_id === user?.id);
 
-  const members = (membersRaw ?? []) as {
-    profile_id: string;
-    role: string;
-    profiles: { display_name: string | null; avatar_url: string | null } | null;
-  }[];
+  const members = (membersRaw ?? []).map(({ profile_id, role, profiles }) => ({
+    profile_id,
+    role,
+    profiles: profiles[0] ?? null,
+  }));
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>

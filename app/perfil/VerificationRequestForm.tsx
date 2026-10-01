@@ -35,7 +35,7 @@ export function VerificationRequestForm({ existingRequest }: Props) {
     setError(null);
     const result = await requestVerification(new FormData(e.currentTarget));
     if (result && 'error' in result) {
-      setError(result.error);
+      setError(result.error ?? 'No se pudo enviar la solicitud.');
       setPending(false);
     } else {
       setSuccess(true);

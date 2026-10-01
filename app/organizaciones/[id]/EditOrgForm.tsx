@@ -48,7 +48,7 @@ export function EditOrgForm({ orgId, initialDescription, initialLocation, initia
     const fd = new FormData();
     fd.append('logo', file);
     const res = await uploadOrgLogo(orgId, fd);
-    if (res && 'url' in res) {
+    if (res && typeof res.url === 'string') {
       setLogo(res.url);
       router.refresh();
     }

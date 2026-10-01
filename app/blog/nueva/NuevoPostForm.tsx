@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import Link from 'next/link';
 import { createBlogPost } from '../actions';
 
 const inputStyle: React.CSSProperties = {
@@ -247,7 +248,7 @@ export function NuevoPostForm() {
 
       {/* Submit */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
-        <a
+        <Link
           href="/blog"
           style={{
             fontSize: 14, fontWeight: 700, padding: '10px 20px', borderRadius: 10,
@@ -256,7 +257,7 @@ export function NuevoPostForm() {
           }}
         >
           Cancelar
-        </a>
+        </Link>
         <button
           type="submit"
           disabled={isPending}
