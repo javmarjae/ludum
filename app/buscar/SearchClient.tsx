@@ -127,7 +127,7 @@ function SideCard({ game, badge, index }: { game: FeaturedGame; badge: React.Rea
   );
 }
 
-function ResultRow({ game }: { game: Game }) {
+function ResultRow({ game, unrankedFallback = false }: { game: Game; unrankedFallback?: boolean }) {
   const players = game.min_players && game.max_players
     ? (game.min_players === game.max_players ? `${game.min_players}j` : `${game.min_players}–${game.max_players}j`)
     : null;
@@ -141,8 +141,10 @@ function ResultRow({ game }: { game: Game }) {
           </p>
           <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 2, flexWrap: 'wrap' }}>
             {game.year_published && <span style={{ fontSize: 11, color: 'var(--text-4)', fontWeight: 500 }}>{game.year_published}</span>}
-            {game.bgg_rating && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)' }}><Picto emoji="⭐" /> {game.bgg_rating.toFixed(1)}</span>}
+            {game.bgg_rating !== null && game.bgg_rating > 0 && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)' }}><Picto emoji="⭐" /> {game.bgg_rating.toFixed(1)}</span>}
             {players && <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)', background: 'var(--bg-inset)', padding: '1px 5px', borderRadius: 4 }}>{players}</span>}
+            {unrankedFallback && <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-4)' }}>Sin ranking BGG</span>}
+            {!unrankedFallback && game.bgg_rank !== null && game.bgg_rank > 0 && <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)' }}>#{game.bgg_rank} BGG</span>}
           </div>
         </div>
       </div>
@@ -222,6 +224,7 @@ function ActiveFilterBadge({ label, onRemove }: { label: string; onRemove: () =>
 export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Game[]>([]);
+  const [showingUnrankedFallback, setShowingUnrankedFallback] = useState(false);
   const [loading, setLoading] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
   const [filterPlayers, setFilterPlayers] = useState<number | null>(null);
@@ -252,30 +255,56 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!hasQuery && !hasFilters) { setResults([]); return; }
+    if (!hasQuery && !hasFilters) {
+      setResults([]);
+      setShowingUnrankedFallback(false);
+      return;
+    }
 
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
-      let q = supabaseRef.current
-        .from('games')
-        .select('bgg_id, name, year_published, bgg_rating, bgg_rank, min_players, max_players, min_playtime, max_playtime, complexity, image_url, categories, mechanics, is_expansion')
-        .neq('is_expansion', true);
+      setShowingUnrankedFallback(false);
+      const buildQuery = () => {
+        let q = supabaseRef.current
+          .from('games')
+          .select('bgg_id, name, year_published, bgg_rating, bgg_rank, min_players, max_players, min_playtime, max_playtime, complexity, image_url, categories, mechanics, is_expansion')
+          .neq('is_expansion', true);
 
-      if (hasQuery) q = q.ilike('name', `%${query.trim()}%`);
-      if (filterPlayers) {
-        if (filterPlayers >= 10) q = q.gte('max_players', 10);
-        else q = q.or(`min_players.is.null,and(min_players.lte.${filterPlayers},max_players.gte.${filterPlayers})`);
+        if (hasQuery) q = q.ilike('name', `%${query.trim()}%`);
+        if (filterPlayers) {
+          if (filterPlayers >= 10) q = q.gte('max_players', 10);
+          else q = q.or(`min_players.is.null,and(min_players.lte.${filterPlayers},max_players.gte.${filterPlayers})`);
+        }
+        if (filterComplexity === 'facil')    q = q.or('complexity.is.null,and(complexity.gte.1,complexity.lte.2)');
+        if (filterComplexity === 'medio')    q = q.or('complexity.is.null,and(complexity.gte.1.8,complexity.lte.3.2)');
+        if (filterComplexity === 'complejo') q = q.or('complexity.is.null,and(complexity.gte.3,complexity.lte.5)');
+        if (filterDuration === 'corta')      q = q.or('min_playtime.is.null,min_playtime.lte.30');
+        if (filterDuration === 'media')      q = q.or('min_playtime.is.null,and(min_playtime.gte.20,min_playtime.lte.60)');
+        if (filterDuration === 'larga')      q = q.or('min_playtime.is.null,and(min_playtime.gte.45,min_playtime.lte.120)');
+        if (filterDuration === 'muy-larga')  q = q.or('min_playtime.is.null,min_playtime.gte.120');
+        return q;
+      };
+
+      const { data: rankedResults, error } = await buildQuery()
+        .gt('bgg_rank', 0)
+        .not('bgg_rating', 'is', null)
+        .order('bgg_rank', { ascending: true })
+        .limit(40);
+
+      if (error) console.error('[SearchClient] Ranked search failed:', error.message);
+
+      if (rankedResults?.length) {
+        setResults(rankedResults);
+      } else {
+        const { data: unrankedResults, error: fallbackError } = await buildQuery()
+          .or('bgg_rank.is.null,bgg_rank.lte.0')
+          .order('bgg_id', { ascending: true })
+          .limit(20);
+
+        if (fallbackError) console.error('[SearchClient] Unranked fallback failed:', fallbackError.message);
+        setResults(unrankedResults ?? []);
+        setShowingUnrankedFallback(Boolean(unrankedResults?.length));
       }
-      if (filterComplexity === 'facil')    q = q.or('complexity.is.null,and(complexity.gte.1,complexity.lte.2)');
-      if (filterComplexity === 'medio')    q = q.or('complexity.is.null,and(complexity.gte.1.8,complexity.lte.3.2)');
-      if (filterComplexity === 'complejo') q = q.or('complexity.is.null,and(complexity.gte.3,complexity.lte.5)');
-      if (filterDuration === 'corta')      q = q.or('min_playtime.is.null,min_playtime.lte.30');
-      if (filterDuration === 'media')      q = q.or('min_playtime.is.null,and(min_playtime.gte.20,min_playtime.lte.60)');
-      if (filterDuration === 'larga')      q = q.or('min_playtime.is.null,and(min_playtime.gte.45,min_playtime.lte.120)');
-      if (filterDuration === 'muy-larga')  q = q.or('min_playtime.is.null,min_playtime.gte.120');
-
-      const { data } = await q.order('bgg_rank', { ascending: true, nullsFirst: false }).limit(40);
-      setResults(data ?? []);
       setLoading(false);
     }, 280);
 
@@ -506,7 +535,12 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
                 <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-4)', marginBottom: 4 }}>
                   {results.length} resultado{results.length !== 1 ? 's' : ''}
                 </p>
-                {results.map(g => <ResultRow key={g.bgg_id} game={g} />)}
+                {showingUnrankedFallback && (
+                  <p role="status" style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 8 }}>
+                    No hay coincidencias con ranking BGG. Mostramos juegos sin clasificar.
+                  </p>
+                )}
+                {results.map(g => <ResultRow key={g.bgg_id} game={g} unrankedFallback={showingUnrankedFallback} />)}
               </>
             )}
           </div>

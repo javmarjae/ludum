@@ -61,6 +61,8 @@ export const getTopRatedGames = unstable_cache(
       .gt('bgg_rank', 0)
       .not('is_expansion', 'is', true)
       .not('image_url', 'is', null)
+      .not('bgg_rating', 'is', null)
+      .gt('bgg_rating', 0)
       .order('bgg_rank', { ascending: true })
       .limit(10);
     if (error) console.error('[cached-queries] getTopRatedGames:', error.message);
