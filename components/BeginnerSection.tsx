@@ -110,7 +110,7 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
         </div>
 
         {/* Game carousel */}
-        <div className="scroll-row" style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap: 16, overflowX: 'auto', paddingBottom: 12, WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
+        <div className="scroll-row hover-safe-scroll" style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap: 16, overflowX: 'auto', paddingBottom: 12, WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
           {games.map((game) => (
             <Link
               key={game.bgg_id}

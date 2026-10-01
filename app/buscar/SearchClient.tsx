@@ -3,8 +3,10 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Picto } from '@/components/Picto';
+import { categoryEs } from '@/lib/bgg-categories';
 
 interface Game {
   bgg_id: number;
@@ -42,6 +44,8 @@ interface Props {
   mostPlayedGames: TrendingGame[];
   topRatedGames: FeaturedGame[];
   newGames: FeaturedGame[];
+  mechanicOptions: string[];
+  categoryOptions: string[];
 }
 
 type QuickFilter =
@@ -221,7 +225,90 @@ function ActiveFilterBadge({ label, onRemove }: { label: string; onRemove: () =>
   );
 }
 
-export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props) {
+function MultiSelectFilter({
+  id,
+  label,
+  options,
+  selected,
+  formatOption = (option) => option,
+  onToggle,
+}: {
+  id: string;
+  label: string;
+  options: string[];
+  selected: string[];
+  formatOption?: (option: string) => string;
+  onToggle: (option: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const normalizedSearch = search.trim().toLocaleLowerCase('es');
+  const visibleOptions = options
+    .filter((option) => formatOption(option).toLocaleLowerCase('es').includes(normalizedSearch))
+    .slice(0, 30);
+
+  return (
+    <div className="buscar-multi-filter">
+      <button
+        type="button"
+        className="buscar-multi-filter-trigger"
+        aria-expanded={open}
+        aria-controls={`${id}-options`}
+        onClick={() => setOpen((value) => !value)}
+      >
+        <span>{label}</span>
+        {selected.length > 0 && <span className="buscar-multi-filter-count">{selected.length}</span>}
+        <span aria-hidden="true">{open ? '⌃' : '⌄'}</span>
+      </button>
+
+      {selected.length > 0 && (
+        <div className="buscar-multi-filter-selected">
+          {selected.map((option) => (
+            <span className="buscar-multi-filter-chip" key={option}>
+              {formatOption(option)}
+              <button
+                type="button"
+                aria-label={`Quitar ${formatOption(option)} de ${label.toLocaleLowerCase('es')}`}
+                onClick={() => onToggle(option)}
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {open && (
+        <div className="buscar-multi-filter-menu" id={`${id}-options`}>
+          <input
+            type="search"
+            aria-label={`Buscar ${label.toLocaleLowerCase('es')}`}
+            placeholder={`Buscar ${label.toLocaleLowerCase('es')}...`}
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+          <div className="buscar-multi-filter-options" role="group" aria-label={label}>
+            {visibleOptions.map((option) => (
+              <label className="buscar-multi-filter-option" key={option}>
+                <input
+                  type="checkbox"
+                  checked={selected.includes(option)}
+                  onChange={() => onToggle(option)}
+                />
+                <span>{formatOption(option)}</span>
+              </label>
+            ))}
+            {visibleOptions.length === 0 && <p className="buscar-multi-filter-empty">Sin coincidencias</p>}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function SearchClient({ mostPlayedGames, topRatedGames, newGames, mechanicOptions, categoryOptions }: Props) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Game[]>([]);
   const [showingUnrankedFallback, setShowingUnrankedFallback] = useState(false);
@@ -230,10 +317,12 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
   const [filterPlayers, setFilterPlayers] = useState<number | null>(null);
   const [filterComplexity, setFilterComplexity] = useState<string | null>(null);
   const [filterDuration, setFilterDuration] = useState<string | null>(null);
+  const selectedMechanics = searchParams.getAll('mecanica');
+  const selectedCategories = searchParams.getAll('categoria');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const supabaseRef = useRef(createClient());
 
-  const hasFilters = filterPlayers !== null || filterComplexity !== null || filterDuration !== null;
+  const hasFilters = filterPlayers !== null || filterComplexity !== null || filterDuration !== null || selectedMechanics.length > 0 || selectedCategories.length > 0;
   const hasQuery = query.trim().length >= 2;
   const showResults = hasQuery || hasFilters;
 
@@ -251,6 +340,19 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
 
   function clearAll() {
     setQuery(''); setFilterPlayers(null); setFilterComplexity(null); setFilterDuration(null);
+    router.replace('/buscar', { scroll: false });
+  }
+
+  function toggleTaxonomyFilter(param: 'mecanica' | 'categoria', option: string) {
+    const selected = searchParams.getAll(param);
+    const nextSelected = selected.includes(option)
+      ? selected.filter((value) => value !== option)
+      : [...selected, option];
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.delete(param);
+    nextSelected.forEach((value) => nextParams.append(param, value));
+    const queryString = nextParams.toString();
+    router.replace(queryString ? `/buscar?${queryString}` : '/buscar', { scroll: false });
   }
 
   useEffect(() => {
@@ -271,6 +373,8 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
           .neq('is_expansion', true);
 
         if (hasQuery) q = q.ilike('name', `%${query.trim()}%`);
+        if (selectedMechanics.length > 0) q = q.overlaps('mechanics', selectedMechanics);
+        if (selectedCategories.length > 0) q = q.overlaps('categories', selectedCategories);
         if (filterPlayers) {
           if (filterPlayers >= 10) q = q.gte('max_players', 10);
           else q = q.or(`min_players.is.null,and(min_players.lte.${filterPlayers},max_players.gte.${filterPlayers})`);
@@ -309,7 +413,7 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
     }, 280);
 
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [query, filterPlayers, filterComplexity, filterDuration, hasQuery, hasFilters]);
+  }, [query, filterPlayers, filterComplexity, filterDuration, searchParams, hasQuery, hasFilters]);
 
   const trendingNames = mostPlayedGames.slice(0, 5).map(g => g.name);
 
@@ -404,6 +508,23 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
                 </div>
               </div>
             ))}
+          </div>
+          <div className="buscar-taxonomy-filters">
+            <MultiSelectFilter
+              id="mechanics-filter"
+              label="Mecánicas"
+              options={mechanicOptions}
+              selected={selectedMechanics}
+              onToggle={(option) => toggleTaxonomyFilter('mecanica', option)}
+            />
+            <MultiSelectFilter
+              id="categories-filter"
+              label="Categorías"
+              options={categoryOptions}
+              selected={selectedCategories}
+              formatOption={categoryEs}
+              onToggle={(option) => toggleTaxonomyFilter('categoria', option)}
+            />
           </div>
         </div>
 
@@ -514,6 +635,20 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props
                     onRemove={() => setFilterDuration(null)}
                   />
                 )}
+                {selectedMechanics.map((mechanic) => (
+                  <ActiveFilterBadge
+                    key={`mechanic-${mechanic}`}
+                    label={`Mecánica: ${mechanic}`}
+                    onRemove={() => toggleTaxonomyFilter('mecanica', mechanic)}
+                  />
+                ))}
+                {selectedCategories.map((category) => (
+                  <ActiveFilterBadge
+                    key={`category-${category}`}
+                    label={`Categoría: ${categoryEs(category)}`}
+                    onRemove={() => toggleTaxonomyFilter('categoria', category)}
+                  />
+                ))}
                 {hasQuery && <ActiveFilterBadge label={`"${query}"`} onRemove={() => setQuery('')} />}
                 <button onClick={clearAll} style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-4)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', fontFamily: 'inherit' }}>
                   Limpiar

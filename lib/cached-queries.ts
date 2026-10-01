@@ -72,6 +72,41 @@ export const getTopRatedGames = unstable_cache(
   { revalidate: 3600 }
 );
 
+/* Catálogos públicos para los filtros múltiples del buscador. */
+export const getSearchTaxonomyOptions = unstable_cache(
+  async () => {
+    const supabase = getPublicSupabase();
+    const [mechanicsResult, categoriesResult, gamesResult] = await Promise.all([
+      supabase.from('mechanics').select('name').order('name').limit(500),
+      supabase.from('categories').select('name').order('name').limit(300),
+      supabase
+        .from('games')
+        .select('mechanics, categories')
+        .gt('bgg_rank', 0)
+        .order('bgg_rank', { ascending: true })
+        .limit(5000),
+    ]);
+
+    if (mechanicsResult.error) console.error('[cached-queries] getSearchTaxonomyOptions mechanics:', mechanicsResult.error.message);
+    if (categoriesResult.error) console.error('[cached-queries] getSearchTaxonomyOptions categories:', categoriesResult.error.message);
+    if (gamesResult.error) console.error('[cached-queries] getSearchTaxonomyOptions game tags:', gamesResult.error.message);
+
+    const mechanics = new Set((mechanicsResult.data ?? []).map((row) => row.name));
+    const categories = new Set((categoriesResult.data ?? []).map((row) => row.name));
+    for (const game of gamesResult.data ?? []) {
+      for (const mechanic of game.mechanics ?? []) mechanics.add(mechanic);
+      for (const category of game.categories ?? []) categories.add(category);
+    }
+
+    return {
+      mechanics: [...mechanics].sort((a, b) => a.localeCompare(b, 'es')),
+      categories: [...categories].sort((a, b) => a.localeCompare(b, 'es')),
+    };
+  },
+  ['search-taxonomy-options-v2'],
+  { revalidate: 86400 }
+);
+
 /* Top juegos BGG para el recomendador (80 juegos, caché 1 hora). */
 const RECOMMENDER_GAME_SELECT =
   'id, bgg_id, name, year_published, bgg_rank, bgg_rating, min_players, max_players, min_playtime, max_playtime, complexity, image_url, mechanics, categories, description';

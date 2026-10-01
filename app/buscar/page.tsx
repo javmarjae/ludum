@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { AppNav } from '@/components/AppNav';
 import { SearchClient } from './SearchClient';
 import { BuscarSkeleton } from './BuscarSkeleton';
-import { getTrendingGames, getTopRatedGames, getNewGames } from '@/lib/cached-queries';
+import { getTrendingGames, getTopRatedGames, getNewGames, getSearchTaxonomyOptions } from '@/lib/cached-queries';
 import type { Metadata } from 'next';
 
 export const revalidate = 1800;
@@ -15,10 +15,11 @@ export const metadata: Metadata = {
 // Carga de datos en streaming: la cabecera y el esqueleto aparecen al instante
 // y las columnas se rellenan en cuanto resuelven las consultas (cacheadas).
 async function SearchData() {
-  const [mostPlayedGames, topRatedGames, newGames] = await Promise.all([
+  const [mostPlayedGames, topRatedGames, newGames, taxonomyOptions] = await Promise.all([
     getTrendingGames(),
     getTopRatedGames(),
     getNewGames(),
+    getSearchTaxonomyOptions(),
   ]);
 
   return (
@@ -26,6 +27,8 @@ async function SearchData() {
       mostPlayedGames={mostPlayedGames}
       topRatedGames={topRatedGames}
       newGames={newGames}
+      mechanicOptions={taxonomyOptions.mechanics}
+      categoryOptions={taxonomyOptions.categories}
     />
   );
 }

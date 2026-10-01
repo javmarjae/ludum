@@ -317,13 +317,20 @@ export default async function GamePage({ params, searchParams }: Props) {
                   <p className="t-label" style={{ marginBottom: 12 }}>Mecánicas</p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {mechanics.map((m: string) => (
-                      <span key={m} style={{
+                      <Link
+                        key={m}
+                        href={`/buscar?mecanica=${encodeURIComponent(m)}`}
+                        prefetch={false}
+                        title={`Filtrar juegos por la mecánica ${m}`}
+                        aria-label={`Buscar juegos con la mecánica ${m}`}
+                        className="game-taxonomy-link"
+                        style={{
                         display: 'inline-block', padding: '6px 14px', borderRadius: 10,
                         fontSize: 14, fontWeight: 600, background: 'var(--bg-inset)', color: 'var(--text-3)',
-                        boxShadow: 'var(--shadow-btn)',
+                        boxShadow: 'var(--shadow-btn)', textDecoration: 'none',
                       }}>
                         {m}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -424,13 +431,21 @@ export default async function GamePage({ params, searchParams }: Props) {
                       <p className="t-label" style={{ marginBottom: 8 }}>Categorías</p>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                         {categories.map((c: string) => (
-                          <span key={c} style={{
+                          <Link
+                            key={c}
+                            href={`/buscar?categoria=${encodeURIComponent(c)}`}
+                            prefetch={false}
+                            title={`Filtrar juegos por la categoría ${categoryEs(c)}`}
+                            aria-label={`Buscar juegos de la categoría ${categoryEs(c)}`}
+                            className="game-taxonomy-link"
+                            style={{
                             display: 'inline-block', padding: '4px 12px', borderRadius: 999,
                             fontSize: 14, fontWeight: 600,
                             background: 'var(--brand-tint)', color: 'var(--brand)',
+                            textDecoration: 'none',
                           }}>
                             {categoryEs(c)}
-                          </span>
+                          </Link>
                         ))}
                       </div>
                     </div>
