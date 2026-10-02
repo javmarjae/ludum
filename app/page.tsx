@@ -1,19 +1,15 @@
-import { Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { unstable_cache } from 'next/cache';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { Nav, NavLink, NavButton } from '@/components/Nav';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { getAuthUserLite, createClient } from '@/lib/supabase/server';
 import { BeginnerSection } from '@/components/BeginnerSection';
-import { DashboardContent } from './DashboardContent';
-import { HomeDashboardSkeleton } from './HomeDashboardSkeleton';
 import type { Metadata } from 'next';
 import { Picto } from '@/components/Picto';
-import { Avatar } from '@/components/Avatar';
 import { ReadMore } from '@/components/ReadMore';
 import { categoryEs } from '@/lib/bgg-categories';
+import { getBeginnerGames } from './home-queries';
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://ludumgames.es' },
@@ -43,39 +39,9 @@ const getFeaturedLandingGames = unstable_cache(
   { revalidate: 3600 }
 );
 
-/* La home autenticada solo necesita beginnerGames para el dashboard,
-   así que separamos la query pesada de la landing pública. */
-const getBeginnerGames = unstable_cache(
-  async () => {
-    const supabase = getPublicSupabase();
-    const { data } = await supabase
-      .from('games')
-      .select('bgg_id, name, image_url, min_players, max_players, min_playtime, max_playtime')
-      .gt('bgg_rank', 0)
-      .not('image_url', 'is', null)
-      .gte('complexity', 1)
-      .lte('complexity', 2.5)
-      .order('bgg_rank', { ascending: true })
-      .limit(16);
-    return data ?? [];
-  },
-  ['home-beginner-games-v2'],
-  { revalidate: 3600 }
-);
-
+// Landing pública y estática: con sesión, proxy.ts reescribe "/" a /inicio (dashboard).
 export default async function Home() {
-  const user = await getAuthUserLite();
-  const profilePromise = user
-    ? createClient().then(sb => sb.from('profiles').select('display_name, avatar_url').eq('id', user.id).single())
-    : null;
-  const todayRaw = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
-  const today = todayRaw.charAt(0).toUpperCase() + todayRaw.slice(1);
-
-    const beginnerGamesPromise = getBeginnerGames();
-    const featuredGames = user ? [] : await getFeaturedLandingGames();
-    const beginnerGames = await beginnerGamesPromise;
-    const profile = profilePromise ? (await profilePromise).data : null;
-    const displayName = profile?.display_name ?? user?.user_metadata?.display_name ?? user?.email?.split('@')[0] ?? null;
+  const [featuredGames, beginnerGames] = await Promise.all([getFeaturedLandingGames(), getBeginnerGames()]);
 
   const covers = featuredGames;
 
@@ -124,8 +90,7 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      {/* ── NO LOGUEADO ─────────────────────────────────── */}
-      {!user && (
+
         <div style={{ background: 'transparent', minHeight: '100vh' }}>
           <Nav
             right={
@@ -311,34 +276,6 @@ export default async function Home() {
             </Link>
           </section>
         </div>
-      )}
-
-      {/* ── LOGUEADO ────────────────────────────────────── */}
-      {user && (
-        <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
-
-          {/* Top header */}
-          <div className="home-dash-header">
-            <Link href="/perfil" aria-label="Tu perfil" className="home-dash-avatar">
-              <Avatar name={displayName ?? '?'} src={profile?.avatar_url} size={44} />
-            </Link>
-            <div style={{ minWidth: 0 }}>
-              <h1 style={{ fontSize: 'clamp(22px, 2.5vw, 32px)', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--text)', lineHeight: 1.15, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                Hola, {displayName}
-              </h1>
-              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', marginTop: 2 }}>
-                {today}
-              </p>
-            </div>
-          </div>
-
-          <div className="home-dash-content">
-            <Suspense fallback={<HomeDashboardSkeleton />}>
-              <DashboardContent userId={user.id} beginnerGames={beginnerGames} />
-            </Suspense>
-          </div>
-        </div>
-      )}
     </>
   );
 }

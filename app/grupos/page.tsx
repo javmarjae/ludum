@@ -5,6 +5,11 @@ import type { Metadata } from 'next';
 import { GruposContent } from './GruposContent';
 import { GruposSkeleton } from './GruposSkeleton';
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 export const metadata: Metadata = { title: 'Grupos y Comunidades' };
 
 export default async function GruposPage({ searchParams }: { searchParams: Promise<{ org_request?: string }> }) {

@@ -2,6 +2,15 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { safeNext } from '@/lib/safe-next';
 
+const PROTECTED_ROUTES = [
+  /^\/(grupos|dashboard|perfil|eventos|partidas|mensajes|notificaciones|admin)(\/|$)/,
+  /^\/recomendador\/?$/,
+  /^\/blog\/nueva\/?$/,
+  /^\/comunidades\/.+/,
+  /^\/organizaciones\/nueva\/?$/,
+  /^\/torneos\/(nuevo|[^/]+\/admin)\/?$/,
+];
+
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -30,10 +39,8 @@ export async function proxy(request: NextRequest) {
   const { data: { session } } = await supabase.auth.getSession();
   const user = session?.user ?? null;
 
-  // Protect /grupos and /dashboard routes
-  const isProtected = request.nextUrl.pathname.startsWith('/grupos') ||
-    request.nextUrl.pathname.startsWith('/dashboard') ||
-    request.nextUrl.pathname.startsWith('/perfil');
+  // Redirigir aquí evita que, con prerenderizado parcial, se envíe el shell antes de la redirección de la página.
+  const isProtected = PROTECTED_ROUTES.some((re) => re.test(request.nextUrl.pathname));
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
@@ -46,6 +53,18 @@ export async function proxy(request: NextRequest) {
   if (user && (pathname === '/auth/login' || pathname === '/auth/signup')) {
     const target = new URL(safeNext(request.nextUrl.searchParams.get('next')), request.url);
     return NextResponse.redirect(target);
+  }
+
+  // La landing de "/" es estática para visitantes; con sesión se sirve el dashboard.
+  if (!user && pathname === '/inicio') {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+  if (user && pathname === '/') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/inicio';
+    const rewrite = NextResponse.rewrite(url, { request });
+    supabaseResponse.cookies.getAll().forEach((cookie) => rewrite.cookies.set(cookie));
+    return rewrite;
   }
 
   return supabaseResponse;

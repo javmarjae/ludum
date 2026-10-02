@@ -1,6 +1,7 @@
 import { Nav, NavButton } from '@/components/Nav';
 import { Metadata } from 'next';
 
+
 export const metadata: Metadata = {
   title: 'Política de privacidad',
   description: 'Cómo Ludum gestiona tus datos personales.',

@@ -1,5 +1,5 @@
-import { createClient } from '@/lib/supabase/server';
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { getAuthUser, getAuthUserLite } from '@/lib/supabase/server';
+import { createClient as createSupabaseClient, type User } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -17,6 +17,11 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Picto } from '@/components/Picto';
 import { categoryEs } from '@/lib/bgg-categories';
+
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -46,6 +51,31 @@ const getGame = unstable_cache(
   ['game-detail'],
   { revalidate: 3600 }
 );
+
+type GameTab = 'detalles' | 'partidas';
+
+// Prerenderiza los juegos más populares; el resto se genera en la primera visita y queda cacheado.
+export async function generateStaticParams() {
+  const { data } = await getPublicSupabase()
+    .from('games')
+    .select('bgg_id')
+    .gt('bgg_rank', 0)
+    .order('bgg_rank', { ascending: true })
+    .limit(20);
+  const ids = (data ?? []).map((g) => ({ id: String(g.bgg_id) }));
+  return ids.length ? ids : [{ id: '174430' }];
+}
+
+async function RequestTabs({ searchParams, render }: {
+  searchParams: Props['searchParams'];
+  render: (activeTab: GameTab, user: User | null) => React.ReactNode;
+}) {
+  const { tab } = await searchParams;
+  const activeTab: GameTab = tab === 'partidas' ? 'partidas' : 'detalles';
+  // La pestaña de partidas consulta datos privados: ahí se verifica la sesión contra Supabase.
+  const user = activeTab === 'partidas' ? await getAuthUser() : await getAuthUserLite();
+  return render(activeTab, user);
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
@@ -85,18 +115,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function GamePage({ params, searchParams }: Props) {
   const { id } = await params;
-  const { tab } = await searchParams;
-  // Detalles is the default tab
-  const activeTab = tab === 'partidas' ? 'partidas' : 'detalles';
 
   const bggId = parseInt(id);
   if (isNaN(bggId)) notFound();
 
-  const supabase = await createClient();
-  const [game, { data: { user } }] = await Promise.all([
-    getGame(bggId),
-    supabase.auth.getUser(),
-  ]);
+  const game = await getGame(bggId);
   if (!game) notFound();
 
   const mechanics: string[] = (game as any).mechanics ?? [];
@@ -156,72 +179,8 @@ export default async function GamePage({ params, searchParams }: Props) {
     url: `https://ludumgames.es/juegos/${game.bgg_id}`,
   };
 
-  return (
-    <GameRatingProvider gameId={game.id}>
-    <div style={{ minHeight: '100vh', background: 'transparent' }}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <AppNav back={{ href: '/buscar', label: 'Buscar' }} />
-
-      {/* ── Hero ─────────────────────────────────────── */}
-      <div style={{ position: 'relative', height: 300, overflow: 'hidden' }}>
-        {game.image_url ? (
-          <Image src={game.image_url} alt="" aria-hidden fill sizes="100vw" style={{
-            objectFit: 'cover', objectPosition: 'center',
-            filter: 'blur(20px) saturate(1.4)',
-            transform: 'scale(1.14)',
-          }} />
-        ) : (
-          <div style={{ position: 'absolute', inset: 0, background: 'var(--olive)' }} />
-        )}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.80) 100%)',
-        }} />
-
-        <div style={{ position: 'absolute', top: 12, right: 12, zIndex: 2 }}>
-          <CollectionButton gameId={game.id} />
-        </div>
-
-        {/* Portada + título anclados al fondo */}
-        <div className="game-hero-inner">
-          {game.image_url && (
-            <Image
-              src={game.image_url}
-              alt={game.name}
-              width={160}
-              height={220}
-              priority
-              className="game-hero-cover"
-            />
-          )}
-          <div style={{ flex: 1, minWidth: 0, paddingBottom: 4 }}>
-            <h1 className="t-page-title" style={{
-              color: 'white', lineHeight: 1.1,
-              marginBottom: 4, letterSpacing: '-0.01em', textShadow: '0 2px 10px rgba(0,0,0,0.5)',
-            }}>
-              {game.name}
-            </h1>
-            {categories.length > 0 && (
-              <p className="t-card-sub" style={{ color: 'rgba(255,255,255,0.72)', marginBottom: 10 }}>
-                {categories.slice(0, 2).map(categoryEs).join(' · ')}
-              </p>
-            )}
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {playersText && (
-                <span style={chipStyle}>
-                  <img src={playersIcon} alt="" aria-hidden="true" style={{ width: 18, height: 18, filter: 'brightness(0) invert(1)', flexShrink: 0 }} />
-                  {playersText}
-                </span>
-              )}
-              {playtimeText && <span style={chipStyle}><Picto emoji="⏱" /> {playtimeText}</span>}
-            </div>
-          </div>
-        </div>
-      </div>
-
+  const renderTabs = (activeTab: GameTab, user: User | null) => (
+    <>
       {/* ── Tab bar ──────────────────────────────────── */}
       <div style={{
         display: 'flex', justifyContent: 'center',
@@ -486,16 +445,88 @@ export default async function GamePage({ params, searchParams }: Props) {
           )}
         </div>
       )}
+    </>
+  );
+
+  return (
+    <GameRatingProvider gameId={game.id}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <AppNav back={{ href: '/buscar', label: 'Buscar' }} />
+
+      {/* ── Hero ─────────────────────────────────────── */}
+      <div style={{ position: 'relative', height: 300, overflow: 'hidden' }}>
+        {game.image_url ? (
+          <Image src={game.image_url} alt="" aria-hidden fill sizes="100vw" style={{
+            objectFit: 'cover', objectPosition: 'center',
+            filter: 'blur(20px) saturate(1.4)',
+            transform: 'scale(1.14)',
+          }} />
+        ) : (
+          <div style={{ position: 'absolute', inset: 0, background: 'var(--olive)' }} />
+        )}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.80) 100%)',
+        }} />
+
+        <div style={{ position: 'absolute', top: 12, right: 12, zIndex: 2 }}>
+          <CollectionButton gameId={game.id} />
+        </div>
+
+        {/* Portada + título anclados al fondo */}
+        <div className="game-hero-inner">
+          {game.image_url && (
+            <Image
+              src={game.image_url}
+              alt={game.name}
+              width={160}
+              height={220}
+              priority
+              className="game-hero-cover"
+            />
+          )}
+          <div style={{ flex: 1, minWidth: 0, paddingBottom: 4 }}>
+            <h1 className="t-page-title" style={{
+              color: 'white', lineHeight: 1.1,
+              marginBottom: 4, letterSpacing: '-0.01em', textShadow: '0 2px 10px rgba(0,0,0,0.5)',
+            }}>
+              {game.name}
+            </h1>
+            {categories.length > 0 && (
+              <p className="t-card-sub" style={{ color: 'rgba(255,255,255,0.72)', marginBottom: 10 }}>
+                {categories.slice(0, 2).map(categoryEs).join(' · ')}
+              </p>
+            )}
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {playersText && (
+                <span style={chipStyle}>
+                  <img src={playersIcon} alt="" aria-hidden="true" style={{ width: 18, height: 18, filter: 'brightness(0) invert(1)', flexShrink: 0 }} />
+                  {playersText}
+                </span>
+              )}
+              {playtimeText && <span style={chipStyle}><Picto emoji="⏱" /> {playtimeText}</span>}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Los detalles van en el shell estático; la sesión y la pestaña se resuelven en la petición */}
+      <Suspense fallback={renderTabs('detalles', null)}>
+        <RequestTabs searchParams={searchParams} render={renderTabs} />
+      </Suspense>
 
       {/* ── Bottom CTA (guests only) ──────────────── */}
-      {!user && (
-        <div style={{
+        <div className="guest-only" style={{
           position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50,
           padding: '12px clamp(16px,4vw,28px)',
           background: 'rgba(247,238,231,0.96)',
           backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
           borderTop: '1px solid var(--border)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
+          alignItems: 'center', justifyContent: 'space-between', gap: 10,
           flexWrap: 'wrap',
         }}>
           <p className="t-card-title" style={{ color: 'var(--text-2)', display: 'contents' }}>
@@ -518,7 +549,6 @@ export default async function GamePage({ params, searchParams }: Props) {
             </Link>
           </div>
         </div>
-      )}
     </div>
     </GameRatingProvider>
   );

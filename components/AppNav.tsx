@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { getAuthUserLite } from '@/lib/supabase/server';
 import { Nav, NavLink, NavButton, ThemeToggle } from './Nav';
 
 function BlogIcon() {
@@ -48,16 +47,21 @@ function UserIcon() {
   );
 }
 
-/* Auth-aware top nav: slim back bar for logged-in users, full nav for guests */
-export async function AppNav({ back }: { back?: { href: string; label: string } }) {
-  const user = await getAuthUserLite();
+/* Sin lectura de sesión para que sea prerenderizable: html[data-authed] decide qué variante se ve */
+export function AppNav({ back }: { back?: { href: string; label: string } }) {
+  return (
+    <>
+      {back && <AuthedBackBar back={back} />}
+      <GuestNav back={back} />
+    </>
+  );
+}
 
-  if (user) {
-    if (!back) return null;
-    return (
+function AuthedBackBar({ back }: { back: { href: string; label: string } }) {
+  return (
       <div
+        className="app-back-bar"
         style={{
-          display: 'flex',
           alignItems: 'center',
           padding: '0 clamp(16px, 4vw, 28px)',
           height: 52,
@@ -90,9 +94,10 @@ export async function AppNav({ back }: { back?: { href: string; label: string } 
           ← {back.label}
         </Link>
       </div>
-    );
-  }
+  );
+}
 
+function GuestNav({ back }: { back?: { href: string; label: string } }) {
   return (
     <Nav
       back={back}

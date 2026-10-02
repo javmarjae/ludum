@@ -11,6 +11,8 @@
     "test": "node --test tests/sync-bgg-request.test.mjs tests/retention-metrics.test.mjs",
     "typecheck": "tsc --noEmit",
     "measure-retention": "node scripts/measure-retention.mjs",
+    "perf": "node scripts/perf-check.mjs --all",
+    "perf:changed": "node scripts/perf-check.mjs --base-ref origin/HEAD",
     "import-csv": "ts-node scripts/import-csv.ts"
   },
   "keywords": [

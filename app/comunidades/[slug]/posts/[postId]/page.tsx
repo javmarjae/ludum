@@ -7,6 +7,11 @@ import { VerifiedBadge } from '@/components/VerifiedBadge';
 import { CreateCommentForm } from './CreateCommentForm';
 import { deletePost, deleteComment } from '../../../actions';
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 interface Props {
   params: Promise<{ slug: string; postId: string }>;
 }

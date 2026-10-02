@@ -2,9 +2,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getBlogPosts, formatBlogDate } from '@/lib/blog';
 import { AppNav } from '@/components/AppNav';
-import { createClient } from '@/lib/supabase/server';
-
-export const revalidate = 3600; // ISR: revalidar cada hora
 
 export const metadata: Metadata = {
   title: 'Blog de juegos de mesa',
@@ -17,8 +14,6 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
   const posts = await getBlogPosts();
   const [featured, ...rest] = posts;
 
@@ -35,19 +30,18 @@ export default async function BlogPage() {
               Novedades, reseñas y guías del mundo de los juegos de mesa.
             </p>
           </div>
-          {user && (
-            <Link
-              href="/blog/nueva"
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                fontSize: 14, fontWeight: 700, padding: '10px 18px', borderRadius: 10,
-                color: 'white', background: 'var(--brand)', textDecoration: 'none',
-                boxShadow: 'var(--shadow-btn-brand)', whiteSpace: 'nowrap',
-              }}
-            >
-              + Nueva entrada
-            </Link>
-          )}
+          <Link
+            href="/blog/nueva"
+            className="authed-only"
+            style={{
+              alignItems: 'center', gap: 8,
+              fontSize: 14, fontWeight: 700, padding: '10px 18px', borderRadius: 10,
+              color: 'white', background: 'var(--brand)', textDecoration: 'none',
+              boxShadow: 'var(--shadow-btn-brand)', whiteSpace: 'nowrap',
+            }}
+          >
+            + Nueva entrada
+          </Link>
         </div>
 
         {posts.length === 0 && (

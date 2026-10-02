@@ -1,4 +1,11 @@
 import Link from 'next/link';
+import { cacheLife } from 'next/cache';
+
+async function CurrentYear() {
+  'use cache';
+  cacheLife('days');
+  return new Date().getFullYear();
+}
 
 const SECTIONS = [
   {
@@ -80,7 +87,7 @@ export function Footer() {
 
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: 40, paddingTop: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
         <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.28)' }}>
-          © {new Date().getFullYear()} Ludum. Hecho con amor por jugadores, para jugadores.
+          © <CurrentYear /> Ludum. Hecho con amor por jugadores, para jugadores.
         </p>
         <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.20)' }}>
           v0.1

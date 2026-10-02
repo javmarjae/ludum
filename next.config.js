@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  cacheComponents: true,
+  // Antes la página hacía el redirect, pero con prerenderizado parcial se enviaba el shell antes.
+  async redirects() {
+    return [{ source: '/comunidades', destination: '/grupos', permanent: false }];
+  },
   async headers() {
     return [
       {

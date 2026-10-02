@@ -1,0 +1,5 @@
+#!/bin/sh
+# Bloquea el push si empeora el rendimiento de las páginas afectadas. Saltar puntualmente: git push --no-verify
+NODE=node
+command -v node >/dev/null 2>&1 || NODE="/c/Program Files/nodejs/node.exe"
+exec "$NODE" scripts/perf-check.mjs --pre-push

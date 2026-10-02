@@ -4,6 +4,11 @@ import { AppNav } from '@/components/AppNav';
 import { submitOrgRequest } from '../actions';
 import OrgRequestForm from './OrgRequestForm';
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 export const metadata = { title: 'Solicitar organización' };
 
 export default async function NuevaOrganizacionPage() {

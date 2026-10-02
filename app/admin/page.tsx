@@ -6,6 +6,11 @@ import { AdminUserCard } from './AdminUserCard';
 import OrgRequestsSection from './OrgRequestsSection';
 import VerificationRequestsSection from './VerificationRequestsSection';
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 export const metadata = { title: 'Admin — Ludum' };
 
 function RequestsSkeleton() {

@@ -14,6 +14,11 @@ import { GroupStatsRow } from './GroupStatsRow';
 import { GroupRecentPlays } from './GroupRecentPlays';
 import { GroupStatsRowSkeleton, GroupRecentPlaysSkeleton } from './GroupActivitySkeleton';
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 function playerIcon(n: number): string {
   if (n <= 1) return '/icons/solo.svg';
   if (n <= 2) return '/icons/pareja.svg';

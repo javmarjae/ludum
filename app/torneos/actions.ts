@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 
 export async function createTournament(formData: FormData) {
   const supabase = await createClient();
@@ -36,6 +36,7 @@ export async function createTournament(formData: FormData) {
 
   if (error) return { error: `Error: ${error.message}` };
 
+  updateTag('torneos');
   revalidatePath('/torneos');
   redirect(`/torneos/${tournament.id}/admin`);
 }
@@ -54,6 +55,7 @@ export async function updateTournamentStatus(tournamentId: string, status: strin
 
   revalidatePath(`/torneos/${tournamentId}`);
   revalidatePath(`/torneos/${tournamentId}/admin`);
+  updateTag('torneos');
   revalidatePath('/torneos');
   return { ok: true };
 }

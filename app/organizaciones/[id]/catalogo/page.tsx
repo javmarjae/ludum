@@ -6,6 +6,11 @@ import { AddCatalogButton } from './AddCatalogButton';
 import { CatalogGame } from './CatalogGame';
 import { Picto } from '@/components/Picto';
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 interface Props {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ q?: string; filtro?: string }>;

@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { createServiceRoleClient } from '@/lib/supabase';
 import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 
 function slugify(text: string): string {
   return text
@@ -72,6 +72,7 @@ export async function createBlogPost(formData: FormData) {
     return { error: `Error al guardar: ${error.message}` };
   }
 
+  updateTag('blog');
   revalidatePath('/blog');
   redirect(`/blog/${data.slug}`);
 }

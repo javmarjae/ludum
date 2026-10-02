@@ -1,6 +1,7 @@
 import { Nav, NavButton } from '@/components/Nav';
 import { Metadata } from 'next';
 
+
 export const metadata: Metadata = {
   title: 'Sobre Ludum',
   description: 'Conoce el proyecto Ludum: quiénes somos y por qué lo construimos.',

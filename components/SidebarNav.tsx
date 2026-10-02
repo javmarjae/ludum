@@ -93,8 +93,8 @@ export function SidebarNav({
       {/* Avatar usuario */}
       <SidebarUserAvatar profileName={profileName} avatarUrl={avatarUrl} />
 
-      {/* Nav items */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, width: '100%' }}>
+      {/* Nav items: se desplazan dentro para que los controles inferiores sigan visibles en pantallas bajas */}
+      <div className="app-sidebar-items" style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, width: '100%' }}>
         {items.map(({ href, label, icon }) => (
           <SidebarItem key={href} href={href} label={label} icon={icon} isActive={matchesRoute(pathname, href)} />
         ))}

@@ -3,6 +3,11 @@ import { createClient } from '@/lib/supabase/server';
 import { AppNav } from '@/components/AppNav';
 import { NuevoPostForm } from './NuevoPostForm';
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 export const metadata = { title: 'Nueva entrada | Blog | Ludum' };
 
 export default async function NuevoPostPage() {

@@ -10,6 +10,9 @@
 /.next/
 /out/
 
+# Mediciones locales de rendimiento (scripts/perf-check.mjs)
+/.perf/
+
 # Production
 /build
 

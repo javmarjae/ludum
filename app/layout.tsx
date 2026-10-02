@@ -12,6 +12,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/next';
 import { Footer } from '@/components/Footer';
 import { BetaBanner } from '@/components/BetaBanner';
+import { AuthFlag } from '@/components/AuthFlag';
 
 const urbanist = Urbanist({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-sans' });
 const playfair = Playfair({ subsets: ['latin'], weight: ['700', '800'], variable: '--font-display' });
@@ -102,26 +103,44 @@ async function MobileNavWithProfile({ userId }: { userId: string }) {
   return <MobileBottomNav isAdmin={profile?.is_admin ?? false} registerHref={registerHref} />;
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // Only 1 blocking call: auth (sesión local, sin red — ver getAuthUserLite).
-  // Profile query runs non-blocking in Suspense.
+async function AuthSidebar() {
   const user = await getAuthUserLite();
-
+  if (!user) return <AuthFlag authed={false} />;
   return (
-    <html lang="es" suppressHydrationWarning data-authed={user ? 'true' : undefined}>
+    <>
+      <AuthFlag authed />
+      <Suspense fallback={<SidebarNav isAdmin={false} userId={user.id} />}>
+        <SidebarWithProfile userId={user.id} />
+      </Suspense>
+    </>
+  );
+}
+
+async function AuthMobileNav() {
+  const user = await getAuthUserLite();
+  if (!user) return null;
+  return (
+    <Suspense fallback={<MobileBottomNav isAdmin={false} />}>
+      <MobileNavWithProfile userId={user.id} />
+    </Suspense>
+  );
+}
+
+// La sesión se lee dentro de Suspense para que el resto del layout se prerenderice como shell estático.
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="es" suppressHydrationWarning>
       <body className={`${urbanist.variable} ${playfair.variable} ${urbanist.className}`}>
         <Script
           id="theme-init"
           strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('ludum-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();` }}
+          dangerouslySetInnerHTML={{ __html: `(function(){var d=document.documentElement;try{var t=localStorage.getItem('ludum-theme');if(t==='dark')d.setAttribute('data-theme','dark');}catch(e){}if(/(?:^|; )sb-[^=]*-auth-token(?:\\.0)?=/.test(document.cookie))d.setAttribute('data-authed','true');})();` }}
         />
         <a href="#contenido" className="skip-link">Saltar al contenido</a>
         <div className="app-shell">
-          {user && (
-            <Suspense fallback={<SidebarNav isAdmin={false} userId={user.id} />}>
-              <SidebarWithProfile userId={user.id} />
-            </Suspense>
-          )}
+          <Suspense fallback={<div className="app-sidebar-slot" aria-hidden="true" />}>
+            <AuthSidebar />
+          </Suspense>
           <div className="app-shell-main">
             <main id="contenido" className="app-main">
               {children}
@@ -129,11 +148,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Footer />
           </div>
         </div>
-        {user && (
-          <Suspense fallback={<MobileBottomNav isAdmin={false} />}>
-            <MobileNavWithProfile userId={user.id} />
-          </Suspense>
-        )}
+        <Suspense fallback={null}>
+          <AuthMobileNav />
+        </Suspense>
         <BetaBanner />
         <SpeedInsights />
         <Analytics />

@@ -1,4 +1,7 @@
+import { Suspense, cache } from 'react';
+import { cacheLife, cacheTag } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { supabase as publicSupabase } from '@/lib/supabase';
 import Link from 'next/link';
 import Image from 'next/image';
 import { AppNav } from '@/components/AppNav';
@@ -21,30 +24,75 @@ const STATUS_LABEL: Record<string, { label: string; color: string }> = {
 
 export const metadata = { title: 'Torneos' };
 
-export default async function TorneosPage() {
+async function getPublicTournaments() {
+  'use cache';
+  cacheLife('minutes');
+  cacheTag('torneos');
+  const { data } = await publicSupabase
+    .from('tournaments')
+    .select(`
+      id, name, format, status, start_date, end_date, location, max_participants,
+      organizations(id, name, type, logo_url),
+      games(name, image_url),
+      tournament_participants(count)
+    `)
+    .eq('is_public', true)
+    .neq('status', 'cancelado')
+    .order('created_at', { ascending: false })
+    .limit(50);
+  return data;
+}
+
+const getOrganizerState = cache(async () => {
   const supabase = await createClient();
-  const [{ data: { user } }, { data: tournaments }] = await Promise.all([
-    supabase.auth.getUser(),
-    supabase
-      .from('tournaments')
-      .select(`
-        id, name, format, status, start_date, end_date, location, max_participants,
-        organizations(id, name, type, logo_url),
-        games(name, image_url),
-        tournament_participants(count)
-      `)
-      .eq('is_public', true)
-      .neq('status', 'cancelado')
-      .order('created_at', { ascending: false })
-      .limit(50),
-  ]);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { user: null, hasOrg: false };
+  const { data: myOrgs } = await supabase.from('organizations').select('id').eq('owner_id', user.id).limit(1);
+  return { user, hasOrg: (myOrgs?.length ?? 0) > 0 };
+});
 
-  // Fetch user's organizations to show "crear torneo" button
-  const { data: myOrgs } = user
-    ? await supabase.from('organizations').select('id').eq('owner_id', user.id).limit(1)
-    : { data: null };
+async function OrganizerActions() {
+  const { user, hasOrg } = await getOrganizerState();
+  return (
+    <>
+      {user && !hasOrg && (
+        <Link href="/organizaciones/nueva" className="btn-outline" style={{ borderRadius: 14, padding: '10px 18px', fontSize: 14, fontWeight: 700, textDecoration: 'none', border: '1.5px solid var(--border)', color: 'var(--text-3)', display: 'inline-block' }}>
+          + Mi organización
+        </Link>
+      )}
+      {user && hasOrg && (
+        <Link href="/torneos/nuevo" className="btn-hero" style={{ borderRadius: 14, padding: '10px 18px', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'inline-block' }}>
+          + Nuevo torneo
+        </Link>
+      )}
+      {!user && (
+        <Link href="/auth/login" style={{ borderRadius: 14, padding: '10px 18px', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'inline-block', background: 'var(--brand)', color: 'white' }}>
+          Accede para organizar
+        </Link>
+      )}
+    </>
+  );
+}
 
-  const hasOrg = (myOrgs?.length ?? 0) > 0;
+async function OrganizerCta() {
+  const { user, hasOrg } = await getOrganizerState();
+  if (!user || hasOrg) return null;
+  return (
+    <div style={{ marginTop: 40, borderRadius: 24, padding: '32px 28px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', textAlign: 'center' }}>
+      <p style={{ fontSize: 28, marginBottom: 10 }}>🏪</p>
+      <p style={{ fontWeight: 700, fontSize: 17, color: 'var(--text)', marginBottom: 6 }}>¿Tienes una asociación o tienda?</p>
+      <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-3)', marginBottom: 20 }}>
+        Registra tu organización y empieza a organizar torneos gratis.
+      </p>
+      <Link href="/organizaciones/nueva" style={{ display: 'inline-block', background: 'var(--brand)', color: 'white', padding: '12px 28px', borderRadius: 16, fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>
+        Crear organización
+      </Link>
+    </div>
+  );
+}
+
+export default async function TorneosPage() {
+  const tournaments = await getPublicTournaments();
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
@@ -60,21 +108,9 @@ export default async function TorneosPage() {
             </p>
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            {user && !hasOrg && (
-              <Link href="/organizaciones/nueva" className="btn-outline" style={{ borderRadius: 14, padding: '10px 18px', fontSize: 14, fontWeight: 700, textDecoration: 'none', border: '1.5px solid var(--border)', color: 'var(--text-3)', display: 'inline-block' }}>
-                + Mi organización
-              </Link>
-            )}
-            {user && hasOrg && (
-              <Link href="/torneos/nuevo" className="btn-hero" style={{ borderRadius: 14, padding: '10px 18px', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'inline-block' }}>
-                + Nuevo torneo
-              </Link>
-            )}
-            {!user && (
-              <Link href="/auth/login" style={{ borderRadius: 14, padding: '10px 18px', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'inline-block', background: 'var(--brand)', color: 'white' }}>
-                Accede para organizar
-              </Link>
-            )}
+            <Suspense fallback={null}>
+              <OrganizerActions />
+            </Suspense>
           </div>
         </div>
 
@@ -149,19 +185,9 @@ export default async function TorneosPage() {
           </div>
         )}
 
-        {/* CTA for orgs */}
-        {user && !hasOrg && (
-          <div style={{ marginTop: 40, borderRadius: 24, padding: '32px 28px', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', textAlign: 'center' }}>
-            <p style={{ fontSize: 28, marginBottom: 10 }}>🏪</p>
-            <p style={{ fontWeight: 700, fontSize: 17, color: 'var(--text)', marginBottom: 6 }}>¿Tienes una asociación o tienda?</p>
-            <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-3)', marginBottom: 20 }}>
-              Registra tu organización y empieza a organizar torneos gratis.
-            </p>
-            <Link href="/organizaciones/nueva" style={{ display: 'inline-block', background: 'var(--brand)', color: 'white', padding: '12px 28px', borderRadius: 16, fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>
-              Crear organización
-            </Link>
-          </div>
-        )}
+        <Suspense fallback={null}>
+          <OrganizerCta />
+        </Suspense>
       </div>
     </div>
   );

@@ -579,16 +579,25 @@ select:focus-visible,
 html[data-authed="true"] .app-nav {
   display: none !important;
 }
+.app-back-bar { display: none; }
+html[data-authed="true"] .app-back-bar { display: flex; }
+.authed-only { display: none; }
+html[data-authed="true"] .authed-only { display: inline-flex; }
+.guest-only { display: flex; }
+html[data-authed="true"] .guest-only { display: none; }
 
 /* Sidebar */
-.app-sidebar {
+.app-sidebar-slot { display: none; }
+html[data-authed="true"] .app-sidebar-slot { display: block; width: 76px; flex-shrink: 0; }
+.app-sidebar, .app-sidebar-items {
   scrollbar-width: none;
 }
-.app-sidebar::-webkit-scrollbar { display: none; }
+.app-sidebar::-webkit-scrollbar, .app-sidebar-items::-webkit-scrollbar { display: none; }
 
 /* En móvil: ocultar sidebar lateral, mostrar barra inferior */
 @media (max-width: 640px) {
   .app-sidebar { display: none !important; }
+  html[data-authed="true"] .app-sidebar-slot { display: none; }
   .app-shell-main { padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px)); }
 }
 

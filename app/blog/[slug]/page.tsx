@@ -6,7 +6,10 @@ import remarkGfm from 'remark-gfm';
 import { getBlogPost, getBlogSlugs, formatBlogDate } from '@/lib/blog';
 import { AppNav } from '@/components/AppNav';
 
-export const revalidate = 3600; // ISR: revalidar cada hora
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
 
 export async function generateStaticParams() {
   const slugs = await getBlogSlugs();

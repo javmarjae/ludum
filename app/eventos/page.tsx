@@ -3,6 +3,11 @@ import { redirect } from 'next/navigation';
 import { EventsClient } from './EventsClient';
 import type { Metadata } from 'next';
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 export const metadata: Metadata = {
   title: 'Eventos cerca de ti',
   description: 'Torneos y ferias de juegos de mesa cerca de ti.',

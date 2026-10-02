@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { unstable_cache } from 'next/cache';
+import { cacheLife, unstable_cache } from 'next/cache';
 import { supabase } from '@/lib/supabase';
 import { getBlogPosts } from '@/lib/blog';
 
@@ -23,6 +23,8 @@ const getRankedGames = unstable_cache(
 );
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  'use cache';
+  cacheLife('hours');
   const games = await getRankedGames();
   const blogPosts = await getBlogPosts();
 

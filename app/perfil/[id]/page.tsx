@@ -9,6 +9,11 @@ import { VerifiedBadge } from '@/components/VerifiedBadge';
 import { Picto } from '@/components/Picto';
 import type { Metadata } from 'next';
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 interface Props { params: Promise<{ id: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

@@ -1,3 +1,4 @@
+import { cacheLife, cacheTag } from 'next/cache';
 import { supabase } from '@/lib/supabase';
 
 export interface BlogPost {
@@ -36,6 +37,9 @@ type BlogPostSummary = Pick<
 >;
 
 export async function getBlogPosts(): Promise<BlogPostSummary[]> {
+  'use cache';
+  cacheLife('hours');
+  cacheTag('blog');
   const db = supabase;
   const { data, error } = await db
     .from('blog_posts')
@@ -48,6 +52,9 @@ export async function getBlogPosts(): Promise<BlogPostSummary[]> {
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
+  'use cache';
+  cacheLife('hours');
+  cacheTag('blog');
   const db = supabase;
   const { data, error } = await db
     .from('blog_posts')
