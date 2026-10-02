@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
 
 export function NotificationBell({ userId }: { userId: string }) {
   const [unread, setUnread] = useState(0);
@@ -10,11 +10,16 @@ export function NotificationBell({ userId }: { userId: string }) {
   const isActive = pathname === '/notificaciones';
 
   useEffect(() => {
-    const supabase = createClient();
-    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let supabase: SupabaseClient | null = null;
+    let channel: RealtimeChannel | null = null;
+    let cancelled = false;
 
     async function init() {
       try {
+        // Import dinámico: el layout no debe arrastrar supabase-js a todas las páginas públicas.
+        const { createClient } = await import('@/lib/supabase/client');
+        if (cancelled) return;
+        supabase = createClient();
         const { count } = await supabase
           .from('notifications')
           .select('id', { count: 'exact', head: true })
@@ -35,7 +40,7 @@ export function NotificationBell({ userId }: { userId: string }) {
             event: 'UPDATE', schema: 'public', table: 'notifications',
             filter: `user_id=eq.${userId}`,
           }, async () => {
-            const { count: c } = await supabase
+            const { count: c } = await supabase!
               .from('notifications')
               .select('id', { count: 'exact', head: true })
               .eq('user_id', userId)
@@ -51,7 +56,8 @@ export function NotificationBell({ userId }: { userId: string }) {
     init();
 
     return () => {
-      if (channel) supabase.removeChannel(channel);
+      cancelled = true;
+      if (supabase && channel) supabase.removeChannel(channel);
     };
   }, [userId]);
 

@@ -49,7 +49,7 @@ export default async function PublicPlayPage({ params }: Props) {
             <img src="/logo.svg" alt="Ludum" style={{ height: 32, width: 'auto' }} />
             <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--brand)' }}>Ludum</span>
           </Link>
-          <Link href="/auth/login" style={{
+          <Link href="/auth/login" prefetch={false} style={{
             fontSize: 13, fontWeight: 700, padding: '7px 16px', borderRadius: 999,
             textDecoration: 'none', color: 'white', background: 'var(--brand)',
             boxShadow: 'var(--shadow-btn-brand)',
@@ -132,7 +132,7 @@ export default async function PublicPlayPage({ params }: Props) {
           <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-2)', marginBottom: 12 }}>
             ¿Quieres registrar tus propias partidas?
           </p>
-          <Link href="/auth/login" style={{
+          <Link href="/auth/login" prefetch={false} style={{
             display: 'inline-flex', padding: '10px 24px', borderRadius: 999,
             fontSize: 14, fontWeight: 700, textDecoration: 'none',
             color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)',

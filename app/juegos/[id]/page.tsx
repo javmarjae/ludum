@@ -430,7 +430,7 @@ export default async function GamePage({ params, searchParams }: Props) {
             <div style={{ textAlign: 'center', padding: '64px 0' }}>
               <p style={{ fontSize: 32, marginBottom: 12 }}><Picto emoji="🎲" /></p>
               <p className="t-section-title" style={{ marginBottom: 8 }}>Inicia sesión para ver tus partidas</p>
-              <Link href="/auth/login" style={{ fontSize: 14, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none' }}>Iniciar sesión →</Link>
+              <Link href="/auth/login" prefetch={false} style={{ fontSize: 14, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none' }}>Iniciar sesión →</Link>
             </div>
           ) : (
             <Suspense fallback={
@@ -533,14 +533,14 @@ export default async function GamePage({ params, searchParams }: Props) {
             <span style={{ display: 'inline' }}>Regístrate para comentar, editar, inspeccionar</span>
           </p>
           <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-            <Link href="/auth/signup" style={{
+            <Link href="/auth/signup" prefetch={false} style={{
               padding: '9px 18px', borderRadius: 999, fontSize: 13, fontWeight: 700,
               background: 'var(--brand)', color: 'white', textDecoration: 'none',
               boxShadow: 'var(--shadow-btn-brand)',
             }}>
               Registrarse
             </Link>
-            <Link href="/auth/login" style={{
+            <Link href="/auth/login" prefetch={false} style={{
               padding: '9px 18px', borderRadius: 999, fontSize: 13, fontWeight: 700,
               background: 'var(--bg-card)', color: 'var(--text-2)', textDecoration: 'none',
               boxShadow: 'var(--shadow-btn)',

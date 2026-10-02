@@ -66,7 +66,7 @@ async function OrganizerActions() {
         </Link>
       )}
       {!user && (
-        <Link href="/auth/login" style={{ borderRadius: 14, padding: '10px 18px', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'inline-block', background: 'var(--brand)', color: 'white' }}>
+        <Link href="/auth/login" prefetch={false} style={{ borderRadius: 14, padding: '10px 18px', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'inline-block', background: 'var(--brand)', color: 'white' }}>
           Accede para organizar
         </Link>
       )}

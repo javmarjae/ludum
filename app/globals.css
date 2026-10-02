@@ -585,6 +585,7 @@ html[data-authed="true"] .app-back-bar { display: flex; }
 html[data-authed="true"] .authed-only { display: inline-flex; }
 .guest-only { display: flex; }
 html[data-authed="true"] .guest-only { display: none; }
+html[data-beginner-hidden] .beginner-section { display: none; }
 
 /* Sidebar */
 .app-sidebar-slot { display: none; }

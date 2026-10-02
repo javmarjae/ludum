@@ -134,7 +134,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script
           id="theme-init"
           strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: `(function(){var d=document.documentElement;try{var t=localStorage.getItem('ludum-theme');if(t==='dark')d.setAttribute('data-theme','dark');}catch(e){}if(/(?:^|; )sb-[^=]*-auth-token(?:\\.0)?=/.test(document.cookie))d.setAttribute('data-authed','true');})();` }}
+          dangerouslySetInnerHTML={{ __html: `(function(){var d=document.documentElement;try{var t=localStorage.getItem('ludum-theme');if(t==='dark')d.setAttribute('data-theme','dark');if(localStorage.getItem('ludum-beginner-hidden')==='1')d.setAttribute('data-beginner-hidden','');}catch(e){}if(/(?:^|; )sb-[^=]*-auth-token(?:\\.0)?=/.test(document.cookie))d.setAttribute('data-authed','true');})();` }}
         />
         <a href="#contenido" className="skip-link">Saltar al contenido</a>
         <div className="app-shell">

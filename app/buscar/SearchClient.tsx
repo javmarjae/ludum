@@ -4,9 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { Picto } from '@/components/Picto';
 import { categoryEs } from '@/lib/bgg-categories';
+import { loadSearchTaxonomyOptions } from './actions';
 
 interface Game {
   bgg_id: number;
@@ -44,8 +45,6 @@ interface Props {
   mostPlayedGames: TrendingGame[];
   topRatedGames: FeaturedGame[];
   newGames: FeaturedGame[];
-  mechanicOptions: string[];
-  categoryOptions: string[];
 }
 
 type QuickFilter =
@@ -232,18 +231,20 @@ function MultiSelectFilter({
   selected,
   formatOption = (option) => option,
   onToggle,
+  onOpen,
 }: {
   id: string;
   label: string;
-  options: string[];
+  options: string[] | null;
   selected: string[];
   formatOption?: (option: string) => string;
   onToggle: (option: string) => void;
+  onOpen: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const normalizedSearch = search.trim().toLocaleLowerCase('es');
-  const visibleOptions = options
+  const visibleOptions = (options ?? [])
     .filter((option) => formatOption(option).toLocaleLowerCase('es').includes(normalizedSearch))
     .slice(0, 30);
 
@@ -254,7 +255,10 @@ function MultiSelectFilter({
         className="buscar-multi-filter-trigger"
         aria-expanded={open}
         aria-controls={`${id}-options`}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          if (!open) onOpen();
+          setOpen((value) => !value);
+        }}
       >
         <span>{label}</span>
         {selected.length > 0 && <span className="buscar-multi-filter-count">{selected.length}</span>}
@@ -298,7 +302,8 @@ function MultiSelectFilter({
                 <span>{formatOption(option)}</span>
               </label>
             ))}
-            {visibleOptions.length === 0 && <p className="buscar-multi-filter-empty">Sin coincidencias</p>}
+            {options === null && <p className="buscar-multi-filter-empty">Cargando…</p>}
+            {options !== null && visibleOptions.length === 0 && <p className="buscar-multi-filter-empty">Sin coincidencias</p>}
           </div>
         </div>
       )}
@@ -306,7 +311,7 @@ function MultiSelectFilter({
   );
 }
 
-export function SearchClient({ mostPlayedGames, topRatedGames, newGames, mechanicOptions, categoryOptions }: Props) {
+export function SearchClient({ mostPlayedGames, topRatedGames, newGames }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState('');
@@ -320,7 +325,26 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames, mechani
   const selectedMechanics = searchParams.getAll('mecanica');
   const selectedCategories = searchParams.getAll('categoria');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const supabaseRef = useRef(createClient());
+  const supabaseRef = useRef<SupabaseClient | null>(null);
+  const [taxonomy, setTaxonomy] = useState<{ mechanics: string[]; categories: string[] } | null>(null);
+  const taxonomyRequested = useRef(false);
+
+  function loadTaxonomy() {
+    if (taxonomyRequested.current) return;
+    taxonomyRequested.current = true;
+    loadSearchTaxonomyOptions()
+      .then(setTaxonomy)
+      .catch(() => { taxonomyRequested.current = false; });
+  }
+
+  // supabase-js solo se descarga cuando hay una búsqueda que lanzar.
+  async function getSupabase() {
+    if (!supabaseRef.current) {
+      const { createClient } = await import('@/lib/supabase/client');
+      supabaseRef.current = createClient();
+    }
+    return supabaseRef.current;
+  }
 
   const hasFilters = filterPlayers !== null || filterComplexity !== null || filterDuration !== null || selectedMechanics.length > 0 || selectedCategories.length > 0;
   const hasQuery = query.trim().length >= 2;
@@ -366,8 +390,9 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames, mechani
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
       setShowingUnrankedFallback(false);
+      const supabase = await getSupabase();
       const buildQuery = () => {
-        let q = supabaseRef.current
+        let q = supabase
           .from('games')
           .select('bgg_id, name, year_published, bgg_rating, bgg_rank, min_players, max_players, min_playtime, max_playtime, complexity, image_url, categories, mechanics, is_expansion')
           .neq('is_expansion', true);
@@ -513,16 +538,18 @@ export function SearchClient({ mostPlayedGames, topRatedGames, newGames, mechani
             <MultiSelectFilter
               id="mechanics-filter"
               label="Mecánicas"
-              options={mechanicOptions}
+              options={taxonomy?.mechanics ?? null}
               selected={selectedMechanics}
+              onOpen={loadTaxonomy}
               onToggle={(option) => toggleTaxonomyFilter('mecanica', option)}
             />
             <MultiSelectFilter
               id="categories-filter"
               label="Categorías"
-              options={categoryOptions}
+              options={taxonomy?.categories ?? null}
               selected={selectedCategories}
               formatOption={categoryEs}
+              onOpen={loadTaxonomy}
               onToggle={(option) => toggleTaxonomyFilter('categoria', option)}
             />
           </div>

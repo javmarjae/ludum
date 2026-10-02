@@ -118,7 +118,7 @@ export default async function Home() {
                 Registra partidas, descubre nuevos juegos y compara con tus amigos. Con datos de más de 138.000 títulos de BoardGameGeek.
               </p>
               <div className="home-hero-ctas" style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                <Link href="/auth/login" style={{ padding: '13px 28px', borderRadius: 8, fontWeight: 700, fontSize: 15, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none' }}>
+                <Link href="/auth/login" prefetch={false} style={{ padding: '13px 28px', borderRadius: 8, fontWeight: 700, fontSize: 15, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none' }}>
                   Empezar gratis
                 </Link>
                 <Link href="/buscar" style={{ padding: '13px 24px', borderRadius: 8, fontWeight: 700, fontSize: 15, color: 'var(--text-2)', background: 'var(--bg-card)', boxShadow: 'var(--shadow-btn)', textDecoration: 'none' }}>
@@ -271,7 +271,7 @@ export default async function Home() {
                 </div>
               ))}
             </div>
-            <Link href="/auth/login" className="home-final-cta" style={{ padding: '13px 28px', borderRadius: 8, fontWeight: 700, fontSize: 15, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none', flexShrink: 0 }}>
+            <Link href="/auth/login" prefetch={false} className="home-final-cta" style={{ padding: '13px 28px', borderRadius: 8, fontWeight: 700, fontSize: 15, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none', flexShrink: 0 }}>
               Crear cuenta gratis →
             </Link>
           </section>

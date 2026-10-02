@@ -1,11 +1,7 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
 import { Picto } from '@/components/Picto';
-
-const STORAGE_KEY = 'ludum-beginner-hidden';
+import { BeginnerHideButton } from '@/components/BeginnerHideButton';
 
 const BEGINNER_TIPS = [
   {
@@ -33,30 +29,14 @@ type Game = {
   max_players?: number;
 };
 
+// Componente de servidor: los juegos van en el HTML. Si el usuario lo ocultó, el script inicial del layout lo esconde por CSS.
 export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding?: boolean }) {
-  const [hidden, setHidden] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    setHidden(localStorage.getItem(STORAGE_KEY) === '1');
-  }, []);
-
-  function hide() {
-    localStorage.setItem(STORAGE_KEY, '1');
-    setHidden(true);
-  }
-
-  // Avoid flash: render nothing until hydrated
-  if (!mounted) return null;
-  if (hidden) return null;
-
   const wrapperStyle: React.CSSProperties = isLanding
     ? { borderTop: '1px solid var(--border)', background: 'var(--bg-inset)' }
     : {};
 
   return (
-    <section style={wrapperStyle}>
+    <section className="beginner-section" style={wrapperStyle}>
       <div style={{ maxWidth: isLanding ? 1120 : undefined, margin: isLanding ? '0 auto' : undefined, padding: isLanding ? 'clamp(40px,7vw,72px) clamp(16px,4vw,32px)' : undefined }}>
         {/* Header row */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32, gap: 16 }}>
@@ -70,28 +50,7 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
               </p>
             )}
           </div>
-          <button
-            onClick={hide}
-            title="Ocultar sección"
-            style={{
-              flexShrink: 0,
-              marginTop: 2,
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              border: '1px solid var(--border)',
-              background: 'var(--bg-card)',
-              color: 'var(--text-3)',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 16,
-              lineHeight: 1,
-            }}
-          >
-            ×
-          </button>
+          <BeginnerHideButton />
         </div>
 
         {/* Tip cards */}

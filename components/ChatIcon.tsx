@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 
 export function ChatIcon({ userId }: { userId: string }) {
   const [unread, setUnread] = useState(0);
@@ -10,11 +9,11 @@ export function ChatIcon({ userId }: { userId: string }) {
   const isActive = pathname.startsWith('/mensajes');
 
   useEffect(() => {
-    const supabase = createClient();
-
     async function init() {
       try {
-        const { data } = await supabase.rpc('get_total_unread_messages');
+        // Import dinámico: el layout no debe arrastrar supabase-js a todas las páginas públicas.
+        const { createClient } = await import('@/lib/supabase/client');
+        const { data } = await createClient().rpc('get_total_unread_messages');
         setUnread(Number(data ?? 0));
       } catch {
         // chat table may not exist yet
