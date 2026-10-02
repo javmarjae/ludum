@@ -180,7 +180,7 @@ function CarouselHeader({ icon, title, subtitle, href }: { icon: string; title: 
         </div>
       </div>
       {href && (
-        <Link href={href} className="tap" style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none', padding: '5px 12px', borderRadius: 999, background: 'var(--brand-tint)', flexShrink: 0 }}>
+        <Link href={href} prefetch={false} className="tap" style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)', textDecoration: 'none', padding: '5px 12px', borderRadius: 999, background: 'var(--brand-tint)', flexShrink: 0 }}>
           Ver todas ›
         </Link>
       )}

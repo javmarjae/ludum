@@ -105,7 +105,7 @@ export function BeginnerSection({ games, isLanding }: { games: Game[]; isLanding
 
         {isLanding && (
           <div className="beginner-ctas" style={{ marginTop: 36, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <Link href="/recomendador" style={{ padding: '12px 24px', borderRadius: 8, fontWeight: 700, fontSize: 14, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none' }}>
+            <Link href="/recomendador" prefetch={false} style={{ padding: '12px 24px', borderRadius: 8, fontWeight: 700, fontSize: 14, color: 'white', background: 'var(--brand)', boxShadow: 'var(--shadow-btn-brand)', textDecoration: 'none' }}>
               Recomiéndame un juego →
             </Link>
             <Link href="/buscar" style={{ padding: '12px 20px', borderRadius: 8, fontWeight: 700, fontSize: 14, color: 'var(--text-2)', background: 'var(--bg-card)', boxShadow: 'var(--shadow-btn)', textDecoration: 'none' }}>
